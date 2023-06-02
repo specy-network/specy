@@ -1,8 +1,10 @@
 // THIS FILE IS GENERATED AUTOMATICALLY. DO NOT MODIFY.
 
+import SpecySpecy from './specy.specy'
 
 
 export default { 
+  SpecySpecy: load(SpecySpecy, 'specy.specy'),
   
 }
 

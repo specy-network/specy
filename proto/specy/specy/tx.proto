@@ -1,0 +1,26 @@
+syntax = "proto3";
+package specy.specy;
+
+// this line is used by starport scaffolding # proto/tx/import
+import "cosmos/base/v1beta1/coin.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "specy/x/specy/types";
+
+// Msg defines the Msg service.
+service Msg {
+      rpc CreateExecutor(MsgCreateExecutor) returns (MsgCreateExecutorResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgCreateExecutor {
+  string creator = 1;
+  cosmos.base.v1beta1.Coin staking = 2 [(gogoproto.nullable) = false];
+  string iasAttestationReport = 3;
+  string enclavePk = 4;
+}
+
+message MsgCreateExecutorResponse {
+}
+
+// this line is used by starport scaffolding # proto/tx/message
