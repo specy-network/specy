@@ -2,20 +2,20 @@
 import _m0 from "protobufjs/minimal";
 import { Executor } from "./executor";
 import { Params } from "./params";
+import { Task } from "./task";
 
 export const protobufPackage = "specy.specy";
 
 /** GenesisState defines the specy module's genesis state. */
 export interface GenesisState {
-  params:
-    | Params
-    | undefined;
-  /** this line is used by starport scaffolding # genesis/proto/state */
+  params: Params | undefined;
   executorList: Executor[];
+  /** this line is used by starport scaffolding # genesis/proto/state */
+  taskList: Task[];
 }
 
 function createBaseGenesisState(): GenesisState {
-  return { params: undefined, executorList: [] };
+  return { params: undefined, executorList: [], taskList: [] };
 }
 
 export const GenesisState = {
@@ -25,6 +25,9 @@ export const GenesisState = {
     }
     for (const v of message.executorList) {
       Executor.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
+    for (const v of message.taskList) {
+      Task.encode(v!, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -42,6 +45,9 @@ export const GenesisState = {
         case 2:
           message.executorList.push(Executor.decode(reader, reader.uint32()));
           break;
+        case 3:
+          message.taskList.push(Task.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -56,6 +62,7 @@ export const GenesisState = {
       executorList: Array.isArray(object?.executorList)
         ? object.executorList.map((e: any) => Executor.fromJSON(e))
         : [],
+      taskList: Array.isArray(object?.taskList) ? object.taskList.map((e: any) => Task.fromJSON(e)) : [],
     };
   },
 
@@ -67,6 +74,11 @@ export const GenesisState = {
     } else {
       obj.executorList = [];
     }
+    if (message.taskList) {
+      obj.taskList = message.taskList.map((e) => e ? Task.toJSON(e) : undefined);
+    } else {
+      obj.taskList = [];
+    }
     return obj;
   },
 
@@ -76,6 +88,7 @@ export const GenesisState = {
       ? Params.fromPartial(object.params)
       : undefined;
     message.executorList = object.executorList?.map((e) => Executor.fromPartial(e)) || [];
+    message.taskList = object.taskList?.map((e) => Task.fromPartial(e)) || [];
     return message;
   },
 };

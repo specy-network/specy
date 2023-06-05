@@ -14,6 +14,18 @@ export interface MsgCreateExecutor {
 export interface MsgCreateExecutorResponse {
 }
 
+export interface MsgCreateTask {
+  creator: string;
+  contractAddress: string;
+  method: string;
+  calldata: string;
+  single: boolean;
+  ruleFile: string;
+}
+
+export interface MsgCreateTaskResponse {
+}
+
 function createBaseMsgCreateExecutor(): MsgCreateExecutor {
   return { creator: "", staking: undefined, iasAttestationReport: "", enclavePk: "" };
 }
@@ -131,10 +143,144 @@ export const MsgCreateExecutorResponse = {
   },
 };
 
+function createBaseMsgCreateTask(): MsgCreateTask {
+  return { creator: "", contractAddress: "", method: "", calldata: "", single: false, ruleFile: "" };
+}
+
+export const MsgCreateTask = {
+  encode(message: MsgCreateTask, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.contractAddress !== "") {
+      writer.uint32(18).string(message.contractAddress);
+    }
+    if (message.method !== "") {
+      writer.uint32(26).string(message.method);
+    }
+    if (message.calldata !== "") {
+      writer.uint32(34).string(message.calldata);
+    }
+    if (message.single === true) {
+      writer.uint32(40).bool(message.single);
+    }
+    if (message.ruleFile !== "") {
+      writer.uint32(50).string(message.ruleFile);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgCreateTask {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgCreateTask();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.contractAddress = reader.string();
+          break;
+        case 3:
+          message.method = reader.string();
+          break;
+        case 4:
+          message.calldata = reader.string();
+          break;
+        case 5:
+          message.single = reader.bool();
+          break;
+        case 6:
+          message.ruleFile = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgCreateTask {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      contractAddress: isSet(object.contractAddress) ? String(object.contractAddress) : "",
+      method: isSet(object.method) ? String(object.method) : "",
+      calldata: isSet(object.calldata) ? String(object.calldata) : "",
+      single: isSet(object.single) ? Boolean(object.single) : false,
+      ruleFile: isSet(object.ruleFile) ? String(object.ruleFile) : "",
+    };
+  },
+
+  toJSON(message: MsgCreateTask): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.contractAddress !== undefined && (obj.contractAddress = message.contractAddress);
+    message.method !== undefined && (obj.method = message.method);
+    message.calldata !== undefined && (obj.calldata = message.calldata);
+    message.single !== undefined && (obj.single = message.single);
+    message.ruleFile !== undefined && (obj.ruleFile = message.ruleFile);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgCreateTask>, I>>(object: I): MsgCreateTask {
+    const message = createBaseMsgCreateTask();
+    message.creator = object.creator ?? "";
+    message.contractAddress = object.contractAddress ?? "";
+    message.method = object.method ?? "";
+    message.calldata = object.calldata ?? "";
+    message.single = object.single ?? false;
+    message.ruleFile = object.ruleFile ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgCreateTaskResponse(): MsgCreateTaskResponse {
+  return {};
+}
+
+export const MsgCreateTaskResponse = {
+  encode(_: MsgCreateTaskResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgCreateTaskResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgCreateTaskResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgCreateTaskResponse {
+    return {};
+  },
+
+  toJSON(_: MsgCreateTaskResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgCreateTaskResponse>, I>>(_: I): MsgCreateTaskResponse {
+    const message = createBaseMsgCreateTaskResponse();
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   CreateExecutor(request: MsgCreateExecutor): Promise<MsgCreateExecutorResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  CreateTask(request: MsgCreateTask): Promise<MsgCreateTaskResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -142,11 +288,18 @@ export class MsgClientImpl implements Msg {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.CreateExecutor = this.CreateExecutor.bind(this);
+    this.CreateTask = this.CreateTask.bind(this);
   }
   CreateExecutor(request: MsgCreateExecutor): Promise<MsgCreateExecutorResponse> {
     const data = MsgCreateExecutor.encode(request).finish();
     const promise = this.rpc.request("specy.specy.Msg", "CreateExecutor", data);
     return promise.then((data) => MsgCreateExecutorResponse.decode(new _m0.Reader(data)));
+  }
+
+  CreateTask(request: MsgCreateTask): Promise<MsgCreateTaskResponse> {
+    const data = MsgCreateTask.encode(request).finish();
+    const promise = this.rpc.request("specy.specy.Msg", "CreateTask", data);
+    return promise.then((data) => MsgCreateTaskResponse.decode(new _m0.Reader(data)));
   }
 }
 

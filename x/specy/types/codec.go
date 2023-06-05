@@ -9,12 +9,16 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreateExecutor{}, "specy/CreateExecutor", nil)
+	cdc.RegisterConcrete(&MsgCreateTask{}, "specy/CreateTask", nil)
 	// this line is used by starport scaffolding # 2
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateExecutor{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgCreateTask{},
 	)
 	// this line is used by starport scaffolding # 3
 

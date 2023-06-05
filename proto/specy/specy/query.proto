@@ -5,6 +5,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "specy/specy/params.proto";
 import "specy/specy/executor.proto";
+import "specy/specy/task.proto";
 // this line is used by starport scaffolding # 1
 import "cosmos/base/v1beta1/coin.proto";
 import "gogoproto/gogo.proto";
@@ -25,6 +26,16 @@ service Query {
 	// Queries a list of Executor items.
 	rpc ExecutorAll(QueryAllExecutorRequest) returns (QueryAllExecutorResponse) {
 		option (google.api.http).get = "/specy/specy/executor";
+	}
+
+// Queries a Task by index.
+	rpc Task(QueryGetTaskRequest) returns (QueryGetTaskResponse) {
+		option (google.api.http).get = "/specy/specy/task/{taskHash}";
+	}
+
+	// Queries a list of Task items.
+	rpc TaskAll(QueryAllTaskRequest) returns (QueryAllTaskResponse) {
+		option (google.api.http).get = "/specy/specy/task";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -54,6 +65,24 @@ message QueryAllExecutorRequest {
 
 message QueryAllExecutorResponse {
 	repeated Executor executor = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetTaskRequest {
+	  string taskHash = 1;
+
+}
+
+message QueryGetTaskResponse {
+	Task task = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllTaskRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllTaskResponse {
+	repeated Task task = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

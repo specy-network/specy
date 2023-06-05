@@ -30,6 +30,14 @@ func TestGenesisState_Validate(t *testing.T) {
 						Address: "1",
 					},
 				},
+				TaskList: []types.Task{
+					{
+						TaskHash: "0",
+					},
+					{
+						TaskHash: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -43,6 +51,20 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 					{
 						Address: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated task",
+			genState: &types.GenesisState{
+				TaskList: []types.Task{
+					{
+						TaskHash: "0",
+					},
+					{
+						TaskHash: "0",
 					},
 				},
 			},

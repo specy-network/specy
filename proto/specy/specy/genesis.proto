@@ -4,6 +4,7 @@ package specy.specy;
 import "gogoproto/gogo.proto";
 import "specy/specy/params.proto";
 import "specy/specy/executor.proto";
+import "specy/specy/task.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "specy/x/specy/types";
@@ -12,5 +13,6 @@ option go_package = "specy/x/specy/types";
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
   repeated Executor executorList = 2 [(gogoproto.nullable) = false];
+  repeated Task taskList = 3 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }

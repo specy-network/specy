@@ -10,6 +10,7 @@ option go_package = "specy/x/specy/types";
 // Msg defines the Msg service.
 service Msg {
       rpc CreateExecutor(MsgCreateExecutor) returns (MsgCreateExecutorResponse);
+  rpc CreateTask(MsgCreateTask) returns (MsgCreateTaskResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -21,6 +22,18 @@ message MsgCreateExecutor {
 }
 
 message MsgCreateExecutorResponse {
+}
+
+message MsgCreateTask {
+  string creator = 1;
+  string contractAddress = 2;
+  string method = 3;
+  string calldata = 4;
+  bool single = 5;
+  string ruleFile = 6;
+}
+
+message MsgCreateTaskResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

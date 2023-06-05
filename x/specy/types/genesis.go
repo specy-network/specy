@@ -11,6 +11,7 @@ const DefaultIndex uint64 = 1
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		ExecutorList: []Executor{},
+		TaskList:     []Task{},
 		// this line is used by starport scaffolding # genesis/types/default
 		Params: DefaultParams(),
 	}
@@ -28,6 +29,16 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for executor")
 		}
 		executorIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in task
+	taskIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.TaskList {
+		index := string(TaskKey(elem.TaskHash))
+		if _, ok := taskIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for task")
+		}
+		taskIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

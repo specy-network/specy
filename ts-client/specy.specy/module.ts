@@ -7,10 +7,17 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
+import { MsgCreateTask } from "./types/specy/specy/tx";
 import { MsgCreateExecutor } from "./types/specy/specy/tx";
 
 
-export { MsgCreateExecutor };
+export { MsgCreateTask, MsgCreateExecutor };
+
+type sendMsgCreateTaskParams = {
+  value: MsgCreateTask,
+  fee?: StdFee,
+  memo?: string
+};
 
 type sendMsgCreateExecutorParams = {
   value: MsgCreateExecutor,
@@ -18,6 +25,10 @@ type sendMsgCreateExecutorParams = {
   memo?: string
 };
 
+
+type msgCreateTaskParams = {
+  value: MsgCreateTask,
+};
 
 type msgCreateExecutorParams = {
   value: MsgCreateExecutor,
@@ -41,6 +52,20 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
+		async sendMsgCreateTask({ value, fee, memo }: sendMsgCreateTaskParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgCreateTask: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgCreateTask({ value: MsgCreateTask.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgCreateTask: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
 		async sendMsgCreateExecutor({ value, fee, memo }: sendMsgCreateExecutorParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgCreateExecutor: Unable to sign Tx. Signer is not present.')
@@ -55,6 +80,14 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
+		
+		msgCreateTask({ value }: msgCreateTaskParams): EncodeObject {
+			try {
+				return { typeUrl: "/specy.specy.MsgCreateTask", value: MsgCreateTask.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCreateTask: Could not create message: ' + e.message)
+			}
+		},
 		
 		msgCreateExecutor({ value }: msgCreateExecutorParams): EncodeObject {
 			try {

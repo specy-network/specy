@@ -36,6 +36,8 @@ export interface SpecyExecutor {
 
 export type SpecyMsgCreateExecutorResponse = object;
 
+export type SpecyMsgCreateTaskResponse = object;
+
 /**
  * Params defines the parameters for the module.
  */
@@ -56,8 +58,27 @@ export interface SpecyQueryAllExecutorResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface SpecyQueryAllTaskResponse {
+  task?: SpecyTask[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface SpecyQueryGetExecutorResponse {
   executor?: SpecyExecutor;
+}
+
+export interface SpecyQueryGetTaskResponse {
+  task?: SpecyTask;
 }
 
 /**
@@ -66,6 +87,15 @@ export interface SpecyQueryGetExecutorResponse {
 export interface SpecyQueryParamsResponse {
   /** params holds all the parameters of this module. */
   params?: SpecyParams;
+}
+
+export interface SpecyTask {
+  taskHash?: string;
+  contractAddress?: string;
+  method?: string;
+  calldata?: string;
+  single?: boolean;
+  ruleFile?: string;
 }
 
 /**
@@ -329,6 +359,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryParams = (params: RequestParams = {}) =>
     this.request<SpecyQueryParamsResponse, RpcStatus>({
       path: `/specy/specy/params`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryTaskAll
+   * @summary Queries a list of Task items.
+   * @request GET:/specy/specy/task
+   */
+  queryTaskAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<SpecyQueryAllTaskResponse, RpcStatus>({
+      path: `/specy/specy/task`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryTask
+   * @summary Queries a Task by index.
+   * @request GET:/specy/specy/task/{taskHash}
+   */
+  queryTask = (taskHash: string, params: RequestParams = {}) =>
+    this.request<SpecyQueryGetTaskResponse, RpcStatus>({
+      path: `/specy/specy/task/${taskHash}`,
       method: "GET",
       format: "json",
       ...params,

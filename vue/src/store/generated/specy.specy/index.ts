@@ -2,9 +2,10 @@ import { Client, registry, MissingWalletError } from 'specy-client-ts'
 
 import { Executor } from "specy-client-ts/specy.specy/types"
 import { Params } from "specy-client-ts/specy.specy/types"
+import { Task } from "specy-client-ts/specy.specy/types"
 
 
-export { Executor, Params };
+export { Executor, Params, Task };
 
 function initClient(vuexGetters) {
 	return new Client(vuexGetters['common/env/getEnv'], vuexGetters['common/wallet/signer'])
@@ -38,10 +39,13 @@ const getDefaultState = () => {
 				Params: {},
 				Executor: {},
 				ExecutorAll: {},
+				Task: {},
+				TaskAll: {},
 				
 				_Structure: {
 						Executor: getStructure(Executor.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
+						Task: getStructure(Task.fromPartial({})),
 						
 		},
 		_Registry: registry,
@@ -87,6 +91,18 @@ export default {
 						(<any> params).query=null
 					}
 			return state.ExecutorAll[JSON.stringify(params)] ?? {}
+		},
+				getTask: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Task[JSON.stringify(params)] ?? {}
+		},
+				getTaskAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.TaskAll[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -192,6 +208,54 @@ export default {
 		},
 		
 		
+		
+		
+		 		
+		
+		
+		async QueryTask({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.SpecySpecy.query.queryTask( key.taskHash)).data
+				
+					
+				commit('QUERY', { query: 'Task', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryTask', payload: { options: { all }, params: {...key},query }})
+				return getters['getTask']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryTask API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryTaskAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.SpecySpecy.query.queryTaskAll(query ?? undefined)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await client.SpecySpecy.query.queryTaskAll({...query ?? {}, 'pagination.key':(<any> value).pagination.next_key} as any)).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'TaskAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryTaskAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getTaskAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryTaskAll API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
 		async sendMsgCreateExecutor({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -202,6 +266,19 @@ export default {
 					throw new Error('TxClient:MsgCreateExecutor:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgCreateExecutor:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgCreateTask({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.SpecySpecy.tx.sendMsgCreateTask({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateTask:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgCreateTask:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -216,6 +293,19 @@ export default {
 					throw new Error('TxClient:MsgCreateExecutor:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgCreateExecutor:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgCreateTask({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.SpecySpecy.tx.msgCreateTask({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateTask:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgCreateTask:Create Could not create message: ' + e.message)
 				}
 			}
 		},
