@@ -107,6 +107,7 @@ import (
 	specymodule "specy/x/specy"
 	specymodulekeeper "specy/x/specy/keeper"
 	specymoduletypes "specy/x/specy/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "specy/app/params"
@@ -502,15 +503,17 @@ func New(
 		app.MsgServiceRouter(),
 		govConfig,
 	)
-
+	router := specymodulekeeper.NewRouter()
+	router.AddRoute(banktypes.ModuleName, app.BankKeeper)
 	app.SpecyKeeper = *specymodulekeeper.NewKeeper(
 		appCodec,
 		keys[specymoduletypes.StoreKey],
 		keys[specymoduletypes.MemStoreKey],
 		app.GetSubspace(specymoduletypes.ModuleName),
-
+		router,
 		app.BankKeeper,
 	)
+
 	specyModule := specymodule.NewAppModule(appCodec, app.SpecyKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition

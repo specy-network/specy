@@ -18,18 +18,31 @@ type (
 		cdc        codec.BinaryCodec
 		storeKey   storetypes.StoreKey
 		memKey     storetypes.StoreKey
+		router     FunctionRouter
 		paramstore paramtypes.Subspace
-
 		bankKeeper types.BankKeeper
 	}
 )
+type FunctionRouter struct {
+	routes map[string]interface{}
+}
+
+func NewRouter() FunctionRouter {
+	return FunctionRouter{
+		routes: make(map[string]interface{}),
+	}
+}
+
+func (router FunctionRouter) AddRoute(contractName string, fun interface{}) {
+	router.routes[contractName] = fun
+}
 
 func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
 	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
-
+	router FunctionRouter,
 	bankKeeper types.BankKeeper,
 ) *Keeper {
 	// set KeyTable if it has not already been set
@@ -43,6 +56,7 @@ func NewKeeper(
 		storeKey:   storeKey,
 		memKey:     memKey,
 		paramstore: ps,
+		router:     router,
 		bankKeeper: bankKeeper,
 	}
 }
