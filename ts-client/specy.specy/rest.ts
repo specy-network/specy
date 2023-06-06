@@ -38,6 +38,8 @@ export type SpecyMsgCreateExecutorResponse = object;
 
 export type SpecyMsgCreateTaskResponse = object;
 
+export type SpecyMsgExecuteTaskResponse = object;
+
 /**
  * Params defines the parameters for the module.
  */

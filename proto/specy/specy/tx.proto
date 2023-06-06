@@ -11,6 +11,7 @@ option go_package = "specy/x/specy/types";
 service Msg {
       rpc CreateExecutor(MsgCreateExecutor) returns (MsgCreateExecutorResponse);
   rpc CreateTask(MsgCreateTask) returns (MsgCreateTaskResponse);
+  rpc ExecuteTask(MsgExecuteTask) returns (MsgExecuteTaskResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -34,6 +35,15 @@ message MsgCreateTask {
 }
 
 message MsgCreateTaskResponse {
+}
+
+message MsgExecuteTask {
+  string creator = 1;
+  string taskHash = 2;
+  string calldata = 3;
+}
+
+message MsgExecuteTaskResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

@@ -26,6 +26,15 @@ export interface MsgCreateTask {
 export interface MsgCreateTaskResponse {
 }
 
+export interface MsgExecuteTask {
+  creator: string;
+  taskHash: string;
+  calldata: string;
+}
+
+export interface MsgExecuteTaskResponse {
+}
+
 function createBaseMsgCreateExecutor(): MsgCreateExecutor {
   return { creator: "", staking: undefined, iasAttestationReport: "", enclavePk: "" };
 }
@@ -276,11 +285,118 @@ export const MsgCreateTaskResponse = {
   },
 };
 
+function createBaseMsgExecuteTask(): MsgExecuteTask {
+  return { creator: "", taskHash: "", calldata: "" };
+}
+
+export const MsgExecuteTask = {
+  encode(message: MsgExecuteTask, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.taskHash !== "") {
+      writer.uint32(18).string(message.taskHash);
+    }
+    if (message.calldata !== "") {
+      writer.uint32(26).string(message.calldata);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgExecuteTask {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgExecuteTask();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.taskHash = reader.string();
+          break;
+        case 3:
+          message.calldata = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgExecuteTask {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      taskHash: isSet(object.taskHash) ? String(object.taskHash) : "",
+      calldata: isSet(object.calldata) ? String(object.calldata) : "",
+    };
+  },
+
+  toJSON(message: MsgExecuteTask): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.taskHash !== undefined && (obj.taskHash = message.taskHash);
+    message.calldata !== undefined && (obj.calldata = message.calldata);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgExecuteTask>, I>>(object: I): MsgExecuteTask {
+    const message = createBaseMsgExecuteTask();
+    message.creator = object.creator ?? "";
+    message.taskHash = object.taskHash ?? "";
+    message.calldata = object.calldata ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgExecuteTaskResponse(): MsgExecuteTaskResponse {
+  return {};
+}
+
+export const MsgExecuteTaskResponse = {
+  encode(_: MsgExecuteTaskResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgExecuteTaskResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgExecuteTaskResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgExecuteTaskResponse {
+    return {};
+  },
+
+  toJSON(_: MsgExecuteTaskResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgExecuteTaskResponse>, I>>(_: I): MsgExecuteTaskResponse {
+    const message = createBaseMsgExecuteTaskResponse();
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CreateExecutor(request: MsgCreateExecutor): Promise<MsgCreateExecutorResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   CreateTask(request: MsgCreateTask): Promise<MsgCreateTaskResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  ExecuteTask(request: MsgExecuteTask): Promise<MsgExecuteTaskResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -289,6 +405,7 @@ export class MsgClientImpl implements Msg {
     this.rpc = rpc;
     this.CreateExecutor = this.CreateExecutor.bind(this);
     this.CreateTask = this.CreateTask.bind(this);
+    this.ExecuteTask = this.ExecuteTask.bind(this);
   }
   CreateExecutor(request: MsgCreateExecutor): Promise<MsgCreateExecutorResponse> {
     const data = MsgCreateExecutor.encode(request).finish();
@@ -300,6 +417,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgCreateTask.encode(request).finish();
     const promise = this.rpc.request("specy.specy.Msg", "CreateTask", data);
     return promise.then((data) => MsgCreateTaskResponse.decode(new _m0.Reader(data)));
+  }
+
+  ExecuteTask(request: MsgExecuteTask): Promise<MsgExecuteTaskResponse> {
+    const data = MsgExecuteTask.encode(request).finish();
+    const promise = this.rpc.request("specy.specy.Msg", "ExecuteTask", data);
+    return promise.then((data) => MsgExecuteTaskResponse.decode(new _m0.Reader(data)));
   }
 }
 

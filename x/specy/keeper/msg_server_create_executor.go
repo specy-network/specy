@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"reflect"
 
 	"specy/x/specy/types"
 
@@ -29,21 +28,6 @@ func (k msgServer) CreateExecutor(goCtx context.Context, msg *types.MsgCreateExe
 		return nil, error
 	}
 	k.SetExecutor(ctx, *executor)
-
-	bankKeeper := k.router.routes["bank"]
-	// 使用反射获取interface{}的值和类型
-	value := reflect.ValueOf(bankKeeper)
-
-	// 获取Hello方法的反射值
-	method := value.MethodByName("SendCoinsFromAccountToModule")
-	args := []reflect.Value{
-		reflect.ValueOf(ctx),
-		reflect.ValueOf(executor_account),
-		reflect.ValueOf(types.ModuleName),
-		reflect.ValueOf(sdk.NewCoins(msg.Staking)),
-	}
-	// 调用Hello方法
-	method.Call(args)
 
 	return &types.MsgCreateExecutorResponse{}, nil
 }
