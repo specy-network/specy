@@ -9,11 +9,13 @@ const TypeMsgExecuteTask = "execute_task"
 
 var _ sdk.Msg = &MsgExecuteTask{}
 
-func NewMsgExecuteTask(creator string, taskHash string, calldata string) *MsgExecuteTask {
+func NewMsgExecuteTask(creator string, taskHash string, calldata string, ruleFileHash string, signature string) *MsgExecuteTask {
 	return &MsgExecuteTask{
-		Creator:  creator,
-		TaskHash: taskHash,
-		Calldata: calldata,
+		Creator:      creator,
+		TaskHash:     taskHash,
+		Calldata:     calldata,
+		RuleFileHash: ruleFileHash,
+		Signature:    signature,
 	}
 }
 

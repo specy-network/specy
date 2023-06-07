@@ -23,6 +23,10 @@ func (k msgServer) ExecuteTask(goCtx context.Context, msg *types.MsgExecuteTask)
 		return nil, types.ErrExecutorIsExsit
 	}
 
+	//TODO add executor power check
+
+	//TODO add signature and rulefile hash check
+
 	keeper := k.router.routes[task.ContractAddress]
 	value := reflect.ValueOf(keeper)
 	method := value.MethodByName(task.Method)

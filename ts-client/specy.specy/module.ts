@@ -8,20 +8,14 @@ import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
 import { MsgCreateExecutor } from "./types/specy/specy/tx";
-import { MsgExecuteTask } from "./types/specy/specy/tx";
 import { MsgCreateTask } from "./types/specy/specy/tx";
+import { MsgExecuteTask } from "./types/specy/specy/tx";
 
 
-export { MsgCreateExecutor, MsgExecuteTask, MsgCreateTask };
+export { MsgCreateExecutor, MsgCreateTask, MsgExecuteTask };
 
 type sendMsgCreateExecutorParams = {
   value: MsgCreateExecutor,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgExecuteTaskParams = {
-  value: MsgExecuteTask,
   fee?: StdFee,
   memo?: string
 };
@@ -32,17 +26,23 @@ type sendMsgCreateTaskParams = {
   memo?: string
 };
 
+type sendMsgExecuteTaskParams = {
+  value: MsgExecuteTask,
+  fee?: StdFee,
+  memo?: string
+};
+
 
 type msgCreateExecutorParams = {
   value: MsgCreateExecutor,
 };
 
-type msgExecuteTaskParams = {
-  value: MsgExecuteTask,
-};
-
 type msgCreateTaskParams = {
   value: MsgCreateTask,
+};
+
+type msgExecuteTaskParams = {
+  value: MsgExecuteTask,
 };
 
 
@@ -77,20 +77,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgExecuteTask({ value, fee, memo }: sendMsgExecuteTaskParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgExecuteTask: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgExecuteTask({ value: MsgExecuteTask.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgExecuteTask: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgCreateTask({ value, fee, memo }: sendMsgCreateTaskParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgCreateTask: Unable to sign Tx. Signer is not present.')
@@ -105,6 +91,20 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
+		async sendMsgExecuteTask({ value, fee, memo }: sendMsgExecuteTaskParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgExecuteTask: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgExecuteTask({ value: MsgExecuteTask.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgExecuteTask: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
 		
 		msgCreateExecutor({ value }: msgCreateExecutorParams): EncodeObject {
 			try {
@@ -114,19 +114,19 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgExecuteTask({ value }: msgExecuteTaskParams): EncodeObject {
-			try {
-				return { typeUrl: "/specy.specy.MsgExecuteTask", value: MsgExecuteTask.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgExecuteTask: Could not create message: ' + e.message)
-			}
-		},
-		
 		msgCreateTask({ value }: msgCreateTaskParams): EncodeObject {
 			try {
 				return { typeUrl: "/specy.specy.MsgCreateTask", value: MsgCreateTask.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgCreateTask: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgExecuteTask({ value }: msgExecuteTaskParams): EncodeObject {
+			try {
+				return { typeUrl: "/specy.specy.MsgExecuteTask", value: MsgExecuteTask.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgExecuteTask: Could not create message: ' + e.message)
 			}
 		},
 		

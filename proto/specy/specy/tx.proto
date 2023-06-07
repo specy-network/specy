@@ -41,6 +41,8 @@ message MsgExecuteTask {
   string creator = 1;
   string taskHash = 2;
   string calldata = 3;
+  string ruleFileHash=4;
+  string signature=5;
 }
 
 message MsgExecuteTaskResponse {
