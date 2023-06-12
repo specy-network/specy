@@ -1,0 +1,11 @@
+syntax = "proto3";
+package specy.rewards;
+
+option go_package = "specy/x/rewards/types";
+
+message Merkel {
+  string datahash = 1; 
+  string merkelRoot = 2; 
+  
+}
+

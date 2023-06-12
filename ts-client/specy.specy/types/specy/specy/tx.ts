@@ -30,6 +30,8 @@ export interface MsgExecuteTask {
   creator: string;
   taskHash: string;
   calldata: string;
+  ruleFileHash: string;
+  signature: string;
 }
 
 export interface MsgExecuteTaskResponse {
@@ -286,7 +288,7 @@ export const MsgCreateTaskResponse = {
 };
 
 function createBaseMsgExecuteTask(): MsgExecuteTask {
-  return { creator: "", taskHash: "", calldata: "" };
+  return { creator: "", taskHash: "", calldata: "", ruleFileHash: "", signature: "" };
 }
 
 export const MsgExecuteTask = {
@@ -299,6 +301,12 @@ export const MsgExecuteTask = {
     }
     if (message.calldata !== "") {
       writer.uint32(26).string(message.calldata);
+    }
+    if (message.ruleFileHash !== "") {
+      writer.uint32(34).string(message.ruleFileHash);
+    }
+    if (message.signature !== "") {
+      writer.uint32(42).string(message.signature);
     }
     return writer;
   },
@@ -319,6 +327,12 @@ export const MsgExecuteTask = {
         case 3:
           message.calldata = reader.string();
           break;
+        case 4:
+          message.ruleFileHash = reader.string();
+          break;
+        case 5:
+          message.signature = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -332,6 +346,8 @@ export const MsgExecuteTask = {
       creator: isSet(object.creator) ? String(object.creator) : "",
       taskHash: isSet(object.taskHash) ? String(object.taskHash) : "",
       calldata: isSet(object.calldata) ? String(object.calldata) : "",
+      ruleFileHash: isSet(object.ruleFileHash) ? String(object.ruleFileHash) : "",
+      signature: isSet(object.signature) ? String(object.signature) : "",
     };
   },
 
@@ -340,6 +356,8 @@ export const MsgExecuteTask = {
     message.creator !== undefined && (obj.creator = message.creator);
     message.taskHash !== undefined && (obj.taskHash = message.taskHash);
     message.calldata !== undefined && (obj.calldata = message.calldata);
+    message.ruleFileHash !== undefined && (obj.ruleFileHash = message.ruleFileHash);
+    message.signature !== undefined && (obj.signature = message.signature);
     return obj;
   },
 
@@ -348,6 +366,8 @@ export const MsgExecuteTask = {
     message.creator = object.creator ?? "";
     message.taskHash = object.taskHash ?? "";
     message.calldata = object.calldata ?? "";
+    message.ruleFileHash = object.ruleFileHash ?? "";
+    message.signature = object.signature ?? "";
     return message;
   },
 };

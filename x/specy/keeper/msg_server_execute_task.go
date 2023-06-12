@@ -11,8 +11,8 @@ import (
 )
 
 type CallData struct {
-	Params []interface{}
-	Index  int
+	Params []interface{} `json:"params" yaml:"params"`
+	Index  int           `json:"index" yaml:"index"`
 }
 
 func (k msgServer) ExecuteTask(goCtx context.Context, msg *types.MsgExecuteTask) (*types.MsgExecuteTaskResponse, error) {
@@ -23,6 +23,10 @@ func (k msgServer) ExecuteTask(goCtx context.Context, msg *types.MsgExecuteTask)
 		return nil, types.ErrExecutorIsExsit
 	}
 
+	//TODO add executor power check
+
+	//TODO add signature and rulefile hash check
+
 	keeper := k.router.routes[task.ContractAddress]
 	value := reflect.ValueOf(keeper)
 	method := value.MethodByName(task.Method)
@@ -32,9 +36,10 @@ func (k msgServer) ExecuteTask(goCtx context.Context, msg *types.MsgExecuteTask)
 		return nil, types.ErrExecutorIsExsit
 	}
 	numParams := len(calldata.Params)
-	methodParams := make([]reflect.Value, numParams)
+	methodParams := make([]reflect.Value, numParams+1)
+	methodParams[0] = reflect.ValueOf(ctx)
 	for i := 0; i < numParams; i++ {
-		methodParams[i] = reflect.ValueOf(calldata.Params[i])
+		methodParams[i+1] = reflect.ValueOf(calldata.Params[i])
 	}
 	method.Call(methodParams)
 
@@ -44,8 +49,8 @@ func (k msgServer) ExecuteTask(goCtx context.Context, msg *types.MsgExecuteTask)
 func parseCallData(content string) (CallData, error) {
 	var callData CallData
 	if err := json.Unmarshal([]byte(content), &callData); err != nil {
-		return callData, nil
-	} else {
 		return callData, err
+	} else {
+		return callData, nil
 	}
 }

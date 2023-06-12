@@ -108,6 +108,10 @@ import (
 	specymodulekeeper "specy/x/specy/keeper"
 	specymoduletypes "specy/x/specy/types"
 
+	rewardsmodule "specy/x/rewards"
+	rewardsmodulekeeper "specy/x/rewards/keeper"
+	rewardsmoduletypes "specy/x/rewards/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "specy/app/params"
@@ -167,6 +171,7 @@ var (
 		ica.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		specymodule.AppModuleBasic{},
+		rewardsmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -181,6 +186,7 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		specymoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		rewardsmoduletypes.ModuleName:  {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -242,6 +248,8 @@ type App struct {
 	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
 
 	SpecyKeeper specymodulekeeper.Keeper
+
+	RewardsKeeper rewardsmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -287,6 +295,7 @@ func New(
 		ibctransfertypes.StoreKey, icahosttypes.StoreKey, capabilitytypes.StoreKey, group.StoreKey,
 		icacontrollertypes.StoreKey,
 		specymoduletypes.StoreKey,
+		rewardsmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -503,8 +512,19 @@ func New(
 		app.MsgServiceRouter(),
 		govConfig,
 	)
+
+	app.RewardsKeeper = *rewardsmodulekeeper.NewKeeper(
+		appCodec,
+		keys[rewardsmoduletypes.StoreKey],
+		keys[rewardsmoduletypes.MemStoreKey],
+		app.GetSubspace(rewardsmoduletypes.ModuleName),
+
+		app.BankKeeper,
+	)
+	rewardsModule := rewardsmodule.NewAppModule(appCodec, app.RewardsKeeper, app.AccountKeeper, app.BankKeeper)
+
 	router := specymodulekeeper.NewRouter()
-	router.AddRoute(banktypes.ModuleName, app.BankKeeper)
+	router.AddRoute(rewardsmoduletypes.ModuleName, app.RewardsKeeper)
 	app.SpecyKeeper = *specymodulekeeper.NewKeeper(
 		appCodec,
 		keys[specymoduletypes.StoreKey],
@@ -562,6 +582,7 @@ func New(
 		transferModule,
 		icaModule,
 		specyModule,
+		rewardsModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -592,6 +613,7 @@ func New(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		specymoduletypes.ModuleName,
+		rewardsmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -617,6 +639,7 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		specymoduletypes.ModuleName,
+		rewardsmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -647,6 +670,7 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		specymoduletypes.ModuleName,
+		rewardsmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -677,6 +701,7 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		specyModule,
+		rewardsModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -876,6 +901,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(specymoduletypes.ModuleName)
+	paramsKeeper.Subspace(rewardsmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

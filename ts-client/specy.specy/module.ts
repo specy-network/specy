@@ -7,12 +7,18 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
+import { MsgCreateExecutor } from "./types/specy/specy/tx";
 import { MsgCreateTask } from "./types/specy/specy/tx";
 import { MsgExecuteTask } from "./types/specy/specy/tx";
-import { MsgCreateExecutor } from "./types/specy/specy/tx";
 
 
-export { MsgCreateTask, MsgExecuteTask, MsgCreateExecutor };
+export { MsgCreateExecutor, MsgCreateTask, MsgExecuteTask };
+
+type sendMsgCreateExecutorParams = {
+  value: MsgCreateExecutor,
+  fee?: StdFee,
+  memo?: string
+};
 
 type sendMsgCreateTaskParams = {
   value: MsgCreateTask,
@@ -26,12 +32,10 @@ type sendMsgExecuteTaskParams = {
   memo?: string
 };
 
-type sendMsgCreateExecutorParams = {
-  value: MsgCreateExecutor,
-  fee?: StdFee,
-  memo?: string
-};
 
+type msgCreateExecutorParams = {
+  value: MsgCreateExecutor,
+};
 
 type msgCreateTaskParams = {
   value: MsgCreateTask,
@@ -39,10 +43,6 @@ type msgCreateTaskParams = {
 
 type msgExecuteTaskParams = {
   value: MsgExecuteTask,
-};
-
-type msgCreateExecutorParams = {
-  value: MsgCreateExecutor,
 };
 
 
@@ -62,6 +62,20 @@ interface TxClientOptions {
 export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "http://localhost:26657", prefix: "cosmos" }) => {
 
   return {
+		
+		async sendMsgCreateExecutor({ value, fee, memo }: sendMsgCreateExecutorParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgCreateExecutor: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgCreateExecutor({ value: MsgCreateExecutor.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgCreateExecutor: Could not broadcast Tx: '+ e.message)
+			}
+		},
 		
 		async sendMsgCreateTask({ value, fee, memo }: sendMsgCreateTaskParams): Promise<DeliverTxResponse> {
 			if (!signer) {
@@ -91,20 +105,14 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgCreateExecutor({ value, fee, memo }: sendMsgCreateExecutorParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgCreateExecutor: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCreateExecutor({ value: MsgCreateExecutor.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+		
+		msgCreateExecutor({ value }: msgCreateExecutorParams): EncodeObject {
+			try {
+				return { typeUrl: "/specy.specy.MsgCreateExecutor", value: MsgCreateExecutor.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCreateExecutor: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:MsgCreateExecutor: Could not create message: ' + e.message)
 			}
 		},
-		
 		
 		msgCreateTask({ value }: msgCreateTaskParams): EncodeObject {
 			try {
@@ -119,14 +127,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return { typeUrl: "/specy.specy.MsgExecuteTask", value: MsgExecuteTask.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgExecuteTask: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgCreateExecutor({ value }: msgCreateExecutorParams): EncodeObject {
-			try {
-				return { typeUrl: "/specy.specy.MsgCreateExecutor", value: MsgCreateExecutor.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateExecutor: Could not create message: ' + e.message)
 			}
 		},
 		

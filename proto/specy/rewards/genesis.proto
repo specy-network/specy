@@ -1,0 +1,16 @@
+syntax = "proto3";
+package specy.rewards;
+
+import "gogoproto/gogo.proto";
+import "specy/rewards/params.proto";
+import "specy/rewards/merkel.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "specy/x/rewards/types";
+
+// GenesisState defines the rewards module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  repeated Merkel merkelList = 2 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}
