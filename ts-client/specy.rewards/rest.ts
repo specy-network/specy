@@ -20,6 +20,8 @@ export interface RewardsMerkel {
 
 export type RewardsMsgClaimResponse = object;
 
+export type RewardsMsgSetRewardListResponse = object;
+
 /**
  * Params defines the parameters for the module.
  */

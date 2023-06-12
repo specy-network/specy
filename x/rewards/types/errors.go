@@ -8,5 +8,6 @@ import (
 
 // x/rewards module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrSample         = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrMerkelNotExsit = sdkerrors.Register(ModuleName, 1, "Merkel root not exsit")
 )

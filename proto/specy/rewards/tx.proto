@@ -8,6 +8,7 @@ option go_package = "specy/x/rewards/types";
 // Msg defines the Msg service.
 service Msg {
       rpc Claim(MsgClaim) returns (MsgClaimResponse);
+  rpc SetRewardList(MsgSetRewardList) returns (MsgSetRewardListResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -17,6 +18,14 @@ message MsgClaim {
 }
 
 message MsgClaimResponse {
+}
+
+message MsgSetRewardList {
+  string creator = 1;
+  repeated string list = 2;
+}
+
+message MsgSetRewardListResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

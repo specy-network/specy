@@ -7,10 +7,17 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
+import { MsgSetRewardList } from "./types/specy/rewards/tx";
 import { MsgClaim } from "./types/specy/rewards/tx";
 
 
-export { MsgClaim };
+export { MsgSetRewardList, MsgClaim };
+
+type sendMsgSetRewardListParams = {
+  value: MsgSetRewardList,
+  fee?: StdFee,
+  memo?: string
+};
 
 type sendMsgClaimParams = {
   value: MsgClaim,
@@ -18,6 +25,10 @@ type sendMsgClaimParams = {
   memo?: string
 };
 
+
+type msgSetRewardListParams = {
+  value: MsgSetRewardList,
+};
 
 type msgClaimParams = {
   value: MsgClaim,
@@ -41,6 +52,20 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
+		async sendMsgSetRewardList({ value, fee, memo }: sendMsgSetRewardListParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgSetRewardList: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgSetRewardList({ value: MsgSetRewardList.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgSetRewardList: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
 		async sendMsgClaim({ value, fee, memo }: sendMsgClaimParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgClaim: Unable to sign Tx. Signer is not present.')
@@ -55,6 +80,14 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
+		
+		msgSetRewardList({ value }: msgSetRewardListParams): EncodeObject {
+			try {
+				return { typeUrl: "/specy.rewards.MsgSetRewardList", value: MsgSetRewardList.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgSetRewardList: Could not create message: ' + e.message)
+			}
+		},
 		
 		msgClaim({ value }: msgClaimParams): EncodeObject {
 			try {

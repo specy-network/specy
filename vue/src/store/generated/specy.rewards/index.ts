@@ -205,6 +205,19 @@ export default {
 				}
 			}
 		},
+		async sendMsgSetRewardList({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.SpecyRewards.tx.sendMsgSetRewardList({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSetRewardList:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgSetRewardList:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		
 		async MsgClaim({ rootGetters }, { value }) {
 			try {
@@ -216,6 +229,19 @@ export default {
 					throw new Error('TxClient:MsgClaim:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgClaim:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgSetRewardList({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.SpecyRewards.tx.msgSetRewardList({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSetRewardList:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgSetRewardList:Create Could not create message: ' + e.message)
 				}
 			}
 		},
