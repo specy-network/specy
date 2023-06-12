@@ -7,10 +7,21 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
+import { MsgClaim } from "./types/specy/rewards/tx";
 
 
-export {  };
+export { MsgClaim };
 
+type sendMsgClaimParams = {
+  value: MsgClaim,
+  fee?: StdFee,
+  memo?: string
+};
+
+
+type msgClaimParams = {
+  value: MsgClaim,
+};
 
 
 export const registry = new Registry(msgTypes);
@@ -30,6 +41,28 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
+		async sendMsgClaim({ value, fee, memo }: sendMsgClaimParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgClaim: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgClaim({ value: MsgClaim.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgClaim: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		
+		msgClaim({ value }: msgClaimParams): EncodeObject {
+			try {
+				return { typeUrl: "/specy.rewards.MsgClaim", value: MsgClaim.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgClaim: Could not create message: ' + e.message)
+			}
+		},
 		
 	}
 };

@@ -18,6 +18,8 @@ export interface RewardsMerkel {
   merkelRoot?: string;
 }
 
+export type RewardsMsgClaimResponse = object;
+
 /**
  * Params defines the parameters for the module.
  */

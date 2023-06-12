@@ -74320,6 +74320,8 @@ definitions:
         type: string
       merkelRoot:
         type: string
+  specy.rewards.MsgClaimResponse:
+    type: object
   specy.rewards.Params:
     type: object
     description: Params defines the parameters for the module.
