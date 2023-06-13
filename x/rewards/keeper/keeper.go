@@ -53,4 +53,10 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 func (k Keeper) SetRewards(ctx sdk.Context, datehash, root string) {
 	merkel := types.Merkel{Datahash: datehash, MerkelRoot: root}
 	k.SetMerkel(ctx, merkel)
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeSetMerkelRoot,
+			sdk.NewAttribute(types.AttributeKeyMerkelRoot, root),
+		),
+	})
 }

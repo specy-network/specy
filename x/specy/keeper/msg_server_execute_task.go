@@ -43,6 +43,18 @@ func (k msgServer) ExecuteTask(goCtx context.Context, msg *types.MsgExecuteTask)
 	}
 	method.Call(methodParams)
 
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeExecuteTask,
+			sdk.NewAttribute(types.AttributeKeyTaskHash, msg.TaskHash),
+			sdk.NewAttribute(types.AttributeKeyContractAddress, task.ContractAddress),
+			sdk.NewAttribute(types.AttributeKeyMethod, task.Method),
+			sdk.NewAttribute(types.AttributeKeyCalldata, msg.Calldata),
+			sdk.NewAttribute(types.AttributeKeyRuleFile, msg.RuleFileHash),
+			sdk.NewAttribute(types.AttributeKeyExecutor, msg.Creator),
+		),
+	})
+
 	return &types.MsgExecuteTaskResponse{}, nil
 }
 

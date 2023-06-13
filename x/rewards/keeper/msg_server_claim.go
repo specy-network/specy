@@ -21,7 +21,7 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 	for _, value := range msg.Path {
 		byteFromHex, err := hex.DecodeString(value)
 		if err != nil {
-			return nil, types.ErrMerkelNotExsit
+			return nil, types.ErrMerkelProofParse
 		}
 		souceHash = innerHash(souceHash[:], byteFromHex)
 	}
@@ -31,10 +31,23 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 	}
 	if fmt.Sprintf("%x", souceHash) != merkel.MerkelRoot {
 		k.Logger(ctx).Info("claim rewards check proof failed")
-
+		ctx.EventManager().EmitEvents(sdk.Events{
+			sdk.NewEvent(
+				types.EventTypeClaimReward,
+				sdk.NewAttribute(types.AttributeKeyClaimAddress, msg.Creator),
+				sdk.NewAttribute(types.AttributeKeyClaimStatus, "failed"),
+			),
+		})
 	} else {
 		//TODO  send coin
 		k.Logger(ctx).Info("claim rewards check proof successed")
+		ctx.EventManager().EmitEvents(sdk.Events{
+			sdk.NewEvent(
+				types.EventTypeClaimReward,
+				sdk.NewAttribute(types.AttributeKeyClaimAddress, msg.Creator),
+				sdk.NewAttribute(types.AttributeKeyClaimStatus, "successed"),
+			),
+		})
 	}
 
 	return &types.MsgClaimResponse{}, nil

@@ -28,6 +28,14 @@ func (k msgServer) CreateExecutor(goCtx context.Context, msg *types.MsgCreateExe
 		return nil, error
 	}
 	k.SetExecutor(ctx, *executor)
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeCreateExecutor,
+			sdk.NewAttribute(types.AttributeKeyExecutorAddress, msg.Creator),
+			sdk.NewAttribute(types.AttributeKeyExecutorIasReport, msg.IasAttestationReport),
+			sdk.NewAttribute(types.AttributeKeyExecutorEnclavePK, msg.EnclavePk),
+		),
+	})
 
 	return &types.MsgCreateExecutorResponse{}, nil
 }

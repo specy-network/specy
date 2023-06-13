@@ -14,14 +14,10 @@ func TestClaim(t *testing.T) {
 	keeper, ctx := keepertest.RewardsKeeper(t)
 
 	currentTime := time.Now()
-
-	// 将时间戳截断到天
 	truncatedTime := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, currentTime.Location())
-
-	// 获取时间戳
 	timestamp := truncatedTime.Unix()
 
-	addrs := []string{"cosmos17teac5cla5j886k4pyr4xhyz252llnr09x4gdu", "cosmos17teac5cla5j886k4pyr4xhyz252llnr09x4gdi", "cosmos17teac5cla5j886k4pyr4xhyz252llnr09x4gduo", "cosmos17teac5cla5j886k4pyr4xhyz252llnr09x4gduy"}
+	addrs := []string{"cosmos1zaavvzxez0elundtn32qnk9lkm8kmcszzsv80v", "cosmos1zaavvzxez0elundtn32qnk9lkm8kmcszzsv801", "cosmos1zaavvzxez0elundtn32qnk9lkm8kmcszzsv802", "cosmos1zaavvzxez0elundtn32qnk9lkm8kmcszzsv803"}
 
 	//leaf node hash
 	h0 := tmhash.Sum([]byte(addrs[0]))
