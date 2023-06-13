@@ -2,9 +2,10 @@ package keeper_test
 
 import (
 	"fmt"
-	keepertest "specy/testutil/keeper"
 	"testing"
 	"time"
+
+	keepertest "github.com/specy-network/specy/testutil/keeper"
 
 	"github.com/tendermint/tendermint/crypto/tmhash"
 )

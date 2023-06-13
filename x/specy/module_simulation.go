@@ -9,9 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"specy/testutil/sample"
-	specysimulation "specy/x/specy/simulation"
-	"specy/x/specy/types"
+	"github.com/specy-network/specy/testutil/sample"
+	specysimulation "github.com/specy-network/specy/x/specy/simulation"
+	"github.com/specy-network/specy/x/specy/types"
 )
 
 // avoid unused import issue

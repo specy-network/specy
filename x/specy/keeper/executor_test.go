@@ -5,11 +5,11 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	keepertest "github.com/specy-network/specy/testutil/keeper"
+	"github.com/specy-network/specy/testutil/nullify"
+	"github.com/specy-network/specy/x/specy/keeper"
+	"github.com/specy-network/specy/x/specy/types"
 	"github.com/stretchr/testify/require"
-	keepertest "specy/testutil/keeper"
-	"specy/testutil/nullify"
-	"specy/x/specy/keeper"
-	"specy/x/specy/types"
 )
 
 // Prevent strconv unused error

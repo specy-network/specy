@@ -3,10 +3,10 @@ package specy_test
 import (
 	"testing"
 
-	keepertest "specy/testutil/keeper"
-	"specy/testutil/nullify"
-	"specy/x/specy"
-	"specy/x/specy/types"
+	keepertest "github.com/specy-network/specy/testutil/keeper"
+	"github.com/specy-network/specy/testutil/nullify"
+	"github.com/specy-network/specy/x/specy"
+	"github.com/specy-network/specy/x/specy/types"
 
 	"github.com/stretchr/testify/require"
 )

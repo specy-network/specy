@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"specy/x/rewards/types"
+	"github.com/specy-network/specy/x/rewards/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

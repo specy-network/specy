@@ -104,18 +104,18 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
-	specymodule "specy/x/specy"
-	specymodulekeeper "specy/x/specy/keeper"
-	specymoduletypes "specy/x/specy/types"
+	specymodule "github.com/specy-network/specy/x/specy"
+	specymodulekeeper "github.com/specy-network/specy/x/specy/keeper"
+	specymoduletypes "github.com/specy-network/specy/x/specy/types"
 
-	rewardsmodule "specy/x/rewards"
-	rewardsmodulekeeper "specy/x/rewards/keeper"
-	rewardsmoduletypes "specy/x/rewards/types"
+	rewardsmodule "github.com/specy-network/specy/x/rewards"
+	rewardsmodulekeeper "github.com/specy-network/specy/x/rewards/keeper"
+	rewardsmoduletypes "github.com/specy-network/specy/x/rewards/types"
 
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
-	appparams "specy/app/params"
-	"specy/docs"
+	appparams "github.com/specy-network/specy/app/params"
+	"github.com/specy-network/specy/docs"
 )
 
 const (

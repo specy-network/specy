@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"specy/x/specy/types"
+	"github.com/specy-network/specy/x/specy/types"
 )
 
 var _ types.QueryServer = Keeper{}

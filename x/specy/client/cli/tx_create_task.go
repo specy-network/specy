@@ -6,9 +6,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/specy-network/specy/x/specy/types"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
-	"specy/x/specy/types"
 )
 
 var _ = strconv.Itoa(0)

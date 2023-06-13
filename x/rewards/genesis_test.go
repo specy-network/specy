@@ -3,11 +3,11 @@ package rewards_test
 import (
 	"testing"
 
+	keepertest "github.com/specy-network/specy/testutil/keeper"
+	"github.com/specy-network/specy/testutil/nullify"
+	"github.com/specy-network/specy/x/rewards"
+	"github.com/specy-network/specy/x/rewards/types"
 	"github.com/stretchr/testify/require"
-	keepertest "specy/testutil/keeper"
-	"specy/testutil/nullify"
-	"specy/x/rewards"
-	"specy/x/rewards/types"
 )
 
 func TestGenesis(t *testing.T) {

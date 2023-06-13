@@ -3,8 +3,8 @@ package keeper
 import (
 	"testing"
 
-	"specy/x/specy/keeper"
-	"specy/x/specy/types"
+	"github.com/specy-network/specy/x/specy/keeper"
+	"github.com/specy-network/specy/x/specy/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"

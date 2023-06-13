@@ -10,7 +10,7 @@ import (
 	// "github.com/cosmos/cosmos-sdk/client/flags"
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"specy/x/specy/types"
+	"github.com/specy-network/specy/x/specy/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

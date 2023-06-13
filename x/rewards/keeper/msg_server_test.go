@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	keepertest "specy/testutil/keeper"
-	"specy/x/rewards/keeper"
-	"specy/x/rewards/types"
+	keepertest "github.com/specy-network/specy/testutil/keeper"
+	"github.com/specy-network/specy/x/rewards/keeper"
+	"github.com/specy-network/specy/x/rewards/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

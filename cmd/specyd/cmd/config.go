@@ -3,7 +3,7 @@ package cmd
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"specy/app"
+	"github.com/specy-network/specy/app"
 )
 
 func initSDKConfig() {

@@ -1,12 +1,8 @@
 // THIS FILE IS GENERATED AUTOMATICALLY. DO NOT MODIFY.
 
-import SpecyRewards from './specy.rewards'
-import SpecySpecy from './specy.specy'
 
 
 export default { 
-  SpecyRewards: load(SpecyRewards, 'specy.rewards'),
-  SpecySpecy: load(SpecySpecy, 'specy.specy'),
   
 }
 

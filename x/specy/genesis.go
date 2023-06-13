@@ -2,8 +2,8 @@ package specy
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"specy/x/specy/keeper"
-	"specy/x/specy/types"
+	"github.com/specy-network/specy/x/specy/keeper"
+	"github.com/specy-network/specy/x/specy/types"
 )
 
 // InitGenesis initializes the module's state from a provided genesis state.

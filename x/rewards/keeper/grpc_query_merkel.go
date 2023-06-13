@@ -6,9 +6,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/specy-network/specy/x/rewards/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"specy/x/rewards/types"
 )
 
 func (k Keeper) MerkelAll(c context.Context, req *types.QueryAllMerkelRequest) (*types.QueryAllMerkelResponse, error) {

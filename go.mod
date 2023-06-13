@@ -1,4 +1,4 @@
-module specy
+module github.com/specy-network/specy
 
 go 1.18
 

@@ -6,8 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/server"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 
-	"specy/app"
-	"specy/cmd/specyd/cmd"
+	"github.com/specy-network/specy/app"
+	"github.com/specy-network/specy/cmd/specyd/cmd"
 )
 
 func main() {

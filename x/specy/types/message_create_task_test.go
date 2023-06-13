@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/specy-network/specy/testutil/sample"
 	"github.com/stretchr/testify/require"
-	"specy/testutil/sample"
 )
 
 func TestMsgCreateTask_ValidateBasic(t *testing.T) {

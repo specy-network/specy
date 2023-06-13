@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"specy/x/specy/types"
+	"github.com/specy-network/specy/x/specy/types"
 )
 
 // GetParams get all parameters as types.Params

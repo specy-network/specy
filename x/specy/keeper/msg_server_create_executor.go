@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	"specy/x/specy/types"
+	"github.com/specy-network/specy/x/specy/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

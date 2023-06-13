@@ -6,9 +6,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/specy-network/specy/x/specy/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"specy/x/specy/types"
 )
 
 func (k Keeper) TaskAll(c context.Context, req *types.QueryAllTaskRequest) (*types.QueryAllTaskResponse, error) {

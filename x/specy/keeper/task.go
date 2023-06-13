@@ -3,7 +3,7 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"specy/x/specy/types"
+	"github.com/specy-network/specy/x/specy/types"
 )
 
 // SetTask set a specific task in the store from its index

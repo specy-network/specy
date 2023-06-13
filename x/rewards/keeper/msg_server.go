@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"specy/x/rewards/types"
+	"github.com/specy-network/specy/x/rewards/types"
 )
 
 type msgServer struct {

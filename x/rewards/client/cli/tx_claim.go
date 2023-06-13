@@ -3,12 +3,13 @@ package cli
 import (
 	"strconv"
 
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/specy-network/specy/x/rewards/types"
 	"github.com/spf13/cobra"
-	"specy/x/rewards/types"
-	"strings"
 )
 
 var _ = strconv.Itoa(0)

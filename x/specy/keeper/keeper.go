@@ -3,7 +3,7 @@ package keeper
 import (
 	"fmt"
 
-	"specy/x/specy/types"
+	"github.com/specy-network/specy/x/specy/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"

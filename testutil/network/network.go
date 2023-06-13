@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"specy/app"
+	"github.com/specy-network/specy/app"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"

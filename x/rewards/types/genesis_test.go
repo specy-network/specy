@@ -3,8 +3,8 @@ package types_test
 import (
 	"testing"
 
+	"github.com/specy-network/specy/x/rewards/types"
 	"github.com/stretchr/testify/require"
-	"specy/x/rewards/types"
 )
 
 func TestGenesisState_Validate(t *testing.T) {

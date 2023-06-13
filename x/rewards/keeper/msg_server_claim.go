@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"specy/x/rewards/types"
+	"github.com/specy-network/specy/x/rewards/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/crypto/tmhash"

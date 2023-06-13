@@ -12,10 +12,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"specy/testutil/network"
-	"specy/testutil/nullify"
-	"specy/x/specy/client/cli"
-	"specy/x/specy/types"
+	"github.com/specy-network/specy/testutil/network"
+	"github.com/specy-network/specy/testutil/nullify"
+	"github.com/specy-network/specy/x/specy/client/cli"
+	"github.com/specy-network/specy/x/specy/types"
 )
 
 // Prevent strconv unused error
