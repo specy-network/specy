@@ -1,15 +1,20 @@
 syntax = "proto3";
-package specy.specy;
+package specynetwork.specy.specy;
 
-option go_package = "specy/x/specy/types";
+option go_package = "github.com/specy-network/specy/x/specy/types";
+import "specy/specy/condition.proto"; 
 
 message Task {
-  string taskHash = 1; 
-  string contractAddress = 2; 
-  string method = 3; 
-  string calldata = 4; 
-  bool single = 5; 
-  string ruleFile = 6; 
+  string owner = 1; 
+  string name = 2; 
+  string hash = 3; 
+  uint64 connectId = 4; 
+  string msgs = 5; 
+  string ruleFiles = 6; 
+  uint64 taskType = 7; 
+  Condition scheduleType = 8; 
+  uint64 updateTime = 9; 
+  uint64 updateBlockHeight = 10; 
   
 }
 

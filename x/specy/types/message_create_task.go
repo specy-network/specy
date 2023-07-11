@@ -9,14 +9,16 @@ const TypeMsgCreateTask = "create_task"
 
 var _ sdk.Msg = &MsgCreateTask{}
 
-func NewMsgCreateTask(creator string, contractAddress string, method string, calldata string, single bool, ruleFile string) *MsgCreateTask {
+func NewMsgCreateTask(creator string, name string, connectId uint64, msgs string, ruleFiles string, taskType uint64, intervalType uint64, number uint64) *MsgCreateTask {
 	return &MsgCreateTask{
-		Creator:         creator,
-		ContractAddress: contractAddress,
-		Method:          method,
-		Calldata:        calldata,
-		Single:          single,
-		RuleFile:        ruleFile,
+		Creator:      creator,
+		Name:         name,
+		ConnectId:    connectId,
+		Msgs:         msgs,
+		RuleFiles:    ruleFiles,
+		TaskType:     taskType,
+		IntervalType: intervalType,
+		Number:       number,
 	}
 }
 

@@ -1,0 +1,13 @@
+syntax = "proto3";
+package specynetwork.specy.specy;
+
+option go_package = "github.com/specy-network/specy/x/specy/types";
+import "gogoproto/gogo.proto"; 
+import "cosmos/base/v1beta1/coin.proto"; 
+
+message Deposit {
+  string address = 1; 
+  cosmos.base.v1beta1.Coin balance = 2 [(gogoproto.nullable) = false]; 
+  
+}
+

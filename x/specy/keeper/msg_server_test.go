@@ -4,11 +4,10 @@ import (
 	"context"
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	keepertest "github.com/specy-network/specy/testutil/keeper"
 	"github.com/specy-network/specy/x/specy/keeper"
 	"github.com/specy-network/specy/x/specy/types"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {

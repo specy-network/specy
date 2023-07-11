@@ -3,14 +3,17 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/specy-network/specy/x/specy/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store/prefix"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/tendermint/tendermint/libs/log"
+
+	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	"github.com/specy-network/specy/x/specy/types"
+
+	icacontrollerkeeper "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/controller/keeper"
 )
 
 type (
@@ -18,32 +21,24 @@ type (
 		cdc        codec.BinaryCodec
 		storeKey   storetypes.StoreKey
 		memKey     storetypes.StoreKey
-		router     FunctionRouter
 		paramstore paramtypes.Subspace
-		bankKeeper types.BankKeeper
+
+		bankKeeper    types.BankKeeper
+		stakingKeeper types.StakingKeeper
+
+		scopedKeeper        capabilitykeeper.ScopedKeeper
+		icaControllerKeeper icacontrollerkeeper.Keeper
 	}
 )
-type FunctionRouter struct {
-	routes map[string]interface{}
-}
-
-func NewRouter() FunctionRouter {
-	return FunctionRouter{
-		routes: make(map[string]interface{}),
-	}
-}
-
-func (router FunctionRouter) AddRoute(contractName string, fun interface{}) {
-	router.routes[contractName] = fun
-}
 
 func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
 	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
-	router FunctionRouter,
 	bankKeeper types.BankKeeper,
+	stakingKeeper types.StakingKeeper,
+	iaKeeper icacontrollerkeeper.Keeper, scopedKeeper capabilitykeeper.ScopedKeeper,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -51,20 +46,22 @@ func NewKeeper(
 	}
 
 	return &Keeper{
-
-		cdc:        cdc,
-		storeKey:   storeKey,
-		memKey:     memKey,
-		paramstore: ps,
-		router:     router,
-		bankKeeper: bankKeeper,
+		cdc:                 cdc,
+		storeKey:            storeKey,
+		memKey:              memKey,
+		paramstore:          ps,
+		bankKeeper:          bankKeeper,
+		stakingKeeper:       stakingKeeper,
+		icaControllerKeeper: iaKeeper,
+		scopedKeeper:        scopedKeeper,
 	}
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
-func (k Keeper) getAccountStore(ctx sdk.Context, addr sdk.AccAddress) prefix.Store {
-	store := ctx.KVStore(k.storeKey)
-	return prefix.NewStore(store, types.CreateAccountTasksPrefix(addr))
+
+// ClaimCapability claims the channel capability passed via the OnOpenChanInit callback
+func (k *Keeper) ClaimCapability(ctx sdk.Context, cap *capabilitytypes.Capability, name string) error {
+	return k.scopedKeeper.ClaimCapability(ctx, cap, name)
 }

@@ -15,18 +15,29 @@ var _ = strconv.Itoa(0)
 
 func CmdCreateTask() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-task [contract-address] [method] [calldata] [single] [rule-file]",
+		Use:   "create-task [name] [connect-id] [msgs] [rule-files] [task-type] [interval-type] [number]",
 		Short: "Broadcast message create-task",
-		Args:  cobra.ExactArgs(5),
+		Args:  cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argContractAddress := args[0]
-			argMethod := args[1]
-			argCalldata := args[2]
-			argSingle, err := cast.ToBoolE(args[3])
+			argName := args[0]
+			argConnectId, err := cast.ToUint64E(args[1])
 			if err != nil {
 				return err
 			}
-			argRuleFile := args[4]
+			argMsgs := args[2]
+			argRuleFiles := args[3]
+			argTaskType, err := cast.ToUint64E(args[4])
+			if err != nil {
+				return err
+			}
+			argIntervalType, err := cast.ToUint64E(args[5])
+			if err != nil {
+				return err
+			}
+			argNumber, err := cast.ToUint64E(args[6])
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -35,11 +46,13 @@ func CmdCreateTask() *cobra.Command {
 
 			msg := types.NewMsgCreateTask(
 				clientCtx.GetFromAddress().String(),
-				argContractAddress,
-				argMethod,
-				argCalldata,
-				argSingle,
-				argRuleFile,
+				argName,
+				argConnectId,
+				argMsgs,
+				argRuleFiles,
+				argTaskType,
+				argIntervalType,
+				argNumber,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

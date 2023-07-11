@@ -11,12 +11,17 @@ const (
 
 // TaskKey returns the store key to retrieve a Task from the index fields
 func TaskKey(
-	taskHash string,
+	owner string,
+	name string,
 ) []byte {
 	var key []byte
 
-	taskHashBytes := []byte(taskHash)
-	key = append(key, taskHashBytes...)
+	ownerBytes := []byte(owner)
+	key = append(key, ownerBytes...)
+	key = append(key, []byte("/")...)
+
+	nameBytes := []byte(name)
+	key = append(key, nameBytes...)
 	key = append(key, []byte("/")...)
 
 	return key

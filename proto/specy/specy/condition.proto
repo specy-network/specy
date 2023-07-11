@@ -1,0 +1,10 @@
+syntax = "proto3";
+package specynetwork.specy.specy;
+
+option go_package = "github.com/specy-network/specy/x/specy/types";
+
+message Condition {
+  
+  uint64 intervalType = 1; 
+  uint64 number = 2; 
+}
