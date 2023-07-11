@@ -30,6 +30,14 @@ func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (
 		sdk.NewEvent(
 			types.EventTypeCreateTask,
 			sdk.NewAttribute(types.AttributeKeyCreator, msg.Creator),
+			sdk.NewAttribute(types.AttributeKeyTaskName, msg.Name),
+			sdk.NewAttribute(types.AttributeKeyTaskHash, task.Hash),
+			sdk.NewAttribute(types.AttributeKeyConnectId, string(rune(msg.ConnectId))),
+			sdk.NewAttribute(types.AttributeKeyTaskMsgs, task.Msgs),
+			sdk.NewAttribute(types.AttributeKeyTaskRuleFile, task.RuleFiles),
+			sdk.NewAttribute(types.AttributeKeyTaskType, string(rune(task.TaskType))),
+			sdk.NewAttribute(types.AttributeKeyTaskIntervalType, string(rune(task.ScheduleType.IntervalType))),
+			sdk.NewAttribute(types.AttributeKeyTaskIntervalNumber, string(rune(task.ScheduleType.Number))),
 		),
 	})
 
