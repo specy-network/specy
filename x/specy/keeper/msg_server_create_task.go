@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cometbft/cometbft/crypto/tmhash"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -18,7 +19,7 @@ func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (
 	task := &types.Task{
 		Owner:        msg.Creator,
 		Name:         msg.Name,
-		Hash:         string(tmhash.Sum([]byte(msg.String()))),
+		Hash:         fmt.Sprintf("%x", tmhash.Sum([]byte(msg.String()))),
 		ConnectId:    msg.ConnectId,
 		Msgs:         msg.Msgs,
 		RuleFiles:    msg.RuleFiles,
