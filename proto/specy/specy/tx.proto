@@ -14,6 +14,7 @@ service Msg {
   rpc EditTask        (MsgEditTask       ) returns (MsgEditTaskResponse       );
   rpc CreateExecutor  (MsgCreateExecutor ) returns (MsgCreateExecutorResponse );
   rpc CancelExecutor  (MsgCancelExecutor ) returns (MsgCancelExecutorResponse );
+  rpc EditExecutor    (MsgEditExecutor   ) returns (MsgEditExecutorResponse   );
   rpc DepositBalance  (MsgDepositBalance ) returns (MsgDepositBalanceResponse );
   rpc WithdrawBalance (MsgWithdrawBalance) returns (MsgWithdrawBalanceResponse);
 }
@@ -63,6 +64,14 @@ message MsgCancelExecutor {
 }
 
 message MsgCancelExecutorResponse {}
+
+message MsgEditExecutor {
+  string creator              = 1;
+  string iasAttestationReport = 2;
+  string enclavePk            = 3;
+}
+
+message MsgEditExecutorResponse {}
 
 message MsgDepositBalance {
   string                   creator = 1;

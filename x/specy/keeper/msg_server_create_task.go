@@ -3,9 +3,9 @@ package keeper
 import (
 	"context"
 
+	"github.com/cometbft/cometbft/crypto/tmhash"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/specy-network/specy/x/specy/types"
-	"github.com/tendermint/tendermint/crypto/tmhash"
 )
 
 func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (*types.MsgCreateTaskResponse, error) {

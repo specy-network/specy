@@ -44,6 +44,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgCancelExecutor int = 100
 
+	opWeightMsgEditExecutor = "op_weight_msg_edit_executor"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgEditExecutor int = 100
+
 	opWeightMsgDepositBalance = "op_weight_msg_deposit_balance"
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgDepositBalance int = 100
@@ -80,8 +84,11 @@ func (am AppModule) RandomizedParams(_ *rand.Rand) []simtypes.ParamChange {
 		simulation.NewSimParamChange(types.ModuleName, string(types.KeyIntervalBlock), func(r *rand.Rand) string {
 			return string(types.Amino.MustMarshalJSON(specyParams.IntervalBlock))
 		}),
-		simulation.NewSimParamChange(types.ModuleName, string(types.KeyPrice), func(r *rand.Rand) string {
-			return string(types.Amino.MustMarshalJSON(specyParams.Price))
+		simulation.NewSimParamChange(types.ModuleName, string(types.KeyCommissionDenom), func(r *rand.Rand) string {
+			return string(types.Amino.MustMarshalJSON(specyParams.CommissionDenom))
+		}),
+		simulation.NewSimParamChange(types.ModuleName, string(types.KeyAmount), func(r *rand.Rand) string {
+			return string(types.Amino.MustMarshalJSON(specyParams.Amount))
 		}),
 	}
 }
@@ -146,6 +153,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgCancelExecutor,
 		specysimulation.SimulateMsgCancelExecutor(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgEditExecutor int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgEditExecutor, &weightMsgEditExecutor, nil,
+		func(_ *rand.Rand) {
+			weightMsgEditExecutor = defaultWeightMsgEditExecutor
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgEditExecutor,
+		specysimulation.SimulateMsgEditExecutor(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
 	var weightMsgDepositBalance int

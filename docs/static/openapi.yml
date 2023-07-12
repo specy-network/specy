@@ -45566,21 +45566,11 @@ paths:
                   intervalBlock:
                     type: string
                     format: uint64
-                  price:
-                    type: object
-                    properties:
-                      denom:
-                        type: string
-                      amount:
-                        type: string
-                    description: >-
-                      Coin defines a token with a denomination and an amount.
-
-
-                      NOTE: The amount field is an Int which implements the
-                      custom method
-
-                      signatures required by gogoproto.
+                  commissionDenom:
+                    type: string
+                  amount:
+                    type: string
+                    format: uint64
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -75418,6 +75408,8 @@ definitions:
     type: object
   specynetwork.specy.specy.MsgDepositBalanceResponse:
     type: object
+  specynetwork.specy.specy.MsgEditExecutorResponse:
+    type: object
   specynetwork.specy.specy.MsgEditTaskResponse:
     type: object
   specynetwork.specy.specy.MsgWithdrawBalanceResponse:
@@ -75428,18 +75420,11 @@ definitions:
       intervalBlock:
         type: string
         format: uint64
-      price:
-        type: object
-        properties:
-          denom:
-            type: string
-          amount:
-            type: string
-        description: |-
-          Coin defines a token with a denomination and an amount.
-
-          NOTE: The amount field is an Int which implements the custom method
-          signatures required by gogoproto.
+      commissionDenom:
+        type: string
+      amount:
+        type: string
+        format: uint64
     description: Params defines the parameters for the module.
   specynetwork.specy.specy.QueryAllDepositResponse:
     type: object
@@ -75689,21 +75674,11 @@ definitions:
           intervalBlock:
             type: string
             format: uint64
-          price:
-            type: object
-            properties:
-              denom:
-                type: string
-              amount:
-                type: string
-            description: >-
-              Coin defines a token with a denomination and an amount.
-
-
-              NOTE: The amount field is an Int which implements the custom
-              method
-
-              signatures required by gogoproto.
+          commissionDenom:
+            type: string
+          amount:
+            type: string
+            format: uint64
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   specynetwork.specy.specy.Task:
     type: object

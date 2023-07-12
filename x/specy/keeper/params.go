@@ -9,7 +9,8 @@ import (
 func (k Keeper) GetParams(ctx sdk.Context) types.Params {
 	return types.NewParams(
 		k.IntervalBlock(ctx),
-		k.Price(ctx),
+		k.CommissionDenom(ctx),
+		k.Amount(ctx),
 	)
 }
 
@@ -24,8 +25,14 @@ func (k Keeper) IntervalBlock(ctx sdk.Context) (res uint64) {
 	return
 }
 
-// Price returns the Price param
-func (k Keeper) Price(ctx sdk.Context) (res *sdk.Coin) {
-	k.paramstore.Get(ctx, types.KeyPrice, &res)
+// CommissionDenom returns the CommissionDenom param
+func (k Keeper) CommissionDenom(ctx sdk.Context) (res string) {
+	k.paramstore.Get(ctx, types.KeyCommissionDenom, &res)
+	return
+}
+
+// Amount returns the Amount param
+func (k Keeper) Amount(ctx sdk.Context) (res uint64) {
+	k.paramstore.Get(ctx, types.KeyAmount, &res)
 	return
 }

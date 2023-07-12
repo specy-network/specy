@@ -106,7 +106,6 @@ import (
 	specymodule "github.com/specy-network/specy/x/specy"
 	specymodulekeeper "github.com/specy-network/specy/x/specy/keeper"
 	specymoduletypes "github.com/specy-network/specy/x/specy/types"
-
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "github.com/specy-network/specy/app/params"
@@ -179,6 +178,7 @@ var (
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		specymoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -323,7 +323,6 @@ func New(
 	scopedICAControllerKeeper := app.CapabilityKeeper.ScopeToModule(icacontrollertypes.SubModuleName)
 	scopedTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 	scopedICAHostKeeper := app.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
-	scopedSpecyKeeper := app.CapabilityKeeper.ScopeToModule(specymoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/scopedKeeper
 
 	// add keepers
@@ -502,10 +501,9 @@ func New(
 		keys[specymoduletypes.StoreKey],
 		keys[specymoduletypes.MemStoreKey],
 		app.GetSubspace(specymoduletypes.ModuleName),
+
 		app.BankKeeper,
 		app.StakingKeeper,
-		icaControllerKeeper,
-		scopedSpecyKeeper,
 	)
 	specyModule := specymodule.NewAppModule(appCodec, app.SpecyKeeper, app.AccountKeeper, app.BankKeeper)
 

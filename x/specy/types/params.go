@@ -3,7 +3,6 @@ package types
 import (
 	"fmt"
 
-	types "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"gopkg.in/yaml.v2"
 )
@@ -17,9 +16,15 @@ var (
 )
 
 var (
-	KeyPrice = []byte("Price")
+	KeyCommissionDenom = []byte("CommissionDenom")
 	// TODO: Determine the default value
-	DefaultPrice *types.Coin = &types.Coin{}
+	DefaultCommissionDenom string = "commission_denom"
+)
+
+var (
+	KeyAmount = []byte("Amount")
+	// TODO: Determine the default value
+	DefaultAmount uint64 = 0
 )
 
 // ParamKeyTable the param key table for launch module
@@ -30,11 +35,13 @@ func ParamKeyTable() paramtypes.KeyTable {
 // NewParams creates a new Params instance
 func NewParams(
 	intervalBlock uint64,
-	price *types.Coin,
+	commissionDenom string,
+	amount uint64,
 ) Params {
 	return Params{
-		IntervalBlock: intervalBlock,
-		Price:         price,
+		IntervalBlock:   intervalBlock,
+		CommissionDenom: commissionDenom,
+		Amount:          amount,
 	}
 }
 
@@ -42,7 +49,8 @@ func NewParams(
 func DefaultParams() Params {
 	return NewParams(
 		DefaultIntervalBlock,
-		DefaultPrice,
+		DefaultCommissionDenom,
+		DefaultAmount,
 	)
 }
 
@@ -50,7 +58,8 @@ func DefaultParams() Params {
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyIntervalBlock, &p.IntervalBlock, validateIntervalBlock),
-		paramtypes.NewParamSetPair(KeyPrice, &p.Price, validatePrice),
+		paramtypes.NewParamSetPair(KeyCommissionDenom, &p.CommissionDenom, validateCommissionDenom),
+		paramtypes.NewParamSetPair(KeyAmount, &p.Amount, validateAmount),
 	}
 }
 
@@ -60,7 +69,11 @@ func (p Params) Validate() error {
 		return err
 	}
 
-	if err := validatePrice(p.Price); err != nil {
+	if err := validateCommissionDenom(p.CommissionDenom); err != nil {
+		return err
+	}
+
+	if err := validateAmount(p.Amount); err != nil {
 		return err
 	}
 
@@ -86,15 +99,28 @@ func validateIntervalBlock(v interface{}) error {
 	return nil
 }
 
-// validatePrice validates the Price param
-func validatePrice(v interface{}) error {
-	price, ok := v.(*types.Coin)
+// validateCommissionDenom validates the CommissionDenom param
+func validateCommissionDenom(v interface{}) error {
+	commissionDenom, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
 
 	// TODO implement validation
-	_ = price
+	_ = commissionDenom
+
+	return nil
+}
+
+// validateAmount validates the Amount param
+func validateAmount(v interface{}) error {
+	amount, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+
+	// TODO implement validation
+	_ = amount
 
 	return nil
 }

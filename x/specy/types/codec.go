@@ -13,6 +13,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgEditTask{}, "specy/EditTask", nil)
 	cdc.RegisterConcrete(&MsgCreateExecutor{}, "specy/CreateExecutor", nil)
 	cdc.RegisterConcrete(&MsgCancelExecutor{}, "specy/CancelExecutor", nil)
+	cdc.RegisterConcrete(&MsgEditExecutor{}, "specy/EditExecutor", nil)
 	cdc.RegisterConcrete(&MsgDepositBalance{}, "specy/DepositBalance", nil)
 	cdc.RegisterConcrete(&MsgWithdrawBalance{}, "specy/WithdrawBalance", nil)
 	// this line is used by starport scaffolding # 2
@@ -33,6 +34,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCancelExecutor{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgEditExecutor{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgDepositBalance{},

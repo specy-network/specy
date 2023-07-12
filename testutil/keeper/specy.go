@@ -8,9 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
-	icacontrollerkeeper "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/controller/keeper"
 	"github.com/specy-network/specy/x/specy/keeper"
 	"github.com/specy-network/specy/x/specy/types"
 	"github.com/stretchr/testify/require"
@@ -45,8 +43,6 @@ func SpecyKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		paramsSubspace,
 		nil,
 		nil,
-		icacontrollerkeeper.Keeper{},
-		capabilitykeeper.ScopedKeeper{},
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

@@ -2,7 +2,7 @@ syntax = "proto3";
 package specynetwork.specy.specy;
 
 import "gogoproto/gogo.proto";
-import "cosmos/base/v1beta1/coin.proto"; 
+
 option go_package = "github.com/specy-network/specy/x/specy/types";
 
 // Params defines the parameters for the module.
@@ -10,5 +10,6 @@ message Params {
   option (gogoproto.goproto_stringer) = false;
   
   uint64 intervalBlock = 1 [(gogoproto.moretags) = "yaml:\"interval_block\""];
-  cosmos.base.v1beta1.Coin  price = 2 [(gogoproto.moretags) = "yaml:\"price\""];
+  string commissionDenom = 2 [(gogoproto.moretags) = "yaml:\"commission_denom\""];
+  uint64 amount = 3 [(gogoproto.moretags) = "yaml:\"amount\""];
 }
