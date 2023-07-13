@@ -6,10 +6,13 @@ const (
 	EventTypeEditTask   = "edit_task"
 
 	EventTypeCreateExecutor = "create_executor"
+	EventTypeCancelExecutor = "cancel_executor"
+	EventTypeEditExecutor   = "cancel_executor"
 	EventTypeExecuteTask    = "execute_task"
 )
 const (
-	AttributeKeyCreator            = "task_creator"
+	AttributeKeyCreator = "creator"
+
 	AttributeKeyTaskName           = "task_name"
 	AttributeKeyTaskHash           = "task_hash"
 	AttributeKeyConnectId          = "connect_id"
@@ -19,7 +22,6 @@ const (
 	AttributeKeyTaskIntervalType   = "task_interval_type"
 	AttributeKeyTaskIntervalNumber = "task_interval_number"
 
-	AttributeKeyExecutor          = "task_executor"
 	AttributeKeyExecutorAddress   = "executor_address"
 	AttributeKeyExecutorIasReport = "executor_ias_report"
 	AttributeKeyExecutorEnclavePK = "executor_enclave_pk"
