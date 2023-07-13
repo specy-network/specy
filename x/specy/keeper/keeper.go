@@ -7,9 +7,9 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/tendermint/tendermint/libs/log"
-
+	icacontrollerkeeper "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/controller/keeper"
 	"github.com/specy-network/specy/x/specy/types"
+	"github.com/tendermint/tendermint/libs/log"
 )
 
 type (
@@ -19,8 +19,9 @@ type (
 		memKey     storetypes.StoreKey
 		paramstore paramtypes.Subspace
 
-		bankKeeper    types.BankKeeper
-		stakingKeeper types.StakingKeeper
+		bankKeeper          types.BankKeeper
+		stakingKeeper       types.StakingKeeper
+		icaControllerKeeper icacontrollerkeeper.Keeper
 	}
 )
 
@@ -32,6 +33,7 @@ func NewKeeper(
 
 	bankKeeper types.BankKeeper,
 	stakingKeeper types.StakingKeeper,
+	iaKeeper icacontrollerkeeper.Keeper,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -44,8 +46,9 @@ func NewKeeper(
 		memKey:     memKey,
 		paramstore: ps,
 
-		bankKeeper:    bankKeeper,
-		stakingKeeper: stakingKeeper,
+		bankKeeper:          bankKeeper,
+		stakingKeeper:       stakingKeeper,
+		icaControllerKeeper: iaKeeper,
 	}
 }
 
