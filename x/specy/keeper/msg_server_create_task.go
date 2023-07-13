@@ -15,8 +15,8 @@ import (
 func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (*types.MsgCreateTaskResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_, find := k.GetTask(ctx, msg.Creator, msg.Name)
-	if find {
+	_, found := k.GetTask(ctx, msg.Creator, msg.Name)
+	if found {
 		return nil, types.ErrTaskIsExsit
 	}
 	task := &types.Task{
