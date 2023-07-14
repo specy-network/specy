@@ -1,6 +1,6 @@
 package types
 
 const (
-	BalancePoolName = "balance_pool"
-	RewardPoolName  = "reward_pool"
+	BalancePoolName = "specy_balance_pool"
+	RewardPoolName  = "specy_reward_pool"
 )
