@@ -14,6 +14,9 @@ func (k msgServer) DepositBalance(goCtx context.Context, msg *types.MsgDepositBa
 	if err != nil {
 		return nil, err
 	}
+	if !CheckDenom(ctx, k.Keeper, msg.Amount.Denom) {
+		return nil, types.ErrDepositDenomInvalid
+	}
 	//move deposit coin from user address to module balance pool
 	err = k.bankKeeper.SendCoinsFromAccountToModule(ctx, accAddr, types.BalancePoolName, sdk.NewCoins(msg.Amount))
 	if err != nil {

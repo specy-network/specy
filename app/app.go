@@ -551,7 +551,7 @@ func New(
 		keys[specymoduletypes.StoreKey],
 		keys[specymoduletypes.MemStoreKey],
 		app.GetSubspace(specymoduletypes.ModuleName),
-
+		app.AccountKeeper,
 		app.BankKeeper,
 		app.StakingKeeper,
 		app.ICAControllerKeeper,
