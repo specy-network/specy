@@ -59,6 +59,12 @@ service Query {
     option (google.api.http).get = "/specy-network/specy/specy/current_executor_status";
   
   }
+  
+  // Queries a list of Pool items.
+  rpc Pool (QueryPoolRequest) returns (QueryPoolResponse) {
+    option (google.api.http).get = "/specy-network/specy/specy/pool";
+  
+  }
 }
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -126,5 +132,12 @@ message QueryGetCurrentExecutorStatusRequest {}
 
 message QueryGetCurrentExecutorStatusResponse {
   CurrentExecutorStatus CurrentExecutorStatus = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryPoolRequest {}
+
+message QueryPoolResponse {
+  cosmos.base.v1beta1.Coin totalDeposit  = 1 [(gogoproto.nullable) = false];
+  cosmos.base.v1beta1.Coin currentReward = 2 [(gogoproto.nullable) = false];
 }
 

@@ -12,13 +12,13 @@ var _ paramtypes.ParamSet = (*Params)(nil)
 var (
 	KeyIntervalBlock = []byte("IntervalBlock")
 	// TODO: Determine the default value
-	DefaultIntervalBlock uint64 = 0
+	DefaultIntervalBlock uint64 = 100
 )
 
 var (
 	KeyCommissionDenom = []byte("CommissionDenom")
 	// TODO: Determine the default value
-	DefaultCommissionDenom string = "commission_denom"
+	DefaultCommissionDenom string = "stake"
 )
 
 var (

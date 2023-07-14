@@ -44,6 +44,7 @@ func SpecyKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		paramsSubspace,
 		nil,
 		nil,
+		nil,
 		icacontrollerkeeper.Keeper{},
 	)
 
