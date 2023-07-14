@@ -9,6 +9,9 @@ const (
 	EventTypeCancelExecutor = "cancel_executor"
 	EventTypeEditExecutor   = "cancel_executor"
 	EventTypeExecuteTask    = "execute_task"
+
+	EventTypeDepositBalance  = "deposit_balance"
+	EventTypeWithdrawBalance = "withdraw_balance"
 )
 const (
 	AttributeKeyCreator = "creator"
