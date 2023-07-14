@@ -10,18 +10,15 @@ import (
 func (k msgServer) EditExecutor(goCtx context.Context, msg *types.MsgEditExecutor) (*types.MsgEditExecutorResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_, found := k.GetExecutor(ctx, msg.Creator)
+	executor, found := k.GetExecutor(ctx, msg.Creator)
 	if !found {
 		return nil, types.ErrExecutorNotExsit
 	}
 
-	executor := &types.Executor{
-		Address:              msg.Creator,
-		EnclavePk:            msg.EnclavePk,
-		IasAttestationReport: msg.IasAttestationReport,
-	}
+	executor.EnclavePk = msg.EnclavePk
+	executor.IasAttestationReport = msg.IasAttestationReport
 
-	k.SetExecutor(ctx, *executor)
+	k.SetExecutor(ctx, executor)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -29,6 +26,7 @@ func (k msgServer) EditExecutor(goCtx context.Context, msg *types.MsgEditExecuto
 			sdk.NewAttribute(types.AttributeKeyCreator, msg.Creator),
 			sdk.NewAttribute(types.AttributeKeyExecutorIasReport, msg.IasAttestationReport),
 			sdk.NewAttribute(types.AttributeKeyExecutorEnclavePK, msg.EnclavePk),
+			sdk.NewAttribute(types.AttributeKeyExecutorValAddr, executor.ValAddr),
 		),
 	})
 	return &types.MsgEditExecutorResponse{}, nil

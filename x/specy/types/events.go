@@ -25,6 +25,7 @@ const (
 	AttributeKeyExecutorAddress   = "executor_address"
 	AttributeKeyExecutorIasReport = "executor_ias_report"
 	AttributeKeyExecutorEnclavePK = "executor_enclave_pk"
+	AttributeKeyExecutorValAddr   = "executor_validator_address"
 
 	AttributeValueCategory = ModuleName
 )
