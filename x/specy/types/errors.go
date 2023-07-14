@@ -14,4 +14,6 @@ var (
 	ErrTaskPortParse          = sdkerrors.Register(ModuleName, 1003, "task port parse error , error")
 	ErrTaskInterMsgsUnmarshal = sdkerrors.Register(ModuleName, 1004, "task inter msgs unmarshal error , error")
 	ErrTaskNotExsit           = sdkerrors.Register(ModuleName, 1005, "process task error,not exsit")
+	ErrExecutorNotExsit       = sdkerrors.Register(ModuleName, 1006, "process executor error,not exsit")
+	ErrExecutorNotValidator   = sdkerrors.Register(ModuleName, 1007, "create executor error, not in validator list")
 )

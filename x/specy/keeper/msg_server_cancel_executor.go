@@ -10,8 +10,18 @@ import (
 func (k msgServer) CancelExecutor(goCtx context.Context, msg *types.MsgCancelExecutor) (*types.MsgCancelExecutorResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Handling the message
-	_ = ctx
+	_, found := k.GetExecutor(ctx, msg.Creator)
+	if !found {
+		return nil, types.ErrExecutorNotExsit
+	}
+
+	k.RemoveExecutor(ctx, msg.Creator)
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeCancelExecutor,
+			sdk.NewAttribute(types.AttributeKeyCreator, msg.Creator),
+		),
+	})
 
 	return &types.MsgCancelExecutorResponse{}, nil
 }
