@@ -5,6 +5,6 @@ option go_package = "github.com/specy-network/specy/x/specy/types";
 
 message CurrentExecutorStatus {
   string currentExecutor = 1; 
-  string changeHeight = 2; 
+  int64 changeHeight = 2; 
   
 }

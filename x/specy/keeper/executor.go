@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/specy-network/specy/x/specy/types"
@@ -60,4 +62,21 @@ func (k Keeper) GetAllExecutor(ctx sdk.Context) (list []types.Executor) {
 	}
 
 	return
+}
+
+func (k Keeper) ExecutorSelection(ctx sdk.Context) {
+	//Use the presenter of the current block as the executor for the next stage
+	params := k.GetParams(ctx)
+	currentExecutorStatus, found := k.GetCurrentExecutorStatus(ctx)
+	if found {
+		currentExecutorStatus.ChangeHeight = currentExecutorStatus.ChangeHeight + int64(params.IntervalBlock)
+		currentExecutorStatus.CurrentExecutor = fmt.Sprintf("%x", ctx.BlockHeader().ProposerAddress)
+	}
+
+	currentExecutorStatus = types.CurrentExecutorStatus{
+		CurrentExecutor: fmt.Sprintf("%x", ctx.BlockHeader().ProposerAddress),
+
+		ChangeHeight: ctx.BlockHeight() + int64(params.IntervalBlock),
+	}
+	k.SetCurrentExecutorStatus(ctx, currentExecutorStatus)
 }
