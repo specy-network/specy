@@ -77522,6 +77522,8 @@ definitions:
     type: object
   specynetwork.specy.specy.MsgEditTaskResponse:
     type: object
+  specynetwork.specy.specy.MsgExecuteTaskResponse:
+    type: object
   specynetwork.specy.specy.MsgWithdrawBalanceResponse:
     type: object
   specynetwork.specy.specy.Params:

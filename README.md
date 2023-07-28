@@ -120,51 +120,19 @@ specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
 > This is the situation after funding the ICA.
 ![post-fund](./images/post-fund.png)
 
-#### Sending Interchain Account transactions
 
-Send Interchain Accounts transactions using the `intertx submit` cmd. 
-This command accepts a generic `sdk.Msg` JSON payload or path to JSON file as an arg.
+#### Create automation transaction task
+- Automation task case 1:
 
-- **Example 1:** Staking Delegation
+    Create a transfer task for the host chain on the controller chain. When the task is executed, the interchain account on the host chain will transfer to the specified address.
 
+    //TODO Add explanation for rulefile！
 ```bash
-# Output the host chain validator operator address: cosmosvaloper1qnk2n4nlkpw9xfqntladh74w6ujtulwnmxnh3k
-cat ./data/test-2/config/genesis.json | jq -r '.app_state.genutil.gen_txs[0].body.messages[0].validator_address'
-```
- NOTE: According to $ICA_ADDR actual value modifycation *delegator_address* 
-```bash
-# Submit a staking delegation tx using the interchain account via ibc
-specyd tx intertx submit \
-'{
-    "@type":"/cosmos.staking.v1beta1.MsgDelegate",
-    "delegator_address":"cosmos15ccshhmp0gsx29qpqq6g4zmltnnvgmyu9ueuadh9y2nc5zj0szls5gtddz",
-    "validator_address":"cosmosvaloper1qnk2n4nlkpw9xfqntladh74w6ujtulwnmxnh3k",
-    "amount": {
-        "denom": "stake",
-        "amount": "1000"
-    }
-}' --connection-id connection-0 --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
-
-# Alternatively provide a path to a JSON file
-specyd tx intertx submit [path/to/msg.json] --connection-id connection-0 --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
-
-# Wait until the relayer has relayed the packet
-
-# Inspect the staking delegations on the host chain
-specyd q staking delegations-to cosmosvaloper1qnk2n4nlkpw9xfqntladh74w6ujtulwnmxnh3k --home ./data/test-2 --node tcp://localhost:26657
-```
-
-> This is the situation before after sending the staking tx. The user who is the owner of the ICA has staked funds on the host chain to a validator of choice through an interchain accounts packet.
-![post-sendtx](./images/post-sendtx.png)
-
-- **Example 2:** Bank Send
-
-```bash
-# Submit a bank send tx using the interchain account via ibc
-specyd tx intertx submit \
-'{
+specyd tx specy create-task \
+    test_task connection-0 \
+    '{
     "@type":"/cosmos.bank.v1beta1.MsgSend",
-    "from_address":"cosmos15ccshhmp0gsx29qpqq6g4zmltnnvgmyu9ueuadh9y2nc5zj0szls5gtddz",
+    "from_address":"cosmos1upfegaenhhvl8r4ezhe8zt6ez9r80pcxd8c9zfrjshskfxjdjypsutdwwc",
     "to_address":"cosmos10h9stc5v6ntgeygf5xf945njqq5h32r53uquvw",
     "amount": [
         {
@@ -172,60 +140,51 @@ specyd tx intertx submit \
             "amount": "1000"
         }
     ]
-}' --connection-id connection-0 --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    }' rulefile 0 0 100 --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+```
 
-# Alternatively provide a path to a JSON file
-specyd tx intertx submit [path/to/msg.json] --connection-id connection-0 --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+- Automation task case 2:
 
-# Wait until the relayer has relayed the packet
+    Create a pledge task on the target chain and trigger it when the target conditions are met.
+```bash
+specyd tx specy create-task \
+    test_task1 connection-0 \
+    '{
+    "@type":"/cosmos.staking.v1beta1.MsgDelegate",
+    "delegator_address":"cosmos1upfegaenhhvl8r4ezhe8zt6ez9r80pcxd8c9zfrjshskfxjdjypsutdwwc",
+    "validator_address":"cosmosvaloper1qnk2n4nlkpw9xfqntladh74w6ujtulwnmxnh3k",
+    "amount": {
+        "denom": "stake",
+        "amount": "1000"
+    }
+    }' rulefile 0 0 100 --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+```
 
-# Query the interchain account balance on the host chain
+Query task details
+
+```bash 
+specyd q specy list-task --node tcp://localhost:16657
+```
+
+#### Simulate task execution
+
+Note：This is actually executed by the executor when the task rulefile setting is met.
+```bash
+specyd tx specy execute-task \
+cosmos1m9l358xunhhwds0568za49mzhvuxx9uxre5tud test-task1 cproofstring performdataString \
+--from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+```
+
+
+
+#### Query the execution results of automated tasks on the host chain
+
+- staking detail
+```bash
+specyd q staking delegations-to cosmosvaloper1qnk2n4nlkpw9xfqntladh74w6ujtulwnmxnh3k --home ./data/test-2 --node tcp://localhost:26657
+```
+- account balance
+```bash
 specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
 ```
-
-#### Testing timeout scenario
-
-1. Stop the relayer process and send an interchain accounts transaction using one of the examples provided above.
-
-2. Wait for approx. 1 minute for the timeout to elapse.
-
-3. Restart the relayer process
-
-```bash
-#hermes
-make start-hermes
-
-#go relayer
-make start-golang-rly
-```
-
-4. Observe the packet timeout and relayer reacting appropriately (issuing a MsgTimeout to testchain `test-1`).
-
-5. Due to the nature of ordered channels, the timeout will subsequently update the state of the channel to `STATE_CLOSED`.
-Observe both channel ends by querying the IBC channels for each node.
-
-```bash
-# inspect channel ends on test chain 1
-specyd q ibc channel channels --home ./data/test-1 --node tcp://localhost:16657
-
-# inspect channel ends on test chain 2
-specyd q ibc channel channels --home ./data/test-2 --node tcp://localhost:26657
-```
-
-6. Open a new channel for the existing interchain account on the same connection.
-
-```bash
-specyd tx intertx register --from $WALLET_1 --connection-id connection-0 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
-```
-
-7. Inspect the IBC channels once again and observe a new creately interchain accounts channel with `STATE_OPEN`.
-
-```bash
-# inspect channel ends on test chain 1
-specyd q ibc channel channels --home ./data/test-1 --node tcp://localhost:16657
-
-# inspect channel ends on test chain 2
-specyd q ibc channel channels --home ./data/test-2 --node tcp://localhost:26657
-```
-
 
