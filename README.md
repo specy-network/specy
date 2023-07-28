@@ -69,10 +69,10 @@ make start-golang-rly
 :exclamation: **NOTE:** It is abstracted away in the script files, but in case you want to manually run `rly start` with interchain accounts, you will need to add this flag: `-p events` to it.
 
 > This is the situation *before* `make init-*`. The blockchains are not live yet.
-![pre-init](./images/pre-init.png)
+![pre-init](./images/pre-init-sn.jpg)
 
 > This is the situation *after* `make init-*`. The chain binary's have been built and started, and an IBC connection between controller and host chains has been set up.
-![post-init](./images/post-init.png)
+![post-init](./images/post-init-sn.jpg)
 
 ## Demo
 
@@ -103,7 +103,7 @@ export ICA_ADDR=$(specyd query intertx interchainaccounts connection-0 $WALLET_1
 ```
 
 > This is the situation after registering the ICA. A channel has been created and an ICA has been registered on the host.
-![post-register](./images/post-register.png)
+![post-register](./images/post-register-sn.jpg)
 
 #### Funding the Interchain Account wallet
 
@@ -122,7 +122,7 @@ specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
 ```
 
 > This is the situation after funding the ICA.
-![post-fund](./images/post-fund.png)
+
 
 
 #### Create automation transaction task
@@ -163,7 +163,7 @@ specyd tx specy create-task \
     }
     }' rulefile 0 0 100 --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
-
+![post-create-task](./images/post-create-task.jpg)
 Query task details
 
 ```bash 
@@ -179,7 +179,7 @@ cosmos1m9l358xunhhwds0568za49mzhvuxx9uxre5tud test-task1 cproofstring performdat
 --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
-
+![execute-task](./images/post-execute-task.jpg)
 
 #### Query the execution results of automated tasks on the host chain
 
