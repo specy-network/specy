@@ -62,7 +62,7 @@ func (k Keeper) GetAllDeposit(ctx sdk.Context) (list []types.Deposit) {
 	return
 }
 
-//check deposit denom equal params set  commissionDenom
+// check deposit denom equal params set  commissionDenom
 func CheckDenom(ctx sdk.Context, keeper Keeper, denom string) bool {
 	param := keeper.GetParams(ctx)
 	return param.CommissionDenom == denom

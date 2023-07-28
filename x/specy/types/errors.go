@@ -21,4 +21,6 @@ var (
 	ErrDepositNotExsit          = sdkerrors.Register(ModuleName, 1008, "withdraw balance failed, deposit not exsit")
 	ErrWithdrawBalanceNotEnough = sdkerrors.Register(ModuleName, 1009, "withdraw balance failed, balance not enough")
 	ErrDepositDenomInvalid      = sdkerrors.Register(ModuleName, 1010, "deposit balance failed, denom is invalid")
+
+	ErrMsgGetCachedValue = sdkerrors.Register(ModuleName, 1011, "msg  get chched value from task error ")
 )

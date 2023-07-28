@@ -30,7 +30,6 @@ func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (
 		ScheduleType: &types.Condition{IntervalType: msg.IntervalType, Number: msg.Number},
 	}
 	k.SetTask(ctx, *task)
-
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeCreateTask,
@@ -49,15 +48,17 @@ func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (
 	return &types.MsgCreateTaskResponse{}, nil
 }
 
-func (k msgServer) SendInterMsg(goCtx context.Context, task *types.Task) error {
+func (k msgServer) SendInterMsg(goCtx context.Context, task types.Task) error {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	var sdkMsg sdk.Msg
+	err := k.cdc.UnpackAny(task.Msg, &sdkMsg)
+	if err != nil {
+		return types.ErrMsgGetCachedValue
+	}
+
 	portID, err := icatypes.NewControllerPortID(task.Owner)
 	if err != nil {
 		return types.ErrTaskPortParse
-	}
-	sdkMsg, ok := task.Msg.GetCachedValue().(sdk.Msg)
-	if !ok {
-		return nil
 	}
 
 	data, err := icatypes.SerializeCosmosTx(k.cdc, []goproto.Message{sdkMsg})

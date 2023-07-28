@@ -50,7 +50,7 @@ func TestGenesisState_Validate(t *testing.T) {
 				},
 				CurrentExecutorStatus: &types.CurrentExecutorStatus{
 					CurrentExecutor: "57",
-					ChangeHeight:    "92",
+					ChangeHeight:    92,
 				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},

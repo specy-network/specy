@@ -42,7 +42,7 @@ func TestGenesis(t *testing.T) {
 		},
 		CurrentExecutorStatus: &types.CurrentExecutorStatus{
 			CurrentExecutor: "46",
-			ChangeHeight:    "2",
+			ChangeHeight:    2,
 		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}

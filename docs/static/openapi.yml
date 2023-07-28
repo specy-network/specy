@@ -45382,6 +45382,7 @@ paths:
                     type: string
                   changeHeight:
                     type: string
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -45606,10 +45607,9 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    description: |-
+                    title: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently. It will be empty if
-                      there are no more results.
+                      query the next page most efficiently
                   total:
                     type: string
                     format: uint64
@@ -45857,16 +45857,6 @@ paths:
             when key
 
             is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -46122,10 +46112,9 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    description: |-
+                    title: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently. It will be empty if
-                      there are no more results.
+                      query the next page most efficiently
                   total:
                     type: string
                     format: uint64
@@ -46373,16 +46362,6 @@ paths:
             when key
 
             is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -47263,10 +47242,9 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    description: |-
+                    title: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently. It will be empty if
-                      there are no more results.
+                      query the next page most efficiently
                   total:
                     type: string
                     format: uint64
@@ -47514,16 +47492,6 @@ paths:
             when key
 
             is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -48674,6 +48642,9 @@ definitions:
           next_key is the key to be passed to PageRequest.key to
           query the next page most efficiently. It will be empty if
           there are no more results.
+        title: |-
+          next_key is the key to be passed to PageRequest.key to
+          query the next page most efficiently
       total:
         type: string
         format: uint64
@@ -77508,6 +77479,7 @@ definitions:
         type: string
       changeHeight:
         type: string
+        format: int64
   specynetwork.specy.specy.Deposit:
     type: object
     properties:
@@ -77549,6 +77521,8 @@ definitions:
   specynetwork.specy.specy.MsgEditExecutorResponse:
     type: object
   specynetwork.specy.specy.MsgEditTaskResponse:
+    type: object
+  specynetwork.specy.specy.MsgExecuteTaskResponse:
     type: object
   specynetwork.specy.specy.MsgWithdrawBalanceResponse:
     type: object
@@ -77595,10 +77569,9 @@ definitions:
           next_key:
             type: string
             format: byte
-            description: |-
+            title: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently. It will be empty if
-              there are no more results.
+              query the next page most efficiently
           total:
             type: string
             format: uint64
@@ -77637,10 +77610,9 @@ definitions:
           next_key:
             type: string
             format: byte
-            description: |-
+            title: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently. It will be empty if
-              there are no more results.
+              query the next page most efficiently
           total:
             type: string
             format: uint64
@@ -77866,10 +77838,9 @@ definitions:
           next_key:
             type: string
             format: byte
-            description: |-
+            title: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently. It will be empty if
-              there are no more results.
+              query the next page most efficiently
           total:
             type: string
             format: uint64
@@ -77896,6 +77867,7 @@ definitions:
             type: string
           changeHeight:
             type: string
+            format: int64
   specynetwork.specy.specy.QueryGetDepositResponse:
     type: object
     properties:
