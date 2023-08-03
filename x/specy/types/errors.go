@@ -23,4 +23,5 @@ var (
 	ErrDepositDenomInvalid      = sdkerrors.Register(ModuleName, 1010, "deposit balance failed, denom is invalid")
 
 	ErrMsgGetCachedValue = sdkerrors.Register(ModuleName, 1011, "msg  get chched value from task error ")
+	ErrExecutorAuthCheck = sdkerrors.Register(ModuleName, 1012, "executor permission verification failed ")
 )

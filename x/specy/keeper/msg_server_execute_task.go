@@ -10,13 +10,16 @@ import (
 func (k msgServer) ExecuteTask(goCtx context.Context, msg *types.MsgExecuteTask) (*types.MsgExecuteTaskResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	task, found := k.GetTask(ctx, msg.Owner, msg.Name)
-	//TODO check executor auth
 
 	if !found {
 		return nil, types.ErrTaskNotExsit
 	}
-
-	err := k.SendInterMsg(ctx, task)
+	//check executor auth
+	err := checkExecutorAuth(ctx, msg.Creator, k.Keeper)
+	if err != nil {
+		return nil, types.ErrExecutorAuthCheck
+	}
+	err = k.SendInterMsg(ctx, task)
 	if err != nil {
 		return nil, err
 	}
@@ -35,4 +38,19 @@ func (k msgServer) ExecuteTask(goCtx context.Context, msg *types.MsgExecuteTask)
 		),
 	})
 	return &types.MsgExecuteTaskResponse{}, nil
+}
+
+func checkExecutorAuth(goCtx context.Context, creator string, k Keeper) error {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	accAddr, err := sdk.AccAddressFromBech32(creator)
+	if err != nil {
+		return err
+	}
+	valAddr := sdk.ValAddress(accAddr)
+	currentExecutor, found := k.GetCurrentExecutorStatus(ctx)
+	if !found || currentExecutor.CurrentExecutor != valAddr.String() {
+		return types.ErrExecutorAuthCheck
+	}
+	return nil
+
 }
