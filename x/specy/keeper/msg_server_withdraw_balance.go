@@ -17,7 +17,7 @@ func (k msgServer) WithdrawBalance(goCtx context.Context, msg *types.MsgWithdraw
 
 	check := deposit.Balance.IsGTE(msg.Amount)
 	if !check {
-		return nil, types.ErrWithdrawBalanceNotEnough
+		return nil, types.ErrDepositBalanceNotEnough
 	}
 
 	accAddr, err := sdk.AccAddressFromBech32(msg.Creator)

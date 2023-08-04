@@ -19,6 +19,13 @@ func (k msgServer) ExecuteTask(goCtx context.Context, msg *types.MsgExecuteTask)
 	if err != nil {
 		return nil, types.ErrExecutorAuthCheck
 	}
+
+	//handle fee
+	err = k.SubFee(ctx, task.Owner)
+	if err != nil {
+		return nil, err
+	}
+
 	err = k.SendInterMsg(ctx, task)
 	if err != nil {
 		return nil, err
@@ -52,5 +59,4 @@ func checkExecutorAuth(goCtx context.Context, creator string, k Keeper) error {
 		return types.ErrExecutorAuthCheck
 	}
 	return nil
-
 }
