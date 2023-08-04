@@ -12,6 +12,7 @@ type StakingKeeper interface {
 	GetValidator(ctx sdk.Context, addr sdk.ValAddress) (validator stakingtypes.Validator, found bool)
 
 	GetBondedValidatorsByPower(ctx sdk.Context) []stakingtypes.Validator
+	ValidatorByConsAddr(sdk.Context, sdk.ConsAddress) stakingtypes.ValidatorI
 }
 
 // AccountKeeper defines the expected account keeper used for simulations (noalias)
