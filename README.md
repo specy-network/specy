@@ -126,6 +126,7 @@ specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
 
 #### Deposit token
 
+When a task is executed, a handling fee will be deducted, so users need to deposit a certain number of tokens into the module in advance, otherwise the automated tasks created by the user in the future cannot be executed.
 ```bash
 specyd tx specy deposit-balance \
     1000000000stake \
@@ -134,6 +135,13 @@ specyd tx specy deposit-balance \
 
 ```bash
 specyd q specy list-deposit --node tcp://localhost:16657
+```
+
+Of course, you can also extract the deposit token.
+```bash
+specyd tx specy withdraw-balance \
+    5000stake \
+    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 
@@ -182,7 +190,7 @@ Query task details
 specyd q specy list-task --node tcp://localhost:16657
 ```
 #### Create executor
-
+As the validator of the specy chain, the executor service must be running and the corresponding information registered on the chain, otherwise it will be evidenced and slashed.
 ```bash
 specyd tx specy create-executor \
      iasreport enclavepk \
@@ -195,7 +203,7 @@ specyd q specy list-executor --node tcp://localhost:16657
 
 #### Simulate task execution
 
-Note：This is actually executed by the executor when the task rulefile setting is met.
+Note：This is actually executed by the executor-service when the task rulefile setting is met.
 ```bash
 specyd tx specy execute-task \
 cosmos1m9l358xunhhwds0568za49mzhvuxx9uxre5tud test_task cproofstring performdataString \
