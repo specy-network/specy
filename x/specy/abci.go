@@ -8,6 +8,8 @@ import (
 
 // BeginBlocker will switch executor if arrived block height
 func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) {
+	//send  previous block execute task fee to distribution module
+	k.SendFeeToDistributionCollected(ctx)
 	//switch currentExecutor
 	consAddr := sdk.ConsAddress(req.Header.ProposerAddress)
 	sk := k.GetStakingKeeper()

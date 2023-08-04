@@ -67,3 +67,36 @@ func CheckDenom(ctx sdk.Context, keeper Keeper, denom string) bool {
 	param := keeper.GetParams(ctx)
 	return param.CommissionDenom == denom
 }
+
+//
+func (k Keeper) SubFee(
+	ctx sdk.Context,
+	taskOwner string,
+
+) error {
+
+	deposit, found := k.GetDeposit(ctx, taskOwner)
+	if !found {
+		return types.ErrDepositNotExsit
+	}
+	//calculate fee amount from module parmas
+	params := k.GetParams(ctx)
+	amount := sdk.NewInt64Coin(params.CommissionDenom, int64(params.Amount))
+	//user deposit need gte fee amount
+	check := deposit.Balance.IsGTE(amount)
+	if !check {
+		return types.ErrDepositBalanceNotEnough
+	}
+	//send fee amount to reward pool ,and send  reward to distribution module pool when after block
+	err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.BalancePoolName, types.RewardPoolName, sdk.NewCoins().Add(amount))
+	//pool balance err
+	if err != nil {
+		panic(types.ErrPoolBalance)
+	}
+	deposit.Balance, err = deposit.Balance.SafeSub(amount)
+	if err != nil {
+		return err
+	}
+	k.SetDeposit(ctx, deposit)
+	return nil
+}

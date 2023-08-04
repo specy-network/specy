@@ -22,6 +22,9 @@ type (
 		bankKeeper          types.BankKeeper
 		stakingKeeper       types.StakingKeeper
 		icaControllerKeeper icacontrollerkeeper.Keeper
+
+		feeCollectorName string // name of the FeeCollector ModuleAccount
+
 	}
 )
 
@@ -34,6 +37,7 @@ func NewKeeper(
 	bankKeeper types.BankKeeper,
 	stakingKeeper types.StakingKeeper,
 	iaKeeper icacontrollerkeeper.Keeper,
+	feeCollectorName string,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -49,6 +53,7 @@ func NewKeeper(
 		bankKeeper:          bankKeeper,
 		stakingKeeper:       stakingKeeper,
 		icaControllerKeeper: iaKeeper,
+		feeCollectorName:    feeCollectorName,
 	}
 }
 
@@ -58,4 +63,9 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 
 func (k Keeper) GetStakingKeeper() types.StakingKeeper {
 	return k.stakingKeeper
+}
+func (k Keeper) SendFeeToDistributionCollected(ctx sdk.Context) error {
+	feeCollector := k.authKeeper.GetModuleAccount(ctx, types.RewardPoolName)
+	feeCollectedInt := k.bankKeeper.GetAllBalances(ctx, feeCollector.GetAddress())
+	return k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.RewardPoolName, k.feeCollectorName, feeCollectedInt)
 }

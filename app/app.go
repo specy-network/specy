@@ -555,6 +555,7 @@ func New(
 		app.BankKeeper,
 		app.StakingKeeper,
 		app.ICAControllerKeeper,
+		authtypes.FeeCollectorName,
 	)
 	specyModule := specymodule.NewAppModule(appCodec, app.SpecyKeeper, app.AccountKeeper, app.BankKeeper)
 

@@ -18,10 +18,11 @@ var (
 	ErrExecutorNotExsit     = sdkerrors.Register(ModuleName, 1006, "process executor error,not exsit")
 	ErrExecutorNotValidator = sdkerrors.Register(ModuleName, 1007, "create executor error, not in validator list")
 
-	ErrDepositNotExsit          = sdkerrors.Register(ModuleName, 1008, "withdraw balance failed, deposit not exsit")
-	ErrWithdrawBalanceNotEnough = sdkerrors.Register(ModuleName, 1009, "withdraw balance failed, balance not enough")
-	ErrDepositDenomInvalid      = sdkerrors.Register(ModuleName, 1010, "deposit balance failed, denom is invalid")
+	ErrDepositNotExsit         = sdkerrors.Register(ModuleName, 1008, "deposit not exsit")
+	ErrDepositBalanceNotEnough = sdkerrors.Register(ModuleName, 1009, "deposit balance not enough")
+	ErrDepositDenomInvalid     = sdkerrors.Register(ModuleName, 1010, "deposit balance failed, denom is invalid")
 
-	ErrMsgGetCachedValue = sdkerrors.Register(ModuleName, 1011, "msg  get chched value from task error ")
-	ErrExecutorAuthCheck = sdkerrors.Register(ModuleName, 1012, "executor permission verification failed ")
+	ErrMsgGetCachedValue    = sdkerrors.Register(ModuleName, 1011, "msg  get chched value from task error ")
+	ErrExecutorAuthCheck    = sdkerrors.Register(ModuleName, 1012, "executor permission verification failed ")
+	ErrDeductExecuteTaskFee = sdkerrors.Register(ModuleName, 1013, "failed to deduct task execution fee ")
 )

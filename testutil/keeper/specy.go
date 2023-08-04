@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
 	icacontrollerkeeper "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/controller/keeper"
 	"github.com/specy-network/specy/x/specy/keeper"
@@ -46,6 +47,7 @@ func SpecyKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		nil,
 		nil,
 		icacontrollerkeeper.Keeper{},
+		authtypes.FeeCollectorName,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

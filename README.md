@@ -82,6 +82,7 @@ make start-golang-rly
 # Store the following account addresses within the current shell env
 export WALLET_1=$(specyd keys show wallet1 -a --keyring-backend test --home ./data/test-1) && echo $WALLET_1;
 export WALLET_2=$(specyd keys show wallet2 -a --keyring-backend test --home ./data/test-1) && echo $WALLET_2;
+export WALLET_VAL=$(specyd keys show val1 -a --keyring-backend test --home ./data/test-1) && echo $WALLET_VAL;
 export WALLET_3=$(specyd keys show wallet3 -a --keyring-backend test --home ./data/test-2) && echo $WALLET_3;
 export WALLET_4=$(specyd keys show wallet4 -a --keyring-backend test --home ./data/test-2) && echo $WALLET_4;
 ```
@@ -123,6 +124,17 @@ specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
 
 > This is the situation after funding the ICA.
 
+#### Deposit token
+
+```bash
+specyd tx specy deposit-balance \
+    1000000000stake \
+    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+```
+
+```bash
+specyd q specy list-deposit --node tcp://localhost:16657
+```
 
 
 #### Create automation transaction task
@@ -136,7 +148,7 @@ specyd tx specy create-task \
     test_task connection-0 \
     '{
     "@type":"/cosmos.bank.v1beta1.MsgSend",
-    "from_address":"cosmos1upfegaenhhvl8r4ezhe8zt6ez9r80pcxd8c9zfrjshskfxjdjypsutdwwc",
+    "from_address":"cosmos1xnf4un9c0psuanm36qqjwnjpp59wy6jzmt72ksuhrwwu0guemp9srdscfh",
     "to_address":"cosmos10h9stc5v6ntgeygf5xf945njqq5h32r53uquvw",
     "amount": [
         {
@@ -169,14 +181,25 @@ Query task details
 ```bash 
 specyd q specy list-task --node tcp://localhost:16657
 ```
+#### Create executor
+
+```bash
+specyd tx specy create-executor \
+     iasreport enclavepk \
+    --from $WALLET_VAL --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+```
+
+```bash
+specyd q specy list-executor --node tcp://localhost:16657
+```
 
 #### Simulate task execution
 
 Note：This is actually executed by the executor when the task rulefile setting is met.
 ```bash
 specyd tx specy execute-task \
-cosmos1m9l358xunhhwds0568za49mzhvuxx9uxre5tud test-task1 cproofstring performdataString \
---from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+cosmos1m9l358xunhhwds0568za49mzhvuxx9uxre5tud test_task cproofstring performdataString \
+--from $WALLET_VAL --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 ![execute-task](./images/post-execute-task.jpg)
