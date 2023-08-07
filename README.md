@@ -129,8 +129,8 @@ specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
 When a task is executed, a handling fee will be deducted, so users need to deposit a certain number of tokens into the module in advance, otherwise the automated tasks created by the user in the future cannot be executed.
 ```bash
 specyd tx specy deposit-balance \
-    1000000000stake \
-    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    1000stake \
+    --from $WALLET_1 --chain-id specy-test-1 --home ./data/specy-test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 ```bash
@@ -156,15 +156,15 @@ specyd tx specy create-task \
     test_task connection-0 \
     '{
     "@type":"/cosmos.bank.v1beta1.MsgSend",
-    "from_address":"cosmos1xnf4un9c0psuanm36qqjwnjpp59wy6jzmt72ksuhrwwu0guemp9srdscfh",
-    "to_address":"cosmos10h9stc5v6ntgeygf5xf945njqq5h32r53uquvw",
+    "from_address":"osmo1gt9vdhz5uwq29ftpprmjut5pzf4gp9yje5flnykm2taeztls287sm2nrrd",
+    "to_address":"osmo17dtl0mjt3t77kpuhg2edqzjpszulwhgz5fk0yz",
     "amount": [
         {
-            "denom": "stake",
-            "amount": "1000"
+            "denom": "osmo",
+            "amount": "1"
         }
     ]
-    }' rulefile 0 0 100 --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    }' rulefile 0 0 100 --from $WALLET_1 --chain-id specy-test-1 --home ./data/specy-test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 - Automation task case 2:
@@ -183,6 +183,30 @@ specyd tx specy create-task \
     }
     }' rulefile 0 0 100 --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
+
+```bash
+specyd tx specy create-task \
+    test_task2 connection-0 \
+    '{
+    "@type": "/osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn",
+    "sender": "osmo1gt9vdhz5uwq29ftpprmjut5pzf4gp9yje5flnykm2taeztls287sm2nrrd",
+    "routes": [
+        {
+            "pool_id": "12",
+            "token_out_denom": "ibc/A8C2D23A1E6F95DA4E48BA349667E322BD7A6C996D8A4AAE8BA72E190F3D1477"
+        }
+    ],
+    "token_in": {
+        "denom": "uosmo",
+        "amount": "10000000"
+    },
+    "token_out_min_amount": "506530"
+    }' rulefile 0 0 100 --from $WALLET_1 --chain-id specy-test-1 --home ./data/specy-test-1 --node tcp://localhost:16657 --keyring-backend test -y
+```
+
+
+
+
 ![post-create-task](./images/post-create-task.jpg)
 Query task details
 
@@ -194,7 +218,7 @@ As the validator of the specy chain, the executor service must be running and th
 ```bash
 specyd tx specy create-executor \
      iasreport enclavepk \
-    --from $WALLET_VAL --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    --from $WALLET_VAL --chain-id specy-test-1 --home ./data/specy-test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 ```bash
@@ -207,7 +231,7 @@ Note：This is actually executed by the executor-service when the task rulefile 
 ```bash
 specyd tx specy execute-task \
 cosmos1m9l358xunhhwds0568za49mzhvuxx9uxre5tud test_task cproofstring performdataString \
---from $WALLET_VAL --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+--from $WALLET_VAL --chain-id test-1 --home ./data/specy-test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 ![execute-task](./images/post-execute-task.jpg)

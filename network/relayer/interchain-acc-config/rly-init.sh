@@ -3,8 +3,8 @@
 # Configure predefined mnemonic pharses
 BINARY=rly
 CHAIN_DIR=./data
-CHAINID_1=test-1
-CHAINID_2=test-2
+CHAINID_1=specy-test-1
+CHAINID_2=osmo-test-5
 RELAYER_DIR=./relayer
 MNEMONIC_1="alley afraid soup fall idea toss can goose become valve initial strong forward bright dish figure check leopard decide warfare hub unusual join cart"
 MNEMONIC_2="record gift you once hip style during joke field prize dust unique length more pencil transfer quit train device arrive energy sort steak upset"
@@ -27,5 +27,5 @@ echo "Restoring accounts..."
 $BINARY keys restore $CHAINID_1 testkey1 "$MNEMONIC_1" --home $CHAIN_DIR/$RELAYER_DIR
 $BINARY keys restore $CHAINID_2 testkey2 "$MNEMONIC_2" --home $CHAIN_DIR/$RELAYER_DIR
 
-echo "Creating clients and a connection..."
-$BINARY tx connection test1-test2 --home $CHAIN_DIR/$RELAYER_DIR
+# echo "Creating clients and a connection..."
+# $BINARY tx connection test1-test2 --home $CHAIN_DIR/$RELAYER_DIR
