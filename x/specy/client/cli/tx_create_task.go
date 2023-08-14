@@ -1,11 +1,15 @@
 package cli
 
 import (
+	"os"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/pkg/errors"
 	"github.com/specy-network/specy/x/specy/types"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
@@ -15,32 +19,63 @@ var _ = strconv.Itoa(0)
 
 func CmdCreateTask() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-task [contract-address] [method] [calldata] [single] [rule-file]",
+		Use:   "create-task [name] [connection-id] [msg] [rule-files] [task-type] [interval-type] [number]",
 		Short: "Broadcast message create-task",
-		Args:  cobra.ExactArgs(5),
+		Args:  cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argContractAddress := args[0]
-			argMethod := args[1]
-			argCalldata := args[2]
-			argSingle, err := cast.ToBoolE(args[3])
+			argName := args[0]
+			argConnectId := args[1]
 			if err != nil {
 				return err
 			}
-			argRuleFile := args[4]
+
+			argRuleFiles := args[3]
+			argTaskType, err := cast.ToUint64E(args[4])
+			if err != nil {
+				return err
+			}
+			argIntervalType, err := cast.ToUint64E(args[5])
+			if err != nil {
+				return err
+			}
+			argNumber, err := cast.ToUint64E(args[6])
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
+			cdc := codec.NewProtoCodec(clientCtx.InterfaceRegistry)
 
-			msg := types.NewMsgCreateTask(
+			var txMsg sdk.Msg
+			if err := cdc.UnmarshalInterfaceJSON([]byte(args[2]), &txMsg); err != nil {
+
+				// check for file path if JSON input is not provided
+				contents, err := os.ReadFile(args[2])
+				if err != nil {
+					return errors.Wrap(err, "neither JSON input nor path to .json file for sdk msg were provided")
+				}
+
+				if err := cdc.UnmarshalInterfaceJSON(contents, &txMsg); err != nil {
+					return errors.Wrap(err, "error unmarshalling sdk msg file")
+				}
+			}
+
+			msg, err := types.NewMsgCreateTask(
 				clientCtx.GetFromAddress().String(),
-				argContractAddress,
-				argMethod,
-				argCalldata,
-				argSingle,
-				argRuleFile,
+				argName,
+				argConnectId,
+				txMsg,
+				argRuleFiles,
+				argTaskType,
+				argIntervalType,
+				argNumber,
 			)
+			if err != nil {
+				return err
+			}
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

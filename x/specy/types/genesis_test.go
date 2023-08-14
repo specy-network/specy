@@ -22,6 +22,16 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
 
+				TaskList: []types.Task{
+					{
+						Owner: "0",
+						Name:  "0",
+					},
+					{
+						Owner: "1",
+						Name:  "1",
+					},
+				},
 				ExecutorList: []types.Executor{
 					{
 						Address: "0",
@@ -30,17 +40,37 @@ func TestGenesisState_Validate(t *testing.T) {
 						Address: "1",
 					},
 				},
-				TaskList: []types.Task{
+				DepositList: []types.Deposit{
 					{
-						TaskHash: "0",
+						Address: "0",
 					},
 					{
-						TaskHash: "1",
+						Address: "1",
 					},
+				},
+				CurrentExecutorStatus: &types.CurrentExecutorStatus{
+					CurrentExecutor: "57",
+					ChangeHeight:    92,
 				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
+		},
+		{
+			desc: "duplicated task",
+			genState: &types.GenesisState{
+				TaskList: []types.Task{
+					{
+						Owner: "0",
+						Name:  "0",
+					},
+					{
+						Owner: "0",
+						Name:  "0",
+					},
+				},
+			},
+			valid: false,
 		},
 		{
 			desc: "duplicated executor",
@@ -57,14 +87,14 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid: false,
 		},
 		{
-			desc: "duplicated task",
+			desc: "duplicated deposit",
 			genState: &types.GenesisState{
-				TaskList: []types.Task{
+				DepositList: []types.Deposit{
 					{
-						TaskHash: "0",
+						Address: "0",
 					},
 					{
-						TaskHash: "0",
+						Address: "0",
 					},
 				},
 			},

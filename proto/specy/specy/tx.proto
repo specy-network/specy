@@ -1,51 +1,101 @@
 syntax = "proto3";
-package specy.specy;
 
-// this line is used by starport scaffolding # proto/tx/import
-import "cosmos/base/v1beta1/coin.proto";
+package specynetwork.specy.specy;
+
 import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "google/protobuf/any.proto";
 
-option go_package = "specy/x/specy/types";
+option go_package = "github.com/specy-network/specy/x/specy/types";
 
 // Msg defines the Msg service.
 service Msg {
-      rpc CreateExecutor(MsgCreateExecutor) returns (MsgCreateExecutorResponse);
-  rpc CreateTask(MsgCreateTask) returns (MsgCreateTaskResponse);
-  rpc ExecuteTask(MsgExecuteTask) returns (MsgExecuteTaskResponse);
-// this line is used by starport scaffolding # proto/tx/rpc
+  rpc CreateTask      (MsgCreateTask     ) returns (MsgCreateTaskResponse     );
+  rpc CancelTask      (MsgCancelTask     ) returns (MsgCancelTaskResponse     );
+  rpc EditTask        (MsgEditTask       ) returns (MsgEditTaskResponse       );
+  rpc CreateExecutor  (MsgCreateExecutor ) returns (MsgCreateExecutorResponse );
+  rpc CancelExecutor  (MsgCancelExecutor ) returns (MsgCancelExecutorResponse );
+  rpc EditExecutor    (MsgEditExecutor   ) returns (MsgEditExecutorResponse   );
+  rpc DepositBalance  (MsgDepositBalance ) returns (MsgDepositBalanceResponse );
+  rpc WithdrawBalance (MsgWithdrawBalance) returns (MsgWithdrawBalanceResponse);
+  rpc ExecuteTask     (MsgExecuteTask    ) returns (MsgExecuteTaskResponse    );
 }
+message MsgCreateTask {
+  string              creator      = 1;
+  string              name         = 2;
+  string              connectionId = 3;
+  google.protobuf.Any msg          = 4;
+  string              ruleFiles    = 5;
+  uint64              taskType     = 6;
+  uint64              intervalType = 7;
+  uint64              number       = 8;
+}
+
+message MsgCreateTaskResponse {}
+
+message MsgCancelTask {
+  string creator = 1;
+  string name    = 2;
+}
+
+message MsgCancelTaskResponse {}
+
+message MsgEditTask {
+  string              creator      = 1;
+  string              name         = 2;
+  string              connectionId = 3;
+  google.protobuf.Any msg          = 4;
+  string              ruleFiles    = 5;
+  uint64              taskType     = 6;
+  uint64              intervalType = 7;
+  uint64              number       = 8;
+}
+
+message MsgEditTaskResponse {}
 
 message MsgCreateExecutor {
+  string creator              = 1;
+  string iasAttestationReport = 2;
+  string enclavePk            = 3;
+}
+
+message MsgCreateExecutorResponse {}
+
+message MsgCancelExecutor {
   string creator = 1;
-  cosmos.base.v1beta1.Coin staking = 2 [(gogoproto.nullable) = false];
-  string iasAttestationReport = 3;
-  string enclavePk = 4;
 }
 
-message MsgCreateExecutorResponse {
+message MsgCancelExecutorResponse {}
+
+message MsgEditExecutor {
+  string creator              = 1;
+  string iasAttestationReport = 2;
+  string enclavePk            = 3;
 }
 
-message MsgCreateTask {
-  string creator = 1;
-  string contractAddress = 2;
-  string method = 3;
-  string calldata = 4;
-  bool single = 5;
-  string ruleFile = 6;
+message MsgEditExecutorResponse {}
+
+message MsgDepositBalance {
+  string                   creator = 1;
+  cosmos.base.v1beta1.Coin amount  = 2 [(gogoproto.nullable) = false];
 }
 
-message MsgCreateTaskResponse {
+message MsgDepositBalanceResponse {}
+
+message MsgWithdrawBalance {
+  string                   creator = 1;
+  cosmos.base.v1beta1.Coin amount  = 2 [(gogoproto.nullable) = false];
 }
+
+message MsgWithdrawBalanceResponse {}
 
 message MsgExecuteTask {
-  string creator = 1;
-  string taskHash = 2;
-  string calldata = 3;
-  string ruleFileHash=4;
-  string signature=5;
+  string creator     = 1;
+  string owner       = 2;
+  string name        = 3;
+  string cproof      = 4;
+  string performData = 5;
 }
 
-message MsgExecuteTaskResponse {
-}
+message MsgExecuteTaskResponse {}
 
-// this line is used by starport scaffolding # proto/tx/message

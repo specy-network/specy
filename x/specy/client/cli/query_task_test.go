@@ -29,7 +29,8 @@ func networkWithTaskObjects(t *testing.T, n int) (*network.Network, []types.Task
 
 	for i := 0; i < n; i++ {
 		task := types.Task{
-			TaskHash: strconv.Itoa(i),
+			Owner: strconv.Itoa(i),
+			Name:  strconv.Itoa(i),
 		}
 		nullify.Fill(&task)
 		state.TaskList = append(state.TaskList, task)
@@ -48,23 +49,26 @@ func TestShowTask(t *testing.T) {
 		fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 	}
 	for _, tc := range []struct {
-		desc       string
-		idTaskHash string
+		desc    string
+		idOwner string
+		idName  string
 
 		args []string
 		err  error
 		obj  types.Task
 	}{
 		{
-			desc:       "found",
-			idTaskHash: objs[0].TaskHash,
+			desc:    "found",
+			idOwner: objs[0].Owner,
+			idName:  objs[0].Name,
 
 			args: common,
 			obj:  objs[0],
 		},
 		{
-			desc:       "not found",
-			idTaskHash: strconv.Itoa(100000),
+			desc:    "not found",
+			idOwner: strconv.Itoa(100000),
+			idName:  strconv.Itoa(100000),
 
 			args: common,
 			err:  status.Error(codes.NotFound, "not found"),
@@ -72,7 +76,8 @@ func TestShowTask(t *testing.T) {
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				tc.idTaskHash,
+				tc.idOwner,
+				tc.idName,
 			}
 			args = append(args, tc.args...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowTask(), args)

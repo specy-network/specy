@@ -2,58 +2,82 @@ package keeper
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
-	"strconv"
-
-	"github.com/specy-network/specy/x/specy/types"
+	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	icatypes "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/types"
+	goproto "github.com/gogo/protobuf/proto"
+	"github.com/specy-network/specy/x/specy/types"
+	"github.com/tendermint/tendermint/crypto/tmhash"
 )
 
 func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (*types.MsgCreateTaskResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	hash := sha256.New()
-	hash.Write([]byte(msg.String()))
-	taskHash := hash.Sum(nil)
-	hashString := hex.EncodeToString(taskHash[:])
-
-	_, found := k.GetTask(ctx, hashString)
+	_, found := k.GetTask(ctx, msg.Creator, msg.Name)
 	if found {
 		return nil, types.ErrTaskIsExsit
 	}
-	//todo 从deposit中减去base price
 	task := &types.Task{
-		TaskHash:        hashString,
-		ContractAddress: msg.ContractAddress,
-		Method:          msg.Method,
-		Calldata:        msg.Calldata,
-		Single:          msg.Single,
-		RuleFile:        msg.RuleFile,
+		Owner:        msg.Creator,
+		Name:         msg.Name,
+		Hash:         fmt.Sprintf("%x", tmhash.Sum([]byte(msg.Creator+msg.Name))),
+		ConnectionId: msg.ConnectionId,
+		Msg:          msg.Msg,
+		RuleFiles:    msg.RuleFiles,
+		TaskType:     msg.TaskType,
+		ScheduleType: &types.Condition{IntervalType: msg.IntervalType, Number: msg.Number},
 	}
-	taskCreator, _ := sdk.AccAddressFromBech32(msg.Creator)
-	accountStore := k.getAccountStore(ctx, taskCreator)
-
 	k.SetTask(ctx, *task)
-	taskByte, err := task.Marshal()
-	if err != nil {
-		return nil, err
-	}
-	accountStore.Set([]byte(hashString), taskByte)
-
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeCreateTask,
-			sdk.NewAttribute(types.AttributeKeyTaskHash, hashString),
-			sdk.NewAttribute(types.AttributeKeyContractAddress, msg.ContractAddress),
-			sdk.NewAttribute(types.AttributeKeyMethod, msg.Method),
-			sdk.NewAttribute(types.AttributeKeyCalldata, msg.Calldata),
-			sdk.NewAttribute(types.AttributeKeySingle, strconv.FormatBool(msg.Single)),
-			sdk.NewAttribute(types.AttributeKeyRuleFile, msg.RuleFile),
 			sdk.NewAttribute(types.AttributeKeyCreator, msg.Creator),
+			sdk.NewAttribute(types.AttributeKeyTaskName, msg.Name),
+			sdk.NewAttribute(types.AttributeKeyTaskHash, task.Hash),
+			sdk.NewAttribute(types.AttributeKeyConnectId, msg.ConnectionId),
+			sdk.NewAttribute(types.AttributeKeyTaskMsgs, task.Msg.String()),
+			sdk.NewAttribute(types.AttributeKeyTaskRuleFile, task.RuleFiles),
+			sdk.NewAttribute(types.AttributeKeyTaskType, string(rune(task.TaskType))),
+			sdk.NewAttribute(types.AttributeKeyTaskIntervalType, string(rune(task.ScheduleType.IntervalType))),
+			sdk.NewAttribute(types.AttributeKeyTaskIntervalNumber, string(rune(task.ScheduleType.Number))),
 		),
 	})
 
 	return &types.MsgCreateTaskResponse{}, nil
+}
+
+func (k msgServer) SendInterMsg(goCtx context.Context, task types.Task) error {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	var sdkMsg sdk.Msg
+	err := k.cdc.UnpackAny(task.Msg, &sdkMsg)
+	if err != nil {
+		return types.ErrMsgGetCachedValue
+	}
+
+	portID, err := icatypes.NewControllerPortID(task.Owner)
+	if err != nil {
+		return types.ErrTaskPortParse
+	}
+
+	data, err := icatypes.SerializeCosmosTx(k.cdc, []goproto.Message{sdkMsg})
+	if err != nil {
+		return err
+	}
+
+	packetData := icatypes.InterchainAccountPacketData{
+		Type: icatypes.EXECUTE_TX,
+		Data: data,
+	}
+
+	// timeoutTimestamp set to max value with the unsigned bit shifted to sastisfy hermes timestamp conversion
+	// it is the responsibility of the auth module developer to ensure an appropriate timeout timestamp
+	timeoutTimestamp := ctx.BlockTime().Add(time.Minute).UnixNano()
+	_, err = k.icaControllerKeeper.SendTx(ctx, nil, task.ConnectionId, portID, packetData, uint64(timeoutTimestamp)) //nolint:staticcheck //
+	if err != nil {
+		return err
+	}
+	return nil
+	//
 }

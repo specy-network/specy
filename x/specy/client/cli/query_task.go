@@ -44,18 +44,20 @@ func CmdListTask() *cobra.Command {
 
 func CmdShowTask() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-task [task-hash]",
+		Use:   "show-task [owner] [name]",
 		Short: "shows a task",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argTaskHash := args[0]
+			argOwner := args[0]
+			argName := args[1]
 
 			params := &types.QueryGetTaskRequest{
-				TaskHash: argTaskHash,
+				Owner: argOwner,
+				Name:  argName,
 			}
 
 			res, err := queryClient.Task(context.Background(), params)

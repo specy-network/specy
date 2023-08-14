@@ -9,10 +9,9 @@ const TypeMsgCreateExecutor = "create_executor"
 
 var _ sdk.Msg = &MsgCreateExecutor{}
 
-func NewMsgCreateExecutor(creator string, staking sdk.Coin, iasAttestationReport string, enclavePk string) *MsgCreateExecutor {
+func NewMsgCreateExecutor(creator string, iasAttestationReport string, enclavePk string) *MsgCreateExecutor {
 	return &MsgCreateExecutor{
 		Creator:              creator,
-		Staking:              staking,
 		IasAttestationReport: iasAttestationReport,
 		EnclavePk:            enclavePk,
 	}

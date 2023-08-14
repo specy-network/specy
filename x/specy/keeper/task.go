@@ -11,20 +11,23 @@ func (k Keeper) SetTask(ctx sdk.Context, task types.Task) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TaskKeyPrefix))
 	b := k.cdc.MustMarshal(&task)
 	store.Set(types.TaskKey(
-		task.TaskHash,
+		task.Owner,
+		task.Name,
 	), b)
 }
 
 // GetTask returns a task from its index
 func (k Keeper) GetTask(
 	ctx sdk.Context,
-	taskHash string,
+	owner string,
+	name string,
 
 ) (val types.Task, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TaskKeyPrefix))
 
 	b := store.Get(types.TaskKey(
-		taskHash,
+		owner,
+		name,
 	))
 	if b == nil {
 		return val, false
@@ -37,12 +40,14 @@ func (k Keeper) GetTask(
 // RemoveTask removes a task from the store
 func (k Keeper) RemoveTask(
 	ctx sdk.Context,
-	taskHash string,
+	owner string,
+	name string,
 
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TaskKeyPrefix))
 	store.Delete(types.TaskKey(
-		taskHash,
+		owner,
+		name,
 	))
 }
 

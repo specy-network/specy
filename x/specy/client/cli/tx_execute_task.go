@@ -3,11 +3,10 @@ package cli
 import (
 	"strconv"
 
-	"github.com/specy-network/specy/x/specy/types"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/specy-network/specy/x/specy/types"
 	"github.com/spf13/cobra"
 )
 
@@ -15,14 +14,14 @@ var _ = strconv.Itoa(0)
 
 func CmdExecuteTask() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "execute-task [task-hash] [calldata] [rulefile-hash] [signature]",
+		Use:   "execute-task [owner] [name] [cproof] [perform-data]",
 		Short: "Broadcast message execute-task",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argTaskHash := args[0]
-			argCalldata := args[1]
-			argRuleFileHash := args[2]
-			argSignature := args[3]
+			argOwner := args[0]
+			argName := args[1]
+			argCproof := args[2]
+			argPerformData := args[3]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -31,10 +30,10 @@ func CmdExecuteTask() *cobra.Command {
 
 			msg := types.NewMsgExecuteTask(
 				clientCtx.GetFromAddress().String(),
-				argTaskHash,
-				argCalldata,
-				argRuleFileHash,
-				argSignature,
+				argOwner,
+				argName,
+				argCproof,
+				argPerformData,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

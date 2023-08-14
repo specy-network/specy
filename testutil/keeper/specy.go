@@ -3,15 +3,16 @@ package keeper
 import (
 	"testing"
 
-	"github.com/specy-network/specy/x/specy/keeper"
-	"github.com/specy-network/specy/x/specy/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
+	icacontrollerkeeper "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/controller/keeper"
+	"github.com/specy-network/specy/x/specy/keeper"
+	"github.com/specy-network/specy/x/specy/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -42,8 +43,11 @@ func SpecyKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		storeKey,
 		memStoreKey,
 		paramsSubspace,
-		keeper.NewRouter(),
 		nil,
+		nil,
+		nil,
+		icacontrollerkeeper.Keeper{},
+		authtypes.FeeCollectorName,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

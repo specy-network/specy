@@ -15,4 +15,7 @@ func TestGetParams(t *testing.T) {
 	k.SetParams(ctx, params)
 
 	require.EqualValues(t, params, k.GetParams(ctx))
+	require.EqualValues(t, params.IntervalBlock, k.IntervalBlock(ctx))
+	require.EqualValues(t, params.CommissionDenom, k.CommissionDenom(ctx))
+	require.EqualValues(t, params.Amount, k.Amount(ctx))
 }

@@ -2,67 +2,61 @@ package keeper
 
 import (
 	"context"
-	"encoding/json"
-	"reflect"
-
-	"github.com/specy-network/specy/x/specy/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/specy-network/specy/x/specy/types"
 )
-
-type CallData struct {
-	Params []interface{} `json:"params" yaml:"params"`
-	Index  int           `json:"index" yaml:"index"`
-}
 
 func (k msgServer) ExecuteTask(goCtx context.Context, msg *types.MsgExecuteTask) (*types.MsgExecuteTaskResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	task, found := k.GetTask(ctx, msg.Owner, msg.Name)
 
-	task, found := k.GetTask(ctx, msg.TaskHash)
 	if !found {
-		return nil, types.ErrExecutorIsExsit
+		return nil, types.ErrTaskNotExsit
 	}
-
-	//TODO add executor power check
-
-	//TODO add signature and rulefile hash check
-
-	keeper := k.router.routes[task.ContractAddress]
-	value := reflect.ValueOf(keeper)
-	method := value.MethodByName(task.Method)
-
-	calldata, err := parseCallData(msg.Calldata)
+	//check executor auth
+	err := checkExecutorAuth(ctx, msg.Creator, k.Keeper)
 	if err != nil {
-		return nil, types.ErrExecutorIsExsit
+		return nil, types.ErrExecutorAuthCheck
 	}
-	numParams := len(calldata.Params)
-	methodParams := make([]reflect.Value, numParams+1)
-	methodParams[0] = reflect.ValueOf(ctx)
-	for i := 0; i < numParams; i++ {
-		methodParams[i+1] = reflect.ValueOf(calldata.Params[i])
-	}
-	method.Call(methodParams)
 
+	//handle fee
+	err = k.SubFee(ctx, task.Owner)
+	if err != nil {
+		return nil, err
+	}
+
+	err = k.SendInterMsg(ctx, task)
+	if err != nil {
+		return nil, err
+	}
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeExecuteTask,
-			sdk.NewAttribute(types.AttributeKeyTaskHash, msg.TaskHash),
-			sdk.NewAttribute(types.AttributeKeyContractAddress, task.ContractAddress),
-			sdk.NewAttribute(types.AttributeKeyMethod, task.Method),
-			sdk.NewAttribute(types.AttributeKeyCalldata, msg.Calldata),
-			sdk.NewAttribute(types.AttributeKeyRuleFile, msg.RuleFileHash),
-			sdk.NewAttribute(types.AttributeKeyExecutor, msg.Creator),
+			sdk.NewAttribute(types.AttributeKeyCreator, msg.Creator),
+			sdk.NewAttribute(types.AttributeKeyTaskName, msg.Name),
+			sdk.NewAttribute(types.AttributeKeyTaskHash, task.Hash),
+			sdk.NewAttribute(types.AttributeKeyConnectId, task.ConnectionId),
+			sdk.NewAttribute(types.AttributeKeyTaskMsgs, task.Msg.String()),
+			sdk.NewAttribute(types.AttributeKeyTaskRuleFile, task.RuleFiles),
+			sdk.NewAttribute(types.AttributeKeyTaskType, string(rune(task.TaskType))),
+			sdk.NewAttribute(types.AttributeKeyTaskIntervalType, string(rune(task.ScheduleType.IntervalType))),
+			sdk.NewAttribute(types.AttributeKeyTaskIntervalNumber, string(rune(task.ScheduleType.Number))),
 		),
 	})
-
 	return &types.MsgExecuteTaskResponse{}, nil
 }
 
-func parseCallData(content string) (CallData, error) {
-	var callData CallData
-	if err := json.Unmarshal([]byte(content), &callData); err != nil {
-		return callData, err
-	} else {
-		return callData, nil
+func checkExecutorAuth(goCtx context.Context, creator string, k Keeper) error {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	accAddr, err := sdk.AccAddressFromBech32(creator)
+	if err != nil {
+		return err
 	}
+	valAddr := sdk.ValAddress(accAddr)
+	currentExecutor, found := k.GetCurrentExecutorStatus(ctx)
+	if !found || currentExecutor.CurrentExecutor != valAddr.String() {
+		return types.ErrExecutorAuthCheck
+	}
+	return nil
 }

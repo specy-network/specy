@@ -3,6 +3,7 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/specy-network/specy/x/specy/types"
 )
 
@@ -60,4 +61,22 @@ func (k Keeper) GetAllExecutor(ctx sdk.Context) (list []types.Executor) {
 	}
 
 	return
+}
+
+func (k Keeper) ExecutorSelection(ctx sdk.Context, val stakingtypes.ValidatorI) {
+	//Use the presenter of the current block as the executor for the next stage
+	params := k.GetParams(ctx)
+	currentExecutorStatus, found := k.GetCurrentExecutorStatus(ctx)
+	if !found {
+		currentExecutorStatus = types.CurrentExecutorStatus{
+			CurrentExecutor: val.GetOperator().String(),
+
+			ChangeHeight: ctx.BlockHeight() + int64(params.IntervalBlock),
+		}
+
+	}
+	currentExecutorStatus.ChangeHeight = currentExecutorStatus.ChangeHeight + int64(params.IntervalBlock)
+	currentExecutorStatus.CurrentExecutor = val.GetOperator().String()
+
+	k.SetCurrentExecutorStatus(ctx, currentExecutorStatus)
 }

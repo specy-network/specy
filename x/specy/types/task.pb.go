@@ -5,6 +5,7 @@ package types
 
 import (
 	fmt "fmt"
+	types "github.com/cosmos/cosmos-sdk/codec/types"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
@@ -23,12 +24,16 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Task struct {
-	TaskHash        string `protobuf:"bytes,1,opt,name=taskHash,proto3" json:"taskHash,omitempty"`
-	ContractAddress string `protobuf:"bytes,2,opt,name=contractAddress,proto3" json:"contractAddress,omitempty"`
-	Method          string `protobuf:"bytes,3,opt,name=method,proto3" json:"method,omitempty"`
-	Calldata        string `protobuf:"bytes,4,opt,name=calldata,proto3" json:"calldata,omitempty"`
-	Single          bool   `protobuf:"varint,5,opt,name=single,proto3" json:"single,omitempty"`
-	RuleFile        string `protobuf:"bytes,6,opt,name=ruleFile,proto3" json:"ruleFile,omitempty"`
+	Owner             string     `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner,omitempty"`
+	Name              string     `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Hash              string     `protobuf:"bytes,3,opt,name=hash,proto3" json:"hash,omitempty"`
+	ConnectionId      string     `protobuf:"bytes,4,opt,name=connectionId,proto3" json:"connectionId,omitempty"`
+	Msg               *types.Any `protobuf:"bytes,5,opt,name=msg,proto3" json:"msg,omitempty"`
+	RuleFiles         string     `protobuf:"bytes,6,opt,name=ruleFiles,proto3" json:"ruleFiles,omitempty"`
+	TaskType          uint64     `protobuf:"varint,7,opt,name=taskType,proto3" json:"taskType,omitempty"`
+	ScheduleType      *Condition `protobuf:"bytes,8,opt,name=scheduleType,proto3" json:"scheduleType,omitempty"`
+	UpdateTime        uint64     `protobuf:"varint,9,opt,name=updateTime,proto3" json:"updateTime,omitempty"`
+	UpdateBlockHeight uint64     `protobuf:"varint,10,opt,name=updateBlockHeight,proto3" json:"updateBlockHeight,omitempty"`
 }
 
 func (m *Task) Reset()         { *m = Task{} }
@@ -64,70 +69,106 @@ func (m *Task) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Task proto.InternalMessageInfo
 
-func (m *Task) GetTaskHash() string {
+func (m *Task) GetOwner() string {
 	if m != nil {
-		return m.TaskHash
+		return m.Owner
 	}
 	return ""
 }
 
-func (m *Task) GetContractAddress() string {
+func (m *Task) GetName() string {
 	if m != nil {
-		return m.ContractAddress
+		return m.Name
 	}
 	return ""
 }
 
-func (m *Task) GetMethod() string {
+func (m *Task) GetHash() string {
 	if m != nil {
-		return m.Method
+		return m.Hash
 	}
 	return ""
 }
 
-func (m *Task) GetCalldata() string {
+func (m *Task) GetConnectionId() string {
 	if m != nil {
-		return m.Calldata
+		return m.ConnectionId
 	}
 	return ""
 }
 
-func (m *Task) GetSingle() bool {
+func (m *Task) GetMsg() *types.Any {
 	if m != nil {
-		return m.Single
+		return m.Msg
 	}
-	return false
+	return nil
 }
 
-func (m *Task) GetRuleFile() string {
+func (m *Task) GetRuleFiles() string {
 	if m != nil {
-		return m.RuleFile
+		return m.RuleFiles
 	}
 	return ""
+}
+
+func (m *Task) GetTaskType() uint64 {
+	if m != nil {
+		return m.TaskType
+	}
+	return 0
+}
+
+func (m *Task) GetScheduleType() *Condition {
+	if m != nil {
+		return m.ScheduleType
+	}
+	return nil
+}
+
+func (m *Task) GetUpdateTime() uint64 {
+	if m != nil {
+		return m.UpdateTime
+	}
+	return 0
+}
+
+func (m *Task) GetUpdateBlockHeight() uint64 {
+	if m != nil {
+		return m.UpdateBlockHeight
+	}
+	return 0
 }
 
 func init() {
-	proto.RegisterType((*Task)(nil), "specy.specy.Task")
+	proto.RegisterType((*Task)(nil), "specynetwork.specy.specy.Task")
 }
 
 func init() { proto.RegisterFile("specy/specy/task.proto", fileDescriptor_8e6cd4bd76707bef) }
 
 var fileDescriptor_8e6cd4bd76707bef = []byte{
-	// 212 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2b, 0x2e, 0x48, 0x4d,
-	0xae, 0xd4, 0x87, 0x90, 0x25, 0x89, 0xc5, 0xd9, 0x7a, 0x05, 0x45, 0xf9, 0x25, 0xf9, 0x42, 0xdc,
-	0x60, 0x11, 0x3d, 0x30, 0xa9, 0xb4, 0x85, 0x91, 0x8b, 0x25, 0x24, 0xb1, 0x38, 0x5b, 0x48, 0x8a,
-	0x8b, 0x03, 0xa4, 0xc6, 0x23, 0xb1, 0x38, 0x43, 0x82, 0x51, 0x81, 0x51, 0x83, 0x33, 0x08, 0xce,
-	0x17, 0xd2, 0xe0, 0xe2, 0x4f, 0xce, 0xcf, 0x2b, 0x29, 0x4a, 0x4c, 0x2e, 0x71, 0x4c, 0x49, 0x29,
-	0x4a, 0x2d, 0x2e, 0x96, 0x60, 0x02, 0x2b, 0x41, 0x17, 0x16, 0x12, 0xe3, 0x62, 0xcb, 0x4d, 0x2d,
-	0xc9, 0xc8, 0x4f, 0x91, 0x60, 0x06, 0x2b, 0x80, 0xf2, 0x40, 0xa6, 0x27, 0x27, 0xe6, 0xe4, 0xa4,
-	0x24, 0x96, 0x24, 0x4a, 0xb0, 0x40, 0x4c, 0x87, 0xf1, 0x41, 0x7a, 0x8a, 0x33, 0xf3, 0xd2, 0x73,
-	0x52, 0x25, 0x58, 0x15, 0x18, 0x35, 0x38, 0x82, 0xa0, 0x3c, 0x90, 0x9e, 0xa2, 0xd2, 0x9c, 0x54,
-	0xb7, 0xcc, 0x9c, 0x54, 0x09, 0x36, 0x88, 0x1e, 0x18, 0xdf, 0x49, 0xf7, 0xc4, 0x23, 0x39, 0xc6,
-	0x0b, 0x8f, 0xe4, 0x18, 0x1f, 0x3c, 0x92, 0x63, 0x9c, 0xf0, 0x58, 0x8e, 0xe1, 0xc2, 0x63, 0x39,
-	0x86, 0x1b, 0x8f, 0xe5, 0x18, 0xa2, 0x84, 0x21, 0xfe, 0xad, 0x80, 0xf9, 0xbb, 0xb2, 0x20, 0xb5,
-	0x38, 0x89, 0x0d, 0xec, 0x73, 0x63, 0x40, 0x00, 0x00, 0x00, 0xff, 0xff, 0x31, 0x0e, 0x58, 0x55,
-	0x13, 0x01, 0x00, 0x00,
+	// 347 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x52, 0xc1, 0x4e, 0xc2, 0x40,
+	0x10, 0xa5, 0x50, 0x10, 0x56, 0x2e, 0x6e, 0x88, 0x59, 0xd1, 0x34, 0x04, 0x13, 0xc3, 0x01, 0x97,
+	0x44, 0xbf, 0x40, 0x4c, 0x50, 0xaf, 0x0d, 0x27, 0x6f, 0x65, 0x3b, 0xb6, 0x4d, 0xdb, 0xdd, 0xa6,
+	0xbb, 0x0d, 0xf6, 0x2f, 0xfc, 0x2c, 0x8f, 0x1c, 0x3d, 0x2a, 0xfc, 0x88, 0xe9, 0x2e, 0x28, 0xc4,
+	0x78, 0x99, 0xcc, 0x7b, 0x6f, 0x66, 0x67, 0xf2, 0x66, 0xd1, 0xa9, 0xcc, 0x80, 0x95, 0x13, 0x13,
+	0x95, 0x27, 0x63, 0x9a, 0xe5, 0x42, 0x09, 0x4c, 0x34, 0xc3, 0x41, 0x2d, 0x45, 0x1e, 0x53, 0x0d,
+	0x4c, 0xec, 0x9f, 0xef, 0x77, 0x30, 0xc1, 0xfd, 0x48, 0x45, 0x82, 0x9b, 0xb6, 0xfe, 0x59, 0x20,
+	0x44, 0x90, 0xc0, 0x44, 0xa3, 0x45, 0xf1, 0x32, 0xf1, 0x78, 0x69, 0xa4, 0xe1, 0x57, 0x1d, 0xd9,
+	0x73, 0x4f, 0xc6, 0xb8, 0x87, 0x9a, 0x62, 0xc9, 0x21, 0x27, 0xd6, 0xc0, 0x1a, 0x75, 0x5c, 0x03,
+	0x30, 0x46, 0x36, 0xf7, 0x52, 0x20, 0x75, 0x4d, 0xea, 0xbc, 0xe2, 0x42, 0x4f, 0x86, 0xa4, 0x61,
+	0xb8, 0x2a, 0xc7, 0x43, 0xd4, 0x65, 0x82, 0x73, 0x60, 0xd5, 0xd4, 0x27, 0x9f, 0xd8, 0x5a, 0x3b,
+	0xe0, 0xf0, 0x15, 0x6a, 0xa4, 0x32, 0x20, 0xcd, 0x81, 0x35, 0x3a, 0xbe, 0xe9, 0x51, 0xb3, 0x13,
+	0xdd, 0xed, 0x44, 0xef, 0x78, 0xe9, 0x56, 0x05, 0xf8, 0x02, 0x75, 0xf2, 0x22, 0x81, 0x59, 0x94,
+	0x80, 0x24, 0x2d, 0xfd, 0xd0, 0x2f, 0x81, 0xfb, 0xa8, 0x5d, 0x19, 0x32, 0x2f, 0x33, 0x20, 0x47,
+	0x03, 0x6b, 0x64, 0xbb, 0x3f, 0x18, 0x3f, 0xa0, 0xae, 0x64, 0x21, 0xf8, 0x45, 0x02, 0x5a, 0x6f,
+	0xeb, 0x51, 0x97, 0xf4, 0x3f, 0xd7, 0xe8, 0xfd, 0xce, 0x28, 0xf7, 0xa0, 0x11, 0x3b, 0x08, 0x15,
+	0x99, 0xef, 0x29, 0x98, 0x47, 0x29, 0x90, 0x8e, 0x1e, 0xb3, 0xc7, 0xe0, 0x31, 0x3a, 0x31, 0x68,
+	0x9a, 0x08, 0x16, 0x3f, 0x42, 0x14, 0x84, 0x8a, 0x20, 0x5d, 0xf6, 0x57, 0x98, 0xce, 0xde, 0xd7,
+	0x8e, 0xb5, 0x5a, 0x3b, 0xd6, 0xe7, 0xda, 0xb1, 0xde, 0x36, 0x4e, 0x6d, 0xb5, 0x71, 0x6a, 0x1f,
+	0x1b, 0xa7, 0xf6, 0x3c, 0x0e, 0x22, 0x15, 0x16, 0x0b, 0xca, 0x44, 0x6a, 0x4e, 0x77, 0xbd, 0xdd,
+	0x72, 0x7b, 0xc8, 0xd7, 0xdd, 0x17, 0x28, 0x33, 0x90, 0x8b, 0x96, 0xf6, 0xea, 0xf6, 0x3b, 0x00,
+	0x00, 0xff, 0xff, 0x7a, 0xaa, 0xad, 0x2f, 0x1e, 0x02, 0x00, 0x00,
 }
 
 func (m *Task) Marshal() (dAtA []byte, err error) {
@@ -150,48 +191,77 @@ func (m *Task) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.RuleFile) > 0 {
-		i -= len(m.RuleFile)
-		copy(dAtA[i:], m.RuleFile)
-		i = encodeVarintTask(dAtA, i, uint64(len(m.RuleFile)))
+	if m.UpdateBlockHeight != 0 {
+		i = encodeVarintTask(dAtA, i, uint64(m.UpdateBlockHeight))
+		i--
+		dAtA[i] = 0x50
+	}
+	if m.UpdateTime != 0 {
+		i = encodeVarintTask(dAtA, i, uint64(m.UpdateTime))
+		i--
+		dAtA[i] = 0x48
+	}
+	if m.ScheduleType != nil {
+		{
+			size, err := m.ScheduleType.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTask(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x42
+	}
+	if m.TaskType != 0 {
+		i = encodeVarintTask(dAtA, i, uint64(m.TaskType))
+		i--
+		dAtA[i] = 0x38
+	}
+	if len(m.RuleFiles) > 0 {
+		i -= len(m.RuleFiles)
+		copy(dAtA[i:], m.RuleFiles)
+		i = encodeVarintTask(dAtA, i, uint64(len(m.RuleFiles)))
 		i--
 		dAtA[i] = 0x32
 	}
-	if m.Single {
-		i--
-		if m.Single {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
+	if m.Msg != nil {
+		{
+			size, err := m.Msg.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTask(dAtA, i, uint64(size))
 		}
 		i--
-		dAtA[i] = 0x28
+		dAtA[i] = 0x2a
 	}
-	if len(m.Calldata) > 0 {
-		i -= len(m.Calldata)
-		copy(dAtA[i:], m.Calldata)
-		i = encodeVarintTask(dAtA, i, uint64(len(m.Calldata)))
+	if len(m.ConnectionId) > 0 {
+		i -= len(m.ConnectionId)
+		copy(dAtA[i:], m.ConnectionId)
+		i = encodeVarintTask(dAtA, i, uint64(len(m.ConnectionId)))
 		i--
 		dAtA[i] = 0x22
 	}
-	if len(m.Method) > 0 {
-		i -= len(m.Method)
-		copy(dAtA[i:], m.Method)
-		i = encodeVarintTask(dAtA, i, uint64(len(m.Method)))
+	if len(m.Hash) > 0 {
+		i -= len(m.Hash)
+		copy(dAtA[i:], m.Hash)
+		i = encodeVarintTask(dAtA, i, uint64(len(m.Hash)))
 		i--
 		dAtA[i] = 0x1a
 	}
-	if len(m.ContractAddress) > 0 {
-		i -= len(m.ContractAddress)
-		copy(dAtA[i:], m.ContractAddress)
-		i = encodeVarintTask(dAtA, i, uint64(len(m.ContractAddress)))
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintTask(dAtA, i, uint64(len(m.Name)))
 		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.TaskHash) > 0 {
-		i -= len(m.TaskHash)
-		copy(dAtA[i:], m.TaskHash)
-		i = encodeVarintTask(dAtA, i, uint64(len(m.TaskHash)))
+	if len(m.Owner) > 0 {
+		i -= len(m.Owner)
+		copy(dAtA[i:], m.Owner)
+		i = encodeVarintTask(dAtA, i, uint64(len(m.Owner)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -215,28 +285,42 @@ func (m *Task) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.TaskHash)
+	l = len(m.Owner)
 	if l > 0 {
 		n += 1 + l + sovTask(uint64(l))
 	}
-	l = len(m.ContractAddress)
+	l = len(m.Name)
 	if l > 0 {
 		n += 1 + l + sovTask(uint64(l))
 	}
-	l = len(m.Method)
+	l = len(m.Hash)
 	if l > 0 {
 		n += 1 + l + sovTask(uint64(l))
 	}
-	l = len(m.Calldata)
+	l = len(m.ConnectionId)
 	if l > 0 {
 		n += 1 + l + sovTask(uint64(l))
 	}
-	if m.Single {
-		n += 2
+	if m.Msg != nil {
+		l = m.Msg.Size()
+		n += 1 + l + sovTask(uint64(l))
 	}
-	l = len(m.RuleFile)
+	l = len(m.RuleFiles)
 	if l > 0 {
 		n += 1 + l + sovTask(uint64(l))
+	}
+	if m.TaskType != 0 {
+		n += 1 + sovTask(uint64(m.TaskType))
+	}
+	if m.ScheduleType != nil {
+		l = m.ScheduleType.Size()
+		n += 1 + l + sovTask(uint64(l))
+	}
+	if m.UpdateTime != 0 {
+		n += 1 + sovTask(uint64(m.UpdateTime))
+	}
+	if m.UpdateBlockHeight != 0 {
+		n += 1 + sovTask(uint64(m.UpdateBlockHeight))
 	}
 	return n
 }
@@ -278,7 +362,7 @@ func (m *Task) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TaskHash", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -306,11 +390,11 @@ func (m *Task) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.TaskHash = string(dAtA[iNdEx:postIndex])
+			m.Owner = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ContractAddress", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -338,11 +422,11 @@ func (m *Task) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ContractAddress = string(dAtA[iNdEx:postIndex])
+			m.Name = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Method", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Hash", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -370,11 +454,11 @@ func (m *Task) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Method = string(dAtA[iNdEx:postIndex])
+			m.Hash = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Calldata", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ConnectionId", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -402,13 +486,13 @@ func (m *Task) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Calldata = string(dAtA[iNdEx:postIndex])
+			m.ConnectionId = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Single", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Msg", wireType)
 			}
-			var v int
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTask
@@ -418,15 +502,31 @@ func (m *Task) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= int(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.Single = bool(v != 0)
+			if msglen < 0 {
+				return ErrInvalidLengthTask
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTask
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Msg == nil {
+				m.Msg = &types.Any{}
+			}
+			if err := m.Msg.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RuleFile", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RuleFiles", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -454,8 +554,101 @@ func (m *Task) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.RuleFile = string(dAtA[iNdEx:postIndex])
+			m.RuleFiles = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TaskType", wireType)
+			}
+			m.TaskType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTask
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TaskType |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ScheduleType", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTask
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTask
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTask
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ScheduleType == nil {
+				m.ScheduleType = &Condition{}
+			}
+			if err := m.ScheduleType.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UpdateTime", wireType)
+			}
+			m.UpdateTime = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTask
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UpdateTime |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UpdateBlockHeight", wireType)
+			}
+			m.UpdateBlockHeight = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTask
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UpdateBlockHeight |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTask(dAtA[iNdEx:])

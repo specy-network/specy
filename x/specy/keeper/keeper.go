@@ -3,47 +3,41 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/specy-network/specy/x/specy/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store/prefix"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	icacontrollerkeeper "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/controller/keeper"
+	"github.com/specy-network/specy/x/specy/types"
 	"github.com/tendermint/tendermint/libs/log"
 )
 
 type (
 	Keeper struct {
-		cdc        codec.BinaryCodec
-		storeKey   storetypes.StoreKey
-		memKey     storetypes.StoreKey
-		router     FunctionRouter
-		paramstore paramtypes.Subspace
-		bankKeeper types.BankKeeper
+		cdc                 codec.BinaryCodec
+		storeKey            storetypes.StoreKey
+		memKey              storetypes.StoreKey
+		paramstore          paramtypes.Subspace
+		authKeeper          types.AccountKeeper
+		bankKeeper          types.BankKeeper
+		stakingKeeper       types.StakingKeeper
+		icaControllerKeeper icacontrollerkeeper.Keeper
+
+		feeCollectorName string // name of the FeeCollector ModuleAccount
+
 	}
 )
-type FunctionRouter struct {
-	routes map[string]interface{}
-}
-
-func NewRouter() FunctionRouter {
-	return FunctionRouter{
-		routes: make(map[string]interface{}),
-	}
-}
-
-func (router FunctionRouter) AddRoute(contractName string, fun interface{}) {
-	router.routes[contractName] = fun
-}
 
 func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
 	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
-	router FunctionRouter,
+	authKeeper types.AccountKeeper,
 	bankKeeper types.BankKeeper,
+	stakingKeeper types.StakingKeeper,
+	iaKeeper icacontrollerkeeper.Keeper,
+	feeCollectorName string,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -51,20 +45,27 @@ func NewKeeper(
 	}
 
 	return &Keeper{
-
-		cdc:        cdc,
-		storeKey:   storeKey,
-		memKey:     memKey,
-		paramstore: ps,
-		router:     router,
-		bankKeeper: bankKeeper,
+		cdc:                 cdc,
+		storeKey:            storeKey,
+		memKey:              memKey,
+		paramstore:          ps,
+		authKeeper:          authKeeper,
+		bankKeeper:          bankKeeper,
+		stakingKeeper:       stakingKeeper,
+		icaControllerKeeper: iaKeeper,
+		feeCollectorName:    feeCollectorName,
 	}
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
-func (k Keeper) getAccountStore(ctx sdk.Context, addr sdk.AccAddress) prefix.Store {
-	store := ctx.KVStore(k.storeKey)
-	return prefix.NewStore(store, types.CreateAccountTasksPrefix(addr))
+
+func (k Keeper) GetStakingKeeper() types.StakingKeeper {
+	return k.stakingKeeper
+}
+func (k Keeper) SendFeeToDistributionCollected(ctx sdk.Context) error {
+	feeCollector := k.authKeeper.GetModuleAccount(ctx, types.RewardPoolName)
+	feeCollectedInt := k.bankKeeper.GetAllBalances(ctx, feeCollector.GetAddress())
+	return k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.RewardPoolName, k.feeCollectorName, feeCollectedInt)
 }

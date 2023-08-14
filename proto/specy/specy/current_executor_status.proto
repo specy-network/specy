@@ -1,0 +1,10 @@
+syntax = "proto3";
+package specynetwork.specy.specy;
+
+option go_package = "github.com/specy-network/specy/x/specy/types";
+
+message CurrentExecutorStatus {
+  string currentExecutor = 1; 
+  int64 changeHeight = 2; 
+  
+}
