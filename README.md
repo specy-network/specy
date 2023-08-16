@@ -181,7 +181,7 @@ specyd tx specy create-task \
 specyd tx specy create-task \
     test_task2 connection-0 \
     '{
-    "@type": "/osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn",
+    "@type": "/osmosis.gamm.v1beta1.MsgSwapExactAmountIn",
     "sender": "osmo1gt9vdhz5uwq29ftpprmjut5pzf4gp9yje5flnykm2taeztls287sm2nrrd",
     "routes": [
         {
@@ -194,7 +194,8 @@ specyd tx specy create-task \
         "amount": "10000000"
     },
     "token_out_min_amount": "506530"
-    }' rulefile 0 0 100 --from $WALLET_1 --chain-id specy-test-3 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
+    }' rulefile 0 0 100 '{"maxAmount":10000}' \
+    --from $WALLET_1 --chain-id specy-test-3 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 
@@ -230,16 +231,20 @@ Here, we manually simulate the generation of packet-data and send `execute-task`
 
 :warning: **NOTE:**  Replace the existing content with the actual output of ica-account.
 ```bash
-specyd tx interchain-accounts host generate-packet-data '{
-    "@type":"/cosmos.bank.v1beta1.MsgSend",
-    "from_address":"cosmos10h92yl2yss3f78tz6q5wu8j59x2cfxmv62umkprdv5zywugt578qagz3q5",
-    "to_address":"cosmos10h9stc5v6ntgeygf5xf945njqq5h32r53uquvw",
-    "amount": [
+osmosisd tx interchain-accounts host generate-packet-data '{
+    "@type": "/osmosis.gamm.v1beta1.MsgSwapExactAmountIn",
+    "sender": "osmo1gt9vdhz5uwq29ftpprmjut5pzf4gp9yje5flnykm2taeztls287sm2nrrd",
+    "routes": [
         {
-            "denom": "stake",
-            "amount": "1000"
+            "pool_id": "12",
+            "token_out_denom": "ibc/A8C2D23A1E6F95DA4E48BA349667E322BD7A6C996D8A4AAE8BA72E190F3D1477"
         }
-    ]
+    ],
+    "token_in": {
+        "denom": "uosmo",
+        "amount": "10000000"
+    },
+    "token_out_min_amount": "506530"
     }' --memo executing-task
 ```
 This will roughly display content similar to the following.
@@ -259,12 +264,9 @@ cosmos1m9l358xunhhwds0568za49mzhvuxx9uxre5tud test_task1 cproofstring '{"type":"
 
 #### Query the execution results of automated tasks on the host chain
 
-- staking detail
-```bash
-specyd q staking delegations-to cosmosvaloper1qnk2n4nlkpw9xfqntladh74w6ujtulwnmxnh3k --home ./data/test-2 --node tcp://localhost:26657
-```
+You can see that in addition to the original token, a swap token（IBC/XXXXXX） has also been added.
 - account balance
 ```bash
-specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
+osmosisd q bank balances $ICA_ADDR --node http://222.106.187.14:53402
 ```
 
