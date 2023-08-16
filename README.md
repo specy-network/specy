@@ -80,11 +80,11 @@ make start-golang-rly
 
 ```bash
 # Store the following account addresses within the current shell env
-export WALLET_1=$(specyd keys show wallet1 -a --keyring-backend test --home ./data/test-1) && echo $WALLET_1;
-export WALLET_2=$(specyd keys show wallet2 -a --keyring-backend test --home ./data/test-1) && echo $WALLET_2;
-export WALLET_VAL=$(specyd keys show val1 -a --keyring-backend test --home ./data/test-1) && echo $WALLET_VAL;
-export WALLET_3=$(specyd keys show wallet3 -a --keyring-backend test --home ./data/test-2) && echo $WALLET_3;
-export WALLET_4=$(specyd keys show wallet4 -a --keyring-backend test --home ./data/test-2) && echo $WALLET_4;
+export WALLET_1=$(specyd keys show wallet1 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_1;
+export WALLET_2=$(specyd keys show wallet2 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_2;
+export WALLET_VAL=$(specyd keys show val1 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_VAL;
+export WALLET_3=$(specyd keys show wallet3 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_3;
+export WALLET_4=$(specyd keys show wallet4 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_4;
 ```
 
 ### Registering an Interchain Account via IBC
@@ -94,13 +94,13 @@ Here the message signer is used as the account owner.
 
 ```bash
 # Register an interchain account on behalf of WALLET_1 where chain test-2 is the interchain accounts host
-specyd tx intertx register --from $WALLET_1 --connection-id connection-0 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+specyd tx intertx register --from $WALLET_1 --connection-id connection-0 --chain-id specy-test-3 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
 
 # Query the address of the interchain account
-specyd query intertx interchainaccounts connection-0 $WALLET_1 --home ./data/test-1 --node tcp://localhost:16657
+specyd query intertx interchainaccounts connection-0 $WALLET_1 --home ./data/specy-test-3 --node tcp://localhost:16657
 
 # Store the interchain account address by parsing the query result: cosmos1hd0f4u7zgptymmrn55h3hy20jv2u0ctdpq23cpe8m9pas8kzd87smtf8al
-export ICA_ADDR=$(specyd query intertx interchainaccounts connection-0 $WALLET_1 --home ./data/test-1 --node tcp://localhost:16657 -o json | jq -r '.interchain_account_address') && echo $ICA_ADDR
+export ICA_ADDR=$(specyd query intertx interchainaccounts connection-0 $WALLET_1 --home ./data/specy-test-3 --node tcp://localhost:16657 -o json | jq -r '.interchain_account_address') && echo $ICA_ADDR
 ```
 
 > This is the situation after registering the ICA. A channel has been created and an ICA has been registered on the host.
@@ -130,7 +130,7 @@ When a task is executed, a handling fee will be deducted, so users need to depos
 ```bash
 specyd tx specy deposit-balance \
     1000stake \
-    --from $WALLET_1 --chain-id specy-test-1 --home ./data/specy-test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    --from $WALLET_1 --chain-id specy-test-3 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 ```bash
@@ -164,7 +164,7 @@ specyd tx specy create-task \
             "amount": "1"
         }
     ]
-    }' rulefile 0 0 100 --from $WALLET_1 --chain-id specy-test-1 --home ./data/specy-test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    }' rulefile 0 0 100 --from $WALLET_1 --chain-id specy-test-3 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 - Automation task case 2:
@@ -201,7 +201,7 @@ specyd tx specy create-task \
         "amount": "10000000"
     },
     "token_out_min_amount": "506530"
-    }' rulefile 0 0 100 --from $WALLET_1 --chain-id specy-test-1 --home ./data/specy-test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    }' rulefile 0 0 100 --from $WALLET_1 --chain-id specy-test-3 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 
@@ -218,7 +218,7 @@ As the validator of the specy chain, the executor service must be running and th
 ```bash
 specyd tx specy create-executor \
      iasreport enclavepk \
-    --from $WALLET_VAL --chain-id specy-test-1 --home ./data/specy-test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    --from $WALLET_VAL --chain-id specy-test-3 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 ```bash
@@ -231,7 +231,7 @@ Note：This is actually executed by the executor-service when the task rulefile 
 ```bash
 specyd tx specy execute-task \
 cosmos1m9l358xunhhwds0568za49mzhvuxx9uxre5tud test_task cproofstring performdataString \
---from $WALLET_VAL --chain-id test-1 --home ./data/specy-test-1 --node tcp://localhost:16657 --keyring-backend test -y
+--from $WALLET_VAL --chain-id test-1 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 ![execute-task](./images/post-execute-task.jpg)

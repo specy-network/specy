@@ -2,7 +2,7 @@
   "type": "cosmos",
   "value": {
     "key": "testkey1",
-    "chain-id": "specy-test-1",
+    "chain-id": "specy-test-3",
     "rpc-addr": "http://localhost:16657",
     "grpc-addr": "",
     "account-prefix": "cosmos",
@@ -11,7 +11,7 @@
     "gas-adjustment": 1.5,
     "gas-prices": "0.025stake",
     "debug": true,
-    "timeout": "60s",
+    "timeout": "600s",
     "output-format": "json",
     "sign-mode": "direct",
     "trusting-period": "330h",

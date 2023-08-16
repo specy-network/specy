@@ -3,7 +3,7 @@
 # Configure predefined mnemonic pharses
 BINARY=rly
 CHAIN_DIR=./data
-CHAINID_1=specy-test-1
+CHAINID_1=specy-test-3
 CHAINID_2=osmo-test-5
 RELAYER_DIR=./relayer
 MNEMONIC_1="alley afraid soup fall idea toss can goose become valve initial strong forward bright dish figure check leopard decide warfare hub unusual join cart"

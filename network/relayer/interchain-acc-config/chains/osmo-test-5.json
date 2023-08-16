@@ -11,7 +11,7 @@
     "gas-adjustment": 1.5,
     "gas-prices": "0.025uosmo",
     "debug": true,
-    "timeout": "300s",
+    "timeout": "600s",
     "output-format": "json",
     "sign-mode": "direct",
     "trusting-period": "330h",

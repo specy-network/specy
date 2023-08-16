@@ -2,7 +2,7 @@
 
 BINARY=specyd
 CHAIN_DIR=./data
-CHAINID_1=specy-test-1
+CHAINID_1=specy-test-3
 CHAINID_2=test-2
 GRPCPORT_1=8090
 GRPCPORT_2=9090
