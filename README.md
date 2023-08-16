@@ -80,11 +80,11 @@ make start-golang-rly
 
 ```bash
 # Store the following account addresses within the current shell env
-export WALLET_1=$(specyd keys show wallet1 -a --keyring-backend test --home ./data/test-1) && echo $WALLET_1;
-export WALLET_2=$(specyd keys show wallet2 -a --keyring-backend test --home ./data/test-1) && echo $WALLET_2;
-export WALLET_VAL=$(specyd keys show val1 -a --keyring-backend test --home ./data/test-1) && echo $WALLET_VAL;
-export WALLET_3=$(specyd keys show wallet3 -a --keyring-backend test --home ./data/test-2) && echo $WALLET_3;
-export WALLET_4=$(specyd keys show wallet4 -a --keyring-backend test --home ./data/test-2) && echo $WALLET_4;
+export WALLET_1=$(specyd keys show wallet1 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_1;
+export WALLET_2=$(specyd keys show wallet2 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_2;
+export WALLET_VAL=$(specyd keys show val1 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_VAL;
+export WALLET_3=$(specyd keys show wallet3 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_3;
+export WALLET_4=$(specyd keys show wallet4 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_4;
 ```
 
 ### Registering an Interchain Account via IBC
@@ -94,13 +94,13 @@ Here the message signer is used as the account owner.
 
 ```bash
 # Register an interchain account on behalf of WALLET_1 where chain test-2 is the interchain accounts host
-specyd tx intertx register --from $WALLET_1 --connection-id connection-0 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+specyd tx intertx register --from $WALLET_1 --connection-id connection-0 --chain-id specy-test-3 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
 
 # Query the address of the interchain account
-specyd query intertx interchainaccounts connection-0 $WALLET_1 --home ./data/test-1 --node tcp://localhost:16657
+specyd query intertx interchainaccounts connection-0 $WALLET_1 --home ./data/specy-test-3 --node tcp://localhost:16657
 
 # Store the interchain account address by parsing the query result: cosmos1hd0f4u7zgptymmrn55h3hy20jv2u0ctdpq23cpe8m9pas8kzd87smtf8al
-export ICA_ADDR=$(specyd query intertx interchainaccounts connection-0 $WALLET_1 --home ./data/test-1 --node tcp://localhost:16657 -o json | jq -r '.interchain_account_address') && echo $ICA_ADDR
+export ICA_ADDR=$(specyd query intertx interchainaccounts connection-0 $WALLET_1 --home ./data/specy-test-3 --node tcp://localhost:16657 -o json | jq -r '.interchain_account_address') && echo $ICA_ADDR
 ```
 
 > This is the situation after registering the ICA. A channel has been created and an ICA has been registered on the host.
@@ -129,8 +129,8 @@ specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
 When a task is executed, a handling fee will be deducted, so users need use `deposit-balance` cmd to deposit a certain number of tokens into the module in advance, otherwise the automated tasks created by the user in the future cannot be executed.
 ```bash
 specyd tx specy deposit-balance \
-    1000000000stake \
-    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    1000stake \
+    --from $WALLET_1 --chain-id specy-test-3 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 ```bash
@@ -159,16 +159,18 @@ specyd tx specy create-task \
     test_task connection-0 \
     '{
     "@type":"/cosmos.bank.v1beta1.MsgSend",
-    "from_address":"cosmos10h92yl2yss3f78tz6q5wu8j59x2cfxmv62umkprdv5zywugt578qagz3q5",
-    "to_address":"cosmos10h9stc5v6ntgeygf5xf945njqq5h32r53uquvw",
+    "from_address":"osmo1gt9vdhz5uwq29ftpprmjut5pzf4gp9yje5flnykm2taeztls287sm2nrrd",
+    "to_address":"osmo17dtl0mjt3t77kpuhg2edqzjpszulwhgz5fk0yz",
     "amount": [
         {
-            "denom": "stake",
-            "amount": "1000"
+            "denom": "osmo",
+            "amount": "1"
         }
     ]
+
     }' rulefile 0 0 100 '{"maxAmount":10000}' \
-    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    --from $WALLET_1 --chain-id specy-test-3 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
+
 ```
     
 
@@ -189,6 +191,30 @@ specyd tx specy create-task \
     }' rulefile 0 0 100 '{"maxAmount":10000}' \
     --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
+
+```bash
+specyd tx specy create-task \
+    test_task2 connection-0 \
+    '{
+    "@type": "/osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn",
+    "sender": "osmo1gt9vdhz5uwq29ftpprmjut5pzf4gp9yje5flnykm2taeztls287sm2nrrd",
+    "routes": [
+        {
+            "pool_id": "12",
+            "token_out_denom": "ibc/A8C2D23A1E6F95DA4E48BA349667E322BD7A6C996D8A4AAE8BA72E190F3D1477"
+        }
+    ],
+    "token_in": {
+        "denom": "uosmo",
+        "amount": "10000000"
+    },
+    "token_out_min_amount": "506530"
+    }' rulefile 0 0 100 --from $WALLET_1 --chain-id specy-test-3 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
+```
+
+
+
+
 ![post-create-task](./images/post-create-task.jpg)
 
 Query task details
@@ -202,7 +228,7 @@ As the validator of the `Specy` chain, the executor service must be running and 
 ```bash
 specyd tx specy create-executor \
      iasreport enclavepk \
-    --from $WALLET_VAL --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    --from $WALLET_VAL --chain-id specy-test-3 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 ```bash
@@ -240,7 +266,8 @@ Paste and replace the corresponding part of the output content.
 ```bash
 specyd tx specy execute-task \
 cosmos1m9l358xunhhwds0568za49mzhvuxx9uxre5tud test_task1 cproofstring '{"type":"TYPE_EXECUTE_TX","data":"CqIBChwvY29zbW9zLmJhbmsudjFiZXRhMS5Nc2dTZW5kEoEBCkFjb3Ntb3MxYzZmMGV0Y2RrNXFjand5N2hoMHBqemdjYThocGpjZTVsMzhmNzZ1Z2Qwajl2cXZkeHEwc3lsMGRyeRItY29zbW9zMTBoOXN0YzV2Nm50Z2V5Z2Y1eGY5NDVuanFxNWgzMnI1M3VxdXZ3Gg0KBXN0YWtlEgQxMDAw","memo":"executing-task"}' \
---from $WALLET_VAL --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+--from $WALLET_VAL --chain-id test-1 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
+
 ```
 
 ![execute-task](./images/post-execute-task.jpg)
