@@ -76,7 +76,7 @@ make start-golang-rly
 
 ## Demo
 
-**NOTE:** For the purposes of this demo the setup scripts have been provided with a set of hardcoded mnemonics that generate deterministic wallet addresses used below.
+:warning: **NOTE:** For the purposes of this demo the setup scripts have been provided with a set of hardcoded mnemonics that generate deterministic wallet addresses used below.
 
 ```bash
 # Store the following account addresses within the current shell env
@@ -126,7 +126,7 @@ specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
 
 #### Deposit token
 
-When a task is executed, a handling fee will be deducted, so users need to deposit a certain number of tokens into the module in advance, otherwise the automated tasks created by the user in the future cannot be executed.
+When a task is executed, a handling fee will be deducted, so users need use `deposit-balance` cmd to deposit a certain number of tokens into the module in advance, otherwise the automated tasks created by the user in the future cannot be executed.
 ```bash
 specyd tx specy deposit-balance \
     1000000000stake \
@@ -137,7 +137,7 @@ specyd tx specy deposit-balance \
 specyd q specy list-deposit --node tcp://localhost:16657
 ```
 
-Of course, you can also extract the deposit token.
+Of course, you can also use `withdraw-balance` cmd extract the deposit token.
 ```bash
 specyd tx specy withdraw-balance \
     5000stake \
@@ -146,9 +146,12 @@ specyd tx specy withdraw-balance \
 
 
 #### Create automation transaction task
+We can create automated interchain tasks in the `Specy` chain using the `create-task` cmd. The following are some task examples:
 - Automation task case 1:
 
     Create a transfer task for the host chain on the controller chain. When the task is executed, the interchain account on the host chain will transfer to the specified address.
+    :warning: **NOTE:**  The last parameter '{"maxAmount": 10000}' is a check-data, which describes the custom data required for rulefile checking in JSON format.
+    :warning: **NOTE:**  Replace the existing content with the actual output of ica-account.
 
     //TODO Add explanation for rulefile！
 ```bash
@@ -156,7 +159,7 @@ specyd tx specy create-task \
     test_task connection-0 \
     '{
     "@type":"/cosmos.bank.v1beta1.MsgSend",
-    "from_address":"cosmos1xnf4un9c0psuanm36qqjwnjpp59wy6jzmt72ksuhrwwu0guemp9srdscfh",
+    "from_address":"cosmos10h92yl2yss3f78tz6q5wu8j59x2cfxmv62umkprdv5zywugt578qagz3q5",
     "to_address":"cosmos10h9stc5v6ntgeygf5xf945njqq5h32r53uquvw",
     "amount": [
         {
@@ -164,8 +167,10 @@ specyd tx specy create-task \
             "amount": "1000"
         }
     ]
-    }' rulefile 0 0 100 --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    }' rulefile 0 0 100 '{"maxAmount":10000}' \
+    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
+    
 
 - Automation task case 2:
 
@@ -181,16 +186,19 @@ specyd tx specy create-task \
         "denom": "stake",
         "amount": "1000"
     }
-    }' rulefile 0 0 100 --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    }' rulefile 0 0 100 '{"maxAmount":10000}' \
+    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 ![post-create-task](./images/post-create-task.jpg)
+
 Query task details
+Using the `list-task` cmd on the `Specy` chain to query tasks that have already been created.
 
 ```bash 
 specyd q specy list-task --node tcp://localhost:16657
 ```
 #### Create executor
-As the validator of the specy chain, the executor service must be running and the corresponding information registered on the chain, otherwise it will be evidenced and slashed.
+As the validator of the `Specy` chain, the executor service must be running and the corresponding information registered on the chain, otherwise it will be evidenced and slashed.
 ```bash
 specyd tx specy create-executor \
      iasreport enclavepk \
@@ -203,10 +211,35 @@ specyd q specy list-executor --node tcp://localhost:16657
 
 #### Simulate task execution
 
-Note：This is actually executed by the executor-service when the task rulefile setting is met.
+:warning: **NOTE:**  This is actually executed by the executor-service when the task rulefile setting is met.
+The executor boot will perform data calculations based on the data definitions and constraints in the rulefile, and fill in the pre executed ica msg data according to the user's agreement.
+Afterwards, use the `generate-packet-data` cmd of the target chain interchain-account host  sub-module to encode the ica msg to be executed, and use the encoded content as the packet data of the execute task msg for task execution.
+
+Here, we manually simulate the generation of packet-data and send `execute-task` msg. 
+
+:warning: **NOTE:**  Replace the existing content with the actual output of ica-account.
+```bash
+specyd tx interchain-accounts host generate-packet-data '{
+    "@type":"/cosmos.bank.v1beta1.MsgSend",
+    "from_address":"cosmos10h92yl2yss3f78tz6q5wu8j59x2cfxmv62umkprdv5zywugt578qagz3q5",
+    "to_address":"cosmos10h9stc5v6ntgeygf5xf945njqq5h32r53uquvw",
+    "amount": [
+        {
+            "denom": "stake",
+            "amount": "1000"
+        }
+    ]
+    }' --memo executing-task
+```
+This will roughly display content similar to the following.
+```json
+{"type":"TYPE_EXECUTE_TX","data":"CqIBChwvY29zbW9zLmJhbmsudjFiZXRhMS5Nc2dTZW5kEoEBCkFjb3Ntb3MxYzZmMGV0Y2RrNXFjand5N2hoMHBqemdjYThocGpjZTVsMzhmNzZ1Z2Qwajl2cXZkeHEwc3lsMGRyeRItY29zbW9zMTBoOXN0YzV2Nm50Z2V5Z2Y1eGY5NDVuanFxNWgzMnI1M3VxdXZ3Gg0KBXN0YWtlEgQxMDAw","memo":"executing-task"}
+```
+Paste and replace the corresponding part of the output content.
+
 ```bash
 specyd tx specy execute-task \
-cosmos1m9l358xunhhwds0568za49mzhvuxx9uxre5tud test_task cproofstring performdataString \
+cosmos1m9l358xunhhwds0568za49mzhvuxx9uxre5tud test_task1 cproofstring '{"type":"TYPE_EXECUTE_TX","data":"CqIBChwvY29zbW9zLmJhbmsudjFiZXRhMS5Nc2dTZW5kEoEBCkFjb3Ntb3MxYzZmMGV0Y2RrNXFjand5N2hoMHBqemdjYThocGpjZTVsMzhmNzZ1Z2Qwajl2cXZkeHEwc3lsMGRyeRItY29zbW9zMTBoOXN0YzV2Nm50Z2V5Z2Y1eGY5NDVuanFxNWgzMnI1M3VxdXZ3Gg0KBXN0YWtlEgQxMDAw","memo":"executing-task"}' \
 --from $WALLET_VAL --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 

@@ -13,20 +13,18 @@ const TypeMsgCreateTask = "create_task"
 
 var _ sdk.Msg = &MsgCreateTask{}
 
-func NewMsgCreateTask(creator string, name string, connectionId string, msg sdk.Msg, ruleFiles string, taskType uint64, intervalType uint64, number uint64) (*MsgCreateTask, error) {
-	any, err := PackTxMsgAny(msg)
-	if err != nil {
-		return nil, err
-	}
+func NewMsgCreateTask(creator string, name string, connectionId string, msg string, ruleFiles string, taskType uint64, intervalType uint64, number uint64, checkData string) (*MsgCreateTask, error) {
+
 	return &MsgCreateTask{
 		Creator:      creator,
 		Name:         name,
 		ConnectionId: connectionId,
-		Msg:          any,
+		Msg:          msg,
 		RuleFiles:    ruleFiles,
 		TaskType:     taskType,
 		IntervalType: intervalType,
 		Number:       number,
+		CheckData:    checkData,
 	}, nil
 }
 
@@ -45,12 +43,6 @@ func PackTxMsgAny(sdkMsg sdk.Msg) (*codectypes.Any, error) {
 	return any, nil
 }
 
-// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
-func (msg MsgCreateTask) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	var sdkMsg sdk.Msg
-
-	return unpacker.UnpackAny(msg.Msg, &sdkMsg)
-}
 func (msg *MsgCreateTask) Route() string {
 	return RouterKey
 }
@@ -78,14 +70,4 @@ func (msg *MsgCreateTask) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 	return nil
-}
-
-// GetTxMsg fetches the cached any message
-func (msg *MsgCreateTask) GetTxMsg() sdk.Msg {
-	sdkMsg, ok := msg.Msg.GetCachedValue().(sdk.Msg)
-	if !ok {
-		return nil
-	}
-
-	return sdkMsg
 }

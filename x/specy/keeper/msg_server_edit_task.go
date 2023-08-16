@@ -35,7 +35,7 @@ func (k msgServer) EditTask(goCtx context.Context, msg *types.MsgEditTask) (*typ
 			sdk.NewAttribute(types.AttributeKeyTaskName, msg.Name),
 			sdk.NewAttribute(types.AttributeKeyTaskHash, task.Hash),
 			sdk.NewAttribute(types.AttributeKeyConnectId, msg.ConnectionId),
-			sdk.NewAttribute(types.AttributeKeyTaskMsgs, task.Msg.String()),
+			sdk.NewAttribute(types.AttributeKeyTaskMsgs, task.Msg),
 			sdk.NewAttribute(types.AttributeKeyTaskRuleFile, task.RuleFiles),
 			sdk.NewAttribute(types.AttributeKeyTaskType, string(rune(task.TaskType))),
 			sdk.NewAttribute(types.AttributeKeyTaskIntervalType, string(rune(task.ScheduleType.IntervalType))),

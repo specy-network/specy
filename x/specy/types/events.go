@@ -24,6 +24,7 @@ const (
 	AttributeKeyTaskType           = "task_type"
 	AttributeKeyTaskIntervalType   = "task_interval_type"
 	AttributeKeyTaskIntervalNumber = "task_interval_number"
+	AttributeKeyTaskCheckData      = "task_check_data"
 
 	AttributeKeyExecutorAddress   = "executor_address"
 	AttributeKeyExecutorIasReport = "executor_ias_report"
