@@ -2,6 +2,8 @@
 
 Specy Network is the automation engine of cosmos ecosystem
 
+:warning: **NOTE:**  This branch document demonstrates how specy chain can automate inter-chain tasks with osmosis testnet.
+
 ## Overview 
 
 Specy Network is a cutting-edge layer-1 blockchain, powered by the Cosmos stack, purpose-built for seamless automation, enabling gasless and automated transaction flows across multiple blockchains of the Cosmos ecosystem.
@@ -21,18 +23,21 @@ https://specy-network.github.io/
 1. Clone this repository and build the application binary
 
 ```bash
-git clone https://github.com/specy-network/specy.git -b specy-2
+git clone https://github.com/specy-network/specy.git -b relayer-osmosis
 cd specy
 
 make install 
 ```
 
-2. Download and install an IBC relayer. ([hermes](https://hermes.informal.systems/), [go relayer](https://github.com/cosmos/relayer) or both ) 
 ```bash
-# hermes (make sure to use v1.0.0 or later)
-cargo install ibc-relayer-cli --bin hermes --locked
+git clone https://github.com/specy-network/osmosis.git -b testnet-5-specy-tool
+cd osmosis
 
-or
+make install 
+```
+
+2. Download and install an IBC relayer. ([go relayer](https://github.com/cosmos/relayer) ) 
+```bash
 
 # go relayer (make sure to use v2.0.0-rc4 or later!)
 git clone https://github.com/cosmos/relayer.git
@@ -41,29 +46,27 @@ make install
 ```
 
 3. Bootstrap two chains, configure the relayer and create an IBC connection (on top of clients that are created as well)
-```bash
-# hermes
-make init-hermes
 
-or
+:exclamation: **NOTE:** Modify all `specy-test-x` in the global network file to be the id of a client that has never been created in osmosis
+```bash
 
 # go relayer
 make init-golang-rly
 ```
-
-:warning: **NOTE:** When you want to use both relayers interchangeably, using both of these `make` commands will set up two seperate connections (which is not needed and can lead to confusion). In the case of using both relayers, perform:
+First, obtain a token for the relay account on osmosis from the [osmosis test network faucet](https://faucet.testnet.osmosis.zone/).
 ```bash
-make init-golang-rly
-./network/hermes/restore-keys.sh
+osmosisd keys list --home data/osmo-test-5 --keyring-backend test
+```
+Check if enough tokens have been received for relay inter chain messages.
+```bash
+osmosisd q bank balances osmo17dtl0mjt3t77kpuhg2edqzjpszulwhgz5fk0yz --node http://222.106.187.14:53402
 ```
 
 4. Start the relayer
 ```bash
-#hermes
-make start-hermes
 
 #go relayer
-make start-golang-rly
+make start-golang-rly 
 ```
 
 :exclamation: **NOTE:** It is abstracted away in the script files, but in case you want to manually run `rly start` with interchain accounts, you will need to add this flag: `-p events` to it.
@@ -76,15 +79,14 @@ make start-golang-rly
 
 ## Demo
 
-:warning: **NOTE:** For the purposes of this demo the setup scripts have been provided with a set of hardcoded mnemonics that generate deterministic wallet addresses used below.
+:warning: **NOTE:** For the purposes of this demo the setup scripts have been provided with a set of hardcoded mnemonics that generate deterministic wallet addresses used below. Please set `specy-test-3` as the actual modified chain id above.
 
 ```bash
 # Store the following account addresses within the current shell env
 export WALLET_1=$(specyd keys show wallet1 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_1;
 export WALLET_2=$(specyd keys show wallet2 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_2;
 export WALLET_VAL=$(specyd keys show val1 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_VAL;
-export WALLET_3=$(specyd keys show wallet3 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_3;
-export WALLET_4=$(specyd keys show wallet4 -a --keyring-backend test --home ./data/specy-test-3) && echo $WALLET_4;
+export WALLET_3=$(osmosisd keys show rly2 -a --keyring-backend test --home ./data/osmo-test-5) && echo $WALLET_3;
 ```
 
 ### Registering an Interchain Account via IBC
@@ -113,13 +115,13 @@ Note this is executed on the host chain to provide the account with an initial b
 
 ```bash
 # Query the interchain account balance on the host chain. It should be empty.
-specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
+osmosisd q bank balances $ICA_ADDR  --node http://222.106.187.14:53402
 
 # Send funds to the interchain account.
-specyd tx bank send $WALLET_3 $ICA_ADDR 10000stake --chain-id test-2 --home ./data/test-2 --node tcp://localhost:26657 --keyring-backend test -y
+osmosisd tx bank send $WALLET_3 $ICA_ADDR 10osmo --chain-id osmo-test-5 --home ./data/osmo-test-5 --node http://222.106.187.14:53402 \ --keyring-backend test -y
 
 # Query the balance once again and observe the changes
-specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
+osmosisd q bank balances $ICA_ADDR --node http://222.106.187.14:53402
 ```
 
 > This is the situation after funding the ICA.
@@ -141,7 +143,7 @@ Of course, you can also use `withdraw-balance` cmd extract the deposit token.
 ```bash
 specyd tx specy withdraw-balance \
     5000stake \
-    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    --from $WALLET_1 --chain-id specy-test-3 --home ./data/specy-test-3 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 
@@ -175,24 +177,7 @@ specyd tx specy create-task \
     
 
 - Automation task case 2:
-
-    Create a pledge task on the target chain and trigger it when the target conditions are met.
-```bash
-specyd tx specy create-task \
-    test_task1 connection-0 \
-    '{
-    "@type":"/cosmos.staking.v1beta1.MsgDelegate",
-    "delegator_address":"cosmos1upfegaenhhvl8r4ezhe8zt6ez9r80pcxd8c9zfrjshskfxjdjypsutdwwc",
-    "validator_address":"cosmosvaloper1qnk2n4nlkpw9xfqntladh74w6ujtulwnmxnh3k",
-    "amount": {
-        "denom": "stake",
-        "amount": "1000"
-    }
-    }' rulefile 0 0 100 '{"maxAmount":10000}' \
-    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
-```
-
-```bash
+```bash 
 specyd tx specy create-task \
     test_task2 connection-0 \
     '{
