@@ -9,16 +9,13 @@ const TypeMsgEditTask = "edit_task"
 
 var _ sdk.Msg = &MsgEditTask{}
 
-func NewMsgEditTask(creator string, name string, connectionId string, msg sdk.Msg, ruleFiles string, taskType uint64, intervalType uint64, number uint64) (*MsgEditTask, error) {
-	any, err := PackTxMsgAny(msg)
-	if err != nil {
-		return nil, err
-	}
+func NewMsgEditTask(creator string, name string, connectionId string, msg string, ruleFiles string, taskType uint64, intervalType uint64, number uint64) (*MsgEditTask, error) {
+
 	return &MsgEditTask{
 		Creator:      creator,
 		Name:         name,
 		ConnectionId: connectionId,
-		Msg:          any,
+		Msg:          msg,
 		RuleFiles:    ruleFiles,
 		TaskType:     taskType,
 		IntervalType: intervalType,

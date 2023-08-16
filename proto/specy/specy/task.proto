@@ -3,18 +3,18 @@ package specynetwork.specy.specy;
 
 option go_package = "github.com/specy-network/specy/x/specy/types";
 import "specy/specy/condition.proto"; 
-import "google/protobuf/any.proto";
+
 message Task {
   string owner = 1; 
   string name = 2; 
   string hash = 3; 
   string connectionId = 4; 
-  google.protobuf.Any msg = 5; 
+  string msg = 5; 
   string ruleFiles = 6; 
   uint64 taskType = 7; 
   Condition scheduleType = 8; 
   uint64 updateTime = 9; 
   uint64 updateBlockHeight = 10; 
-  
+  string checkData         = 11;
 }
 
