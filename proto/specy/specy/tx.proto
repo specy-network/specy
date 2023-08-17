@@ -4,8 +4,8 @@ package specynetwork.specy.specy;
 
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
-import "google/protobuf/any.proto";
-
+import "ibc/applications/interchain_accounts/v1/packet.proto";
+import "ibc/applications/interchain_accounts/controller/v1/controller.proto";
 option go_package = "github.com/specy-network/specy/x/specy/types";
 
 // Msg defines the Msg service.
@@ -24,11 +24,12 @@ message MsgCreateTask {
   string              creator      = 1;
   string              name         = 2;
   string              connectionId = 3;
-  google.protobuf.Any msg          = 4;
+  string              msg          = 4;
   string              ruleFiles    = 5;
   uint64              taskType     = 6;
   uint64              intervalType = 7;
   uint64              number       = 8;
+  string              checkData    = 9;
 }
 
 message MsgCreateTaskResponse {}
@@ -44,7 +45,7 @@ message MsgEditTask {
   string              creator      = 1;
   string              name         = 2;
   string              connectionId = 3;
-  google.protobuf.Any msg          = 4;
+  string              msg          = 4;
   string              ruleFiles    = 5;
   uint64              taskType     = 6;
   uint64              intervalType = 7;
@@ -94,7 +95,7 @@ message MsgExecuteTask {
   string owner       = 2;
   string name        = 3;
   string cproof      = 4;
-  string performData = 5;
+  ibc.applications.interchain_accounts.v1.InterchainAccountPacketData packet_data   = 5 [(gogoproto.nullable) = false];
 }
 
 message MsgExecuteTaskResponse {}

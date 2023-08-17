@@ -3,19 +3,20 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	icatypes "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/types"
 )
 
 const TypeMsgExecuteTask = "execute_task"
 
 var _ sdk.Msg = &MsgExecuteTask{}
 
-func NewMsgExecuteTask(creator string, owner string, name string, cproof string, performData string) *MsgExecuteTask {
+func NewMsgExecuteTask(creator string, owner string, name string, cproof string, packetData icatypes.InterchainAccountPacketData) *MsgExecuteTask {
 	return &MsgExecuteTask{
-		Creator:     creator,
-		Owner:       owner,
-		Name:        name,
-		Cproof:      cproof,
-		PerformData: performData,
+		Creator:    creator,
+		Owner:      owner,
+		Name:       name,
+		Cproof:     cproof,
+		PacketData: packetData,
 	}
 }
 
