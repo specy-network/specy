@@ -1,5 +1,4 @@
 <template>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <footer class="footer">
         <div class="container">
             <div class="row">
@@ -41,6 +40,7 @@ export default {
 
 .footer-text {
     margin-bottom: 0;
+    font-size: 20px;
     /* Remove default margin for <p> element */
 }
 
@@ -48,6 +48,7 @@ export default {
     color: #fff;
     /* White link color */
     text-decoration: none;
+    font-size: 20px;
 }
 
 .github-link:hover {

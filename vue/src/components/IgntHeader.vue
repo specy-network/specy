@@ -44,7 +44,7 @@ export default {
 
 <style scoped>
 .header {
-  background-color: #ffffff;
+  background-color: #ffffff !important;
   /* Light gray background */
   padding: 15px 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

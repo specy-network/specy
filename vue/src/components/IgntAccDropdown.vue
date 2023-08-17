@@ -1,44 +1,31 @@
 <template>
   <transition name="dropdown-fade">
-    <div
-      v-if="showDefault"
-      class="top-20 right-8 shadow-std bg-white-1000 rounded absolute max-w-xs p-7 z-50 w-full box-border acc-dd"
-    >
-      <span class="text-sm leading-normal text-gray-660 mb-3 block text-[13px]"
-        >Connected wallet</span
-      >
+    <div v-if="showDefault"
+      class="top-20 right-8 shadow-std bg-white-1000 rounded absolute max-w-xs p-7 z-50 w-full box-border acc-dd">
+      <span class="text-sm leading-normal text-gray-660 mb-3 block text-[13px]">Connected wallet</span>
       <div class="mb-3 flex items-center">
         <IgntProfileIcon :address="address" />
         <div class="flex flex-col ml-3">
           <span class="text-[13px] font-bold">
             {{ accName }}
           </span>
-          <span
-            class="text-[13px] leading-normal text-gray-660 copy-address flex items-center"
-            title="Copy address"
-            @click="copy(address)"
-          >
+          <span class="text-[13px] leading-normal text-gray-660 copy-address flex items-center" title="Copy address"
+            @click="copy(address)">
             {{ shortAddress }}
             <IgntCopyIcon class="ml-2 cursor-pointer hover:text-black" />
           </span>
         </div>
       </div>
-      <div
-        class="flex justify-between items-center cursor-pointer hover:text-gray-660"
-        @click="$emit('disconnect')"
-      >
+      <div class="flex justify-between items-center cursor-pointer hover:text-gray-660" @click="$emit('disconnect')">
         <span> Disconnect wallet </span>
       </div>
       <hr class="divide-y my-3 -mx-7" />
-      <div
-        class="flex justify-between items-center cursor-pointer hover:text-gray-660"
-        @click="switchToSettings"
-      >
+      <div class="flex justify-between items-center cursor-pointer hover:text-gray-660" @click="switchToSettings">
         <span> Settings </span>
         <IgntChevronRightIcon class="text-sm" />
       </div>
-      <hr class="divide-y my-3 -mx-7" />
-      <a
+      <!-- <hr class="divide-y my-3 -mx-7" /> -->
+      <!-- <a
         href="#"
         class="flex justify-between items-center mb-3 cursor-pointer hover:text-gray-660"
       >
@@ -58,45 +45,20 @@
       >
         <span> Telegram </span>
         <IgntExternalArrowIcon class="text-xs" />
-      </a>
-      <div style="text-align: center; margin-top: 2rem">
-        <a
-          href="#"
-          class="text-sm leading-normal text-gray-660 terms-link mr-2 cursor-pointer"
-          >Privacy</a
-        >•
-        <a
-          href="#"
-          class="text-sm leading-normal text-gray-660 terms-link mr-2 ml-1 cursor-pointer"
-          >Terms of use</a
-        >•
-        <a
-          href="#"
-          class="text-sm leading-normal text-gray-660 terms-link ml-1 cursor-pointer"
-          >Cookies</a
-        >
-      </div>
+      </a> -->
+      <!-- <div style="text-align: center; margin-top: 2rem">
+        <a href="#" class="text-sm leading-normal text-gray-660 terms-link mr-2 cursor-pointer">Privacy</a>•
+        <a href="#" class="text-sm leading-normal text-gray-660 terms-link mr-2 ml-1 cursor-pointer">Terms of use</a>•
+        <a href="#" class="text-sm leading-normal text-gray-660 terms-link ml-1 cursor-pointer">Cookies</a>
+      </div> -->
     </div>
-    <div
-      v-else-if="showSettings"
-      class="top-20 right-8 shadow-std bg-white rounded absolute max-w-xs p-7 z-50 w-full box-border acc-dd"
-    >
+    <div v-else-if="showSettings"
+      class="top-20 right-8 shadow-std bg-white rounded absolute max-w-xs p-7 z-50 w-full box-border acc-dd">
       <header class="flex items-center -mx-7 -mt-7 px-3 pt-3 pb-7">
         <div class="cursor-pointer" @click="switchToDefault">
-          <svg
-            width="22"
-            height="20"
-            viewBox="0 0 22 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M20.5 10L1 10M1 10L9.53125 19M1 10L9.53125 1"
-              stroke="black"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
+          <svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20.5 10L1 10M1 10L9.53125 19M1 10L9.53125 1" stroke="black" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
           </svg>
         </div>
         <div class="text-xl font-semibold text-center flex-1">Settings</div>

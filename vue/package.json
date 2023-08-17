@@ -15,6 +15,7 @@
     "dayjs": "^1.11.6",
     "gradient-avatar": "^1.0.2",
     "long": "^5.2.0",
+    "normalize.css": "^8.0.1",
     "pinia": "^2.0.23",
     "qrcode": "^1.5.1",
     "specy-network-specy-client-ts": "file:../ts-client",

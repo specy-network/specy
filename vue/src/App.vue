@@ -4,7 +4,7 @@ import IgntHeader from "./components/IgntHeader.vue";
 import FooterNavigation from "./components/common/FooterNavigation.vue";
 
 const headerLinks = [
-  { text: "Home", url: "/" },
+  { text: "Home", url: "/home" },
   { text: "Create Tasks", url: "/about" },
 ];
 const siteName = "SPECY NETWORK";
@@ -17,3 +17,8 @@ const siteName = "SPECY NETWORK";
   <FooterNavigation />
 </template>
 
+<style>
+a {
+  text-decoration: none;
+}
+</style>
