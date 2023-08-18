@@ -40,7 +40,7 @@ export default {
 
 .footer-text {
     margin-bottom: 0;
-    font-size: 20px;
+    font-size: 14px;
     /* Remove default margin for <p> element */
 }
 

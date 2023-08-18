@@ -21,6 +21,12 @@ export default {
             tableData: [
                 { column1: "Data 1-1", column2: "Data 1-2", column3: "Data 1-3" },
                 { column1: "Data 2-1", column2: "Data 2-2", column3: "Data 2-3" },
+                { column1: "Data 1-1", column2: "Data 1-2", column3: "Data 1-3" },
+                { column1: "Data 2-1", column2: "Data 2-2", column3: "Data 2-3" },
+                { column1: "Data 1-1", column2: "Data 1-2", column3: "Data 1-3" },
+                { column1: "Data 2-1", column2: "Data 2-2", column3: "Data 2-3" },
+                { column1: "Data 1-1", column2: "Data 1-2", column3: "Data 1-3" },
+                { column1: "Data 2-1", column2: "Data 2-2", column3: "Data 2-3" },
                 // ... more data
             ]
         };

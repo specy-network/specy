@@ -48,6 +48,7 @@ export default {
   /* Light gray background */
   padding: 15px 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 94px;
 }
 
 .logo-image {

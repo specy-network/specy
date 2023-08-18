@@ -21,4 +21,7 @@ const siteName = "SPECY NETWORK";
 a {
   text-decoration: none;
 }
+*{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 </style>
