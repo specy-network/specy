@@ -9,6 +9,8 @@ export const userDeposit = () => {
     const deposit = computed(() => {
         return query.data?.value?.deposit;
     });
+    console.log(query);
+
 
 
     return { deposit, isLoading: query.isLoading };

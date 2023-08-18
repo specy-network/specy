@@ -23,7 +23,7 @@
       <div class="flex justify-between items-center cursor-pointer " >
       <div class="row ">
         <div class="col-md-2 align-self-center text-xl "><i class="fas fa-coins "></i></div>
-        <div class="col-md-8"><p>Deposit</p><p> 19.99 </p></div>
+        <div class="col-md-8  align-self-center"><span> {{deposit?.balance?.amount}} </span></div>
         <div class="col-md-2 text-right align-self-center "><button class="btn btn-outline-dark btn-sm ">Deposit</button></div>
       </div>
         
@@ -121,12 +121,10 @@ enum UI_STATE {
 
 interface State {
   currentUIState: UI_STATE;
-  depositBalance:0
 }
 
 const initialState: State = {
   currentUIState: UI_STATE.DEFAULT,
-  depositBalance:0
 };
 
 defineProps({
@@ -162,6 +160,9 @@ let showSettings = computed<boolean>(
 
 // state
 let state: State = reactive(initialState);
+let {deposit} = userDeposit();
+
+
 
 // methods
 let clickOutsideHandler = (evt: MouseEvent) => {
@@ -181,17 +182,9 @@ let switchToSettings = () => {
 let switchToDefault = () => {
   state.currentUIState = UI_STATE.DEFAULT;
 };
- let getUserDeposit=()=>{
-  console.log(address.value);
-  const {deposit} = userDeposit();
-  console.log(deposit);
-  
-};
-
 // lh
 
 onMounted(() => {
-  getUserDeposit()
   document.addEventListener("click", clickOutsideHandler);
 });
 onBeforeUnmount(() => {

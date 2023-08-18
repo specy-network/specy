@@ -40,7 +40,6 @@ export const useAssets = (perPage: number) => {
       });
     }
   });
-  console.log(balances);
 
   return {
     balancesRaw,

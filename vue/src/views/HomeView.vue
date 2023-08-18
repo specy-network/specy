@@ -8,6 +8,7 @@
 <script>
 import Introduction from "../components/Introduction.vue";
 import ShowTasks from "../components/ShowTasks.vue";
+import { useAddress } from "../def-composables/useAddress";
 
 export default {
     components: {
@@ -16,6 +17,7 @@ export default {
     },
     data() {
         return {
+            address:"",
             projectName: "Specy  Automation",
             projectDescription: "Automate your Cosmos ecosystem TX with the Specy Network.",
             tableData: [
@@ -30,7 +32,30 @@ export default {
                 // ... more data
             ]
         };
-    }
+    },
+    methods: {
+        showAddress(){
+            console.log(this.addres.value);
+        },
+        getUserTasks(){
+
+        }
+    },
+    
+    mounted() {
+        
+        const timer=setInterval(() => {
+        //wait user connect wallet
+        let { address, shortAddress } = useAddress();
+        if (address.value!="") {
+          this.addres=address
+          this.showAddress()
+          clearInterval(timer) // 停止定时器
+        } else {
+        }
+      }, 1000) 
+       
+    },
 };
 </script>
   

@@ -50,7 +50,7 @@ func (k Keeper) Deposit(goCtx context.Context, req *types.QueryGetDepositRequest
 		req.Address,
 	)
 	if !found {
-		return nil, status.Error(codes.NotFound, "not found")
+		val = types.Deposit{}
 	}
 
 	return &types.QueryGetDepositResponse{Deposit: val}, nil
