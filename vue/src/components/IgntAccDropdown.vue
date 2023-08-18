@@ -20,10 +20,21 @@
         <span> Disconnect wallet </span>
       </div>
       <hr class="divide-y my-3 -mx-7" />
+      <div class="flex justify-between items-center cursor-pointer " >
+      <div class="row ">
+        <div class="col-md-2 align-self-center text-xl "><i class="fas fa-coins "></i></div>
+        <div class="col-md-8"><p>Deposit</p><p> 19.99 </p></div>
+        <div class="col-md-2 text-right align-self-center "><button class="btn btn-outline-dark btn-sm ">Deposit</button></div>
+      </div>
+        
+       
+      </div>
+      <hr class="divide-y my-3 -mx-7" />
       <div class="flex justify-between items-center cursor-pointer hover:text-gray-660" @click="switchToSettings">
         <span> Settings </span>
         <IgntChevronRightIcon class="text-sm" />
       </div>
+
       <!-- <hr class="divide-y my-3 -mx-7" /> -->
       <!-- <a
         href="#"
@@ -100,6 +111,7 @@ import { IgntChevronRightIcon } from "@ignt/vue-library";
 import { IgntExternalArrowIcon } from "@ignt/vue-library";
 import { IgntProfileIcon } from "@ignt/vue-library";
 import { IgntCopyIcon } from "@ignt/vue-library";
+import {userDeposit} from "../def-composables/userDeposit";
 
 enum UI_STATE {
   "DEFAULT" = 1,
@@ -109,10 +121,12 @@ enum UI_STATE {
 
 interface State {
   currentUIState: UI_STATE;
+  depositBalance:0
 }
 
 const initialState: State = {
   currentUIState: UI_STATE.DEFAULT,
+  depositBalance:0
 };
 
 defineProps({
@@ -130,8 +144,8 @@ const emit = defineEmits(["disconnect", "close"]);
 
 // composables
 let { address, shortAddress } = useAddress();
-let { copy } = useClipboard();
 
+let { copy } = useClipboard();
 // computed
 const query = useCosmosBaseTendermintV1Beta1();
 const nodeInfo = query.ServiceGetNodeInfo({});
@@ -167,12 +181,24 @@ let switchToSettings = () => {
 let switchToDefault = () => {
   state.currentUIState = UI_STATE.DEFAULT;
 };
+ let getUserDeposit=()=>{
+  console.log(address.value);
+  const {deposit} = userDeposit();
+  console.log(deposit);
+  
+};
 
 // lh
+
 onMounted(() => {
+  getUserDeposit()
   document.addEventListener("click", clickOutsideHandler);
 });
 onBeforeUnmount(() => {
   document.removeEventListener("click", clickOutsideHandler);
 });
 </script>
+
+<style lang="scss">
+
+</style>

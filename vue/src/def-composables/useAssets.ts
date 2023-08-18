@@ -9,6 +9,8 @@ export const useAssets = (perPage: number) => {
   const { QueryAllBalances } = useCosmosBankV1Beta1();
   const enabled = address.value != ""; // if useAssets is called with no wallet connected/no address actual query will be registered but never ran
   const query = QueryAllBalances(address.value, {}, { enabled }, perPage);
+
+
   type HelperBalances = NonNullable<
     NonNullable<Required<typeof query.data>["value"]>["pages"][0]["balances"]
   >;
@@ -38,6 +40,7 @@ export const useAssets = (perPage: number) => {
       });
     }
   });
+  console.log(balances);
 
   return {
     balancesRaw,

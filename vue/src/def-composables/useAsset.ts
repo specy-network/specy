@@ -9,5 +9,7 @@ export const useAsset = (denom: string) => {
   const balance = computed(() => {
     return query.data?.value?.balance;
   });
+
+
   return { balance, isLoading: query.isLoading };
 };
