@@ -1,18 +1,18 @@
 <template>
     <div>
         <Introduction :projectName="projectName" :projectDescription="projectDescription" />
-        <!-- <ShowTasks title="My tasks" :data="tableData" :itemsPerPage="5" /> -->
+        <ShowTasks title="My tasks" :data="tableData" :itemsPerPage="5" />
     </div>
 </template>
   
 <script>
 import Introduction from "../components/Introduction.vue";
-// import ShowTasks from "../components/ShowTasks.vue";
+import ShowTasks from "../components/ShowTasks.vue";
 
 export default {
     components: {
-        Introduction
-        // ShowTasks
+        Introduction,
+        ShowTasks
     },
     data() {
         return {
