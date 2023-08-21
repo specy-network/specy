@@ -265,7 +265,9 @@ const submit_deposit = async (): Promise<void> => {
       });
 
     const txResult = await send();
-    console.log(txResult);
+    if (txResult.code) {
+      throw new Error();
+    }
   } catch (e) {
     console.error(e);
   }
