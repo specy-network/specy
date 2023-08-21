@@ -165,6 +165,7 @@ import { userDeposit } from "../../../def-composables/userDeposit";
 import type { Amount } from "@/utils/interfaces";
 import { ref } from "vue";
 import { useClient } from "@/composables/useClient";
+import { ElNotification } from "element-plus";
 enum UI_STATE {
   "DEFAULT" = 1,
 
@@ -268,11 +269,28 @@ const submit_deposit = async (): Promise<void> => {
     if (txResult.code) {
       throw new Error();
     }
+    depositNotification(true)
   } catch (e) {
+    depositNotification(false)
     console.error(e);
   }
 };
 // lh
+const depositNotification = (status: Boolean) => {
+  if (status) {
+    ElNotification({
+      title: "Success",
+      message: "deposit successful!",
+      type: "success",
+    });
+  } else {
+    ElNotification({
+      title: "Error",
+      message: "This is an error message",
+      type: "error",
+    });
+  }
+};
 
 onMounted(() => {
   document.addEventListener("click", clickOutsideHandler);

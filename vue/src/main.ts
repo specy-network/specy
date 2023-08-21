@@ -6,6 +6,8 @@ import router from "./router";
 import "./assets/index.css";
 import './assets/boostrap.scss'
 import "@ignt/vue-library/dist/style.css";
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
 
 
 /* 核心 */
@@ -25,5 +27,6 @@ const app = createApp(App);
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.use(createPinia());
 app.use(router);
+app.use(ElementPlus)
 app.use(VueQueryPlugin);
 app.mount("#app");
