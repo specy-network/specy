@@ -1,12 +1,12 @@
 {
   "src": {
-    "chain-id": "specy-test-3",
+    "chain-id": "test-1",
     "client-id": "",
     "connection-id": "",
     "channel-id": ""
   },
   "dst": {
-    "chain-id": "osmo-test-5",
+    "chain-id": "test-2",
     "client-id": "",
     "connection-id": "",
     "channel-id": ""

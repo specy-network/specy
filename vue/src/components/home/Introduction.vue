@@ -8,7 +8,9 @@
         </div>
         <div class="row">
             <div class="col-md-2 col-12  ">
-                <button class="btn btn-dark btn-block border-2 px-3 py-2  mb-3">Create new Task</button>
+                <router-link to="/task">
+                    <button class="btn btn-dark btn-block border-2 px-3 py-2  mb-3">Create new Task</button>
+                </router-link>
             </div>
             <div class="col-md-8 col-12">
                 <button class="btn btn-outline-dark btn-block   border-2 px-3 py-2  mb-1"> Go to the docs</button>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
-import IgntHeader from "./components/IgntHeader.vue";
+import IgntHeader from "./components/common/header/IgntHeader.vue";
 import FooterNavigation from "./components/common/FooterNavigation.vue";
 
 const headerLinks = [

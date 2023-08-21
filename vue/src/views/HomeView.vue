@@ -6,8 +6,8 @@
 </template>
   
 <script>
-import Introduction from "../components/Introduction.vue";
-import ShowTasks from "../components/ShowTasks.vue";
+import Introduction from "../components/home/Introduction.vue";
+import ShowTasks from "../components/home/ShowTasks.vue";
 import { useAddress } from "../def-composables/useAddress";
 
 export default {

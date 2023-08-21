@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import IgntAcc from "@/components/IgntAcc.vue";
+import IgntAcc from "@/components/common/header/IgntAcc.vue";
 
 export default {
   components: {
