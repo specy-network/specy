@@ -269,24 +269,24 @@ const submit_deposit = async (): Promise<void> => {
     if (txResult.code) {
       throw new Error();
     }
-    depositNotification(true)
+    notification(true);
   } catch (e) {
-    depositNotification(false)
+    notification(false);
     console.error(e);
   }
 };
 // lh
-const depositNotification = (status: Boolean) => {
+const notification = (status: Boolean) => {
   if (status) {
     ElNotification({
       title: "Success",
-      message: "deposit successful!",
+      message: "TX successed!",
       type: "success",
     });
   } else {
     ElNotification({
       title: "Error",
-      message: "This is an error message",
+      message: "TX failed!",
       type: "error",
     });
   }

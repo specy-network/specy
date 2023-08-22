@@ -1,60 +1,30 @@
 <template>
   <div class="container mt-3 pt-5">
-    <div>
-      <p class="text-xl">Create New Automation Task</p>
-    </div>
-    <form class="row g-3">
-      <div class="col-md-6">
-        <label for="inputEmail4" class="form-label">Email</label>
-        <input type="email" class="form-control" id="inputEmail4" />
-      </div>
-      <div class="col-md-6">
-        <label for="inputPassword4" class="form-label">Password</label>
-        <input type="password" class="form-control" id="inputPassword4" />
-      </div>
-      <div class="col-12">
-        <label for="inputAddress" class="form-label">Address</label>
-        <input
-          type="text"
-          class="form-control"
-          id="inputAddress"
-          placeholder="1234 Main St"
-        />
-      </div>
-      <div class="col-12">
-        <label for="inputAddress2" class="form-label">Address 2</label>
-        <input
-          type="text"
-          class="form-control"
-          id="inputAddress2"
-          placeholder="Apartment, studio, or floor"
-        />
-      </div>
-      <div class="col-md-6">
-        <label for="inputCity" class="form-label">City</label>
-        <input type="text" class="form-control" id="inputCity" />
-      </div>
-      <div class="col-md-4">
-        <label for="inputState" class="form-label">State</label>
-        <select id="inputState" class="form-select">
-          <option selected>Choose...</option>
-          <option>...</option>
+    <div class="row">
+      <p class="col-md-7 text-lg pt-2">Create New Automation Task</p>
+      <p class="col-md-2 text-lg pt-1">Msg Type:</p>
+      <div class="col-md-3">
+        <select class="form-select" aria-label="" v-model="msgType">
+          <option selected value="1">Send</option>
+          <option value="2">Swap</option>
+          <option value="3">Staking</option>
         </select>
       </div>
-      <div class="col-md-2">
-        <label for="inputZip" class="form-label">Zip</label>
-        <input type="text" class="form-control" id="inputZip" />
-      </div>
-      <div class="col-12">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="gridCheck" />
-          <label class="form-check-label" for="gridCheck"> Check me out </label>
+    </div>
+
+    <div v-if="msgType == '1'">
+      <div class="row">
+        <div class="form col-md-6">
+          <SendFrom
+            :icaAddress="initialState.icaAddress"
+            :connection-id="initialState.connectionId"
+          ></SendFrom>
+        </div>
+        <div class="col-md-5 ml-20">
+          <AutomationTriggers></AutomationTriggers>
         </div>
       </div>
-      <div class="col-12">
-        <button type="submit" class="btn btn-primary">Sign in</button>
-      </div>
-    </form>
+    </div>
   </div>
 </template>
       
@@ -62,7 +32,9 @@
 import { useAddress } from "../../def-composables/useAddress";
 import { icaAddress } from "../../def-composables/icaAddress";
 import { computed, onBeforeUnmount, onMounted, reactive } from "vue";
-
+import { ref } from "vue";
+import SendFrom from "../osmosis/SendForm.vue";
+import AutomationTriggers from "./AutomationTriggers.vue";
 export interface State {
   userAddress: string;
   connectionId: string;
@@ -79,6 +51,7 @@ let initialState: State = {
     name: "Osmosis",
   },
 };
+let msgType = ref("1");
 
 let { addressInfo } = icaAddress(initialState.connectionId);
 if (addressInfo != null) {
@@ -87,5 +60,5 @@ if (addressInfo != null) {
 
 onMounted(() => {});
 </script>
-  <style>
+  <style scoped>
 </style>
