@@ -30,6 +30,6 @@ a {
   padding: 0;
 }
 .content {
-  min-height: calc(100vh - 30px);
+  min-height: calc(100vh - 180px);
 }
 </style>

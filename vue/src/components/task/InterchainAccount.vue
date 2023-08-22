@@ -55,7 +55,7 @@ export interface State {
   targetChain: { logoUrl: string; name: string };
 }
 
-let initialState: State = {
+let initialState = reactive({
   userAddress: "",
   connectionId: "connection-0",
   icaAddress: "",
@@ -63,12 +63,18 @@ let initialState: State = {
     logoUrl: "https://www.mintscan.io/assets/chains/svg/osmosis.svg",
     name: "Osmosis",
   },
-};
+});
 
 let { addressInfo } = icaAddress(initialState.connectionId);
-if (addressInfo != null) {
-  initialState.icaAddress = addressInfo.value || "";
-}
+const timer = setInterval(() => {
+  //wait user connect wallet
+  if (addressInfo != null) {
+    initialState.icaAddress = addressInfo.value || "";
+    clearInterval(timer); // 停止定时器
+  } else {
+    console.log("wait");
+  }
+}, 1000);
 
 onMounted(() => {});
 </script>

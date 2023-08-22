@@ -1,61 +1,51 @@
 <template>
-    <div>
-        <Introduction :projectName="projectName" :projectDescription="projectDescription" />
-        <ShowTasks title="My tasks" :data="tableData" :itemsPerPage="5" />
-    </div>
+  <div>
+    <Introduction
+      :projectName="projectName"
+      :projectDescription="projectDescription"
+    />
+    <ShowTasks title="My tasks" :tableData="tableData" :itemsPerPage="5" />
+  </div>
 </template>
   
 <script>
 import Introduction from "../components/home/Introduction.vue";
 import ShowTasks from "../components/home/ShowTasks.vue";
 import { useAddress } from "../def-composables/useAddress";
+import { userTasks } from "../def-composables/userTasks";
 
 export default {
-    components: {
-        Introduction,
-        ShowTasks
-    },
-    data() {
-        return {
-            address:"",
-            projectName: "Specy  Automation",
-            projectDescription: "Automate your Cosmos ecosystem TX with the Specy Network.",
-            tableData: [
-                { column1: "Data 1-1", column2: "Data 1-2", column3: "Data 1-3" },
-                { column1: "Data 2-1", column2: "Data 2-2", column3: "Data 2-3" },
-                { column1: "Data 1-1", column2: "Data 1-2", column3: "Data 1-3" },
-                { column1: "Data 2-1", column2: "Data 2-2", column3: "Data 2-3" },
-                { column1: "Data 1-1", column2: "Data 1-2", column3: "Data 1-3" },
-                { column1: "Data 2-1", column2: "Data 2-2", column3: "Data 2-3" },
-                { column1: "Data 1-1", column2: "Data 1-2", column3: "Data 1-3" },
-                { column1: "Data 2-1", column2: "Data 2-2", column3: "Data 2-3" },
-                // ... more data
-            ]
-        };
-    },
-    methods: {
-        showAddress(){
-            console.log(this.addres.value);
-        },
-        getUserTasks(){
-
-        }
-    },
-    
-    mounted() {
-        
-        const timer=setInterval(() => {
-        //wait user connect wallet
-        let { address, shortAddress } = useAddress();
-        if (address.value!="") {
-          this.addres=address
-          this.showAddress()
-          clearInterval(timer) // 停止定时器
+  components: {
+    Introduction,
+    ShowTasks,
+  },
+  data() {
+    return {
+      address: "",
+      projectName: "Specy  Automation",
+      projectDescription:
+        "Automate your Cosmos ecosystem TX with the Specy Network.",
+      tableData: [],
+    };
+  },
+  methods: {
+    getUserTasks() {
+      //暂且获取所有的task
+      let { tasks } = userTasks(100);
+      const timer = setInterval(() => {
+        if (tasks.value.isLoading == false) {
+          this.tableData = tasks.value.tasks;
+          clearInterval(timer); // 停止定时器
         } else {
+          console.log("wait");
         }
-      }, 1000) 
-       
+      }, 1000);
     },
+  },
+
+  mounted() {
+    this.getUserTasks();
+  },
 };
 </script>
   

@@ -237,7 +237,6 @@ let switchToDefault = () => {
 
 let deposit_show = () => {
   depositInputShow.value = !depositInputShow.value;
-  console.log(depositInputShow);
 };
 const submit_deposit = async (): Promise<void> => {
   const amount: Amount = {
