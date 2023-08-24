@@ -124,7 +124,6 @@ const submit = async (): Promise<void> => {
     amount: { denom: denom.value, amount: amount.value },
   };
   let msg = JSON.stringify(bankSend);
-  console.log(msg);
 
   let payload: any = {
     creator: address.value,

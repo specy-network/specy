@@ -35,7 +35,11 @@
             ></i
           >
         </div>
-        <button class="btn btn-dark mt-3" v-if="initialState.icaAddress == ''">
+        <button
+          class="btn btn-dark mt-3"
+          v-if="initialState.icaAddress == ''"
+          @click="createIca"
+        >
           Create An ICA Account
         </button>
       </div>
@@ -46,7 +50,10 @@
 <script setup lang="ts">
 import { useAddress } from "../../def-composables/useAddress";
 import { icaAddress } from "../../def-composables/icaAddress";
+import type { Amount } from "@/utils/interfaces";
+import { useClient } from "@/composables/useClient";
 import { computed, onBeforeUnmount, onMounted, reactive } from "vue";
+import { ElNotification } from "element-plus";
 
 export interface State {
   userAddress: string;
@@ -54,6 +61,7 @@ export interface State {
   icaAddress: string;
   targetChain: { logoUrl: string; name: string };
 }
+//state
 
 let initialState = reactive({
   userAddress: "",
@@ -65,6 +73,7 @@ let initialState = reactive({
   },
 });
 
+//mounted
 let { addressInfo } = icaAddress(initialState.connectionId);
 const timer = setInterval(() => {
   //wait user connect wallet
@@ -76,6 +85,62 @@ const timer = setInterval(() => {
   }
 }, 1000);
 
+const client = useClient();
+const registerIcaAccount =
+  client.IbcApplicationsInterchainAccountsControllerV1.tx
+    .sendMsgRegisterInterchainAccount;
+
+//function
+const notification = (status: Boolean) => {
+  if (status) {
+    ElNotification({
+      title: "Success",
+      message: "TX successed!",
+      type: "success",
+    });
+  } else {
+    ElNotification({
+      title: "Error",
+      message: "TX failed!",
+      type: "error",
+    });
+  }
+};
+
+const createIca = async (): Promise<void> => {
+  let { address } = useAddress();
+  let send;
+  const fee: Array<Amount> = [
+    {
+      denom: "stake",
+      amount: "0",
+    },
+  ];
+
+  let payload: any = {
+    owner: address.value,
+    connectionId: initialState.connectionId,
+    version: 0,
+  };
+
+  try {
+    send = () =>
+      registerIcaAccount({
+        value: payload,
+        fee: { amount: fee as Readonly<Amount[]>, gas: "200000" },
+        memo: "",
+      });
+
+    const txResult = await send();
+    if (txResult.code) {
+      throw new Error();
+    }
+    notification(true);
+  } catch (e) {
+    notification(false);
+    console.error(e);
+  }
+};
 onMounted(() => {});
 </script>
 <style>
