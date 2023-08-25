@@ -47,6 +47,18 @@ func TestGenesis(t *testing.T) {
 		HistoryExecuteCount: &types.HistoryExecuteCount{
 			Count: 100,
 		},
+		ExecuteRecordList: []types.ExecuteRecord{
+			{
+				Owner:    "0",
+				Name:     "0",
+				Position: 0,
+			},
+			{
+				Owner:    "1",
+				Name:     "1",
+				Position: 1,
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -63,5 +75,6 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.DepositList, got.DepositList)
 	require.Equal(t, genesisState.CurrentExecutorStatus, got.CurrentExecutorStatus)
 	require.Equal(t, genesisState.HistoryExecuteCount, got.HistoryExecuteCount)
+	require.ElementsMatch(t, genesisState.ExecuteRecordList, got.ExecuteRecordList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

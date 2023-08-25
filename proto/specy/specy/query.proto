@@ -13,6 +13,7 @@ import "specy/specy/deposit.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "specy/specy/current_executor_status.proto";
 import "specy/specy/history_execute_count.proto";
+import "specy/specy/execute_record.proto";
 
 option go_package = "github.com/specy-network/specy/x/specy/types";
 
@@ -76,6 +77,16 @@ service Query {
   // Queries a HistoryExecuteCount by index.
   rpc HistoryExecuteCount (QueryGetHistoryExecuteCountRequest) returns (QueryGetHistoryExecuteCountResponse) {
     option (google.api.http).get = "/specy-network/specy/specy/history_execute_count";
+  
+  }
+  
+  // Queries a list of ExecuteRecord items.
+  rpc ExecuteRecord    (QueryGetExecuteRecordRequest) returns (QueryGetExecuteRecordResponse) {
+    option (google.api.http).get = "/specy-network/specy/specy/execute_record/{owner}/{name}/{position}";
+  
+  }
+  rpc ExecuteRecordAll (QueryAllExecuteRecordRequest) returns (QueryAllExecuteRecordResponse) {
+    option (google.api.http).get = "/specy-network/specy/specy/execute_record";
   
   }
 }
@@ -166,5 +177,24 @@ message QueryGetHistoryExecuteCountRequest {}
 
 message QueryGetHistoryExecuteCountResponse {
   HistoryExecuteCount HistoryExecuteCount = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetExecuteRecordRequest {
+  string owner    = 1;
+  string name     = 2;
+  uint64 position = 3;
+}
+
+message QueryGetExecuteRecordResponse {
+  ExecuteRecord executeRecord = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllExecuteRecordRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllExecuteRecordResponse {
+  repeated ExecuteRecord                          executeRecord = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination    = 2;
 }
 

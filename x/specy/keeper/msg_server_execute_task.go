@@ -2,12 +2,13 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/specy-network/specy/x/specy/types"
-
 	icatypes "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/types"
+	"github.com/specy-network/specy/x/specy/types"
+	"github.com/tendermint/tendermint/crypto/tmhash"
 )
 
 func (k msgServer) ExecuteTask(goCtx context.Context, msg *types.MsgExecuteTask) (*types.MsgExecuteTaskResponse, error) {
@@ -33,6 +34,7 @@ func (k msgServer) ExecuteTask(goCtx context.Context, msg *types.MsgExecuteTask)
 	if err != nil {
 		return nil, err
 	}
+
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeExecuteTask,
@@ -47,6 +49,23 @@ func (k msgServer) ExecuteTask(goCtx context.Context, msg *types.MsgExecuteTask)
 			sdk.NewAttribute(types.AttributeKeyTaskIntervalNumber, string(rune(task.ScheduleType.Number))),
 		),
 	})
+	count, found := k.GetHistoryExecuteCount(ctx)
+	if !found {
+		count = types.HistoryExecuteCount{Count: 0}
+	}
+	count.Count++
+	record := &types.ExecuteRecord{
+		Owner:     task.Owner,
+		Name:      task.Name,
+		Position:  count.Count,
+		Executor:  msg.Creator,
+		Timestamp: uint64(ctx.BlockTime().Second()),
+		TxHash:    fmt.Sprintf("%x", tmhash.Sum(ctx.TxBytes())),
+		Amount:    1,
+	}
+	k.SetExecuteRecord(ctx, *record)
+	k.SetHistoryExecuteCount(ctx, count)
+
 	return &types.MsgExecuteTaskResponse{}, nil
 }
 
