@@ -65,6 +65,12 @@ service Query {
     option (google.api.http).get = "/specy-network/specy/specy/pool";
   
   }
+  
+  // Queries a list of TaskAllByOwner items.
+  rpc TaskAllByOwner (QueryTaskAllByOwnerRequest) returns (QueryTaskAllByOwnerResponse) {
+    option (google.api.http).get = "/specy-network/specy/specy/task_all_by_owner/{owner}";
+  
+  }
 }
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -139,5 +145,13 @@ message QueryPoolRequest {}
 message QueryPoolResponse {
   cosmos.base.v1beta1.Coin totalDeposit  = 1 [(gogoproto.nullable) = false];
   cosmos.base.v1beta1.Coin currentReward = 2 [(gogoproto.nullable) = false];
+}
+
+message QueryTaskAllByOwnerRequest {
+  string owner = 1;
+}
+
+message QueryTaskAllByOwnerResponse {
+  repeated Task tasks = 1 [(gogoproto.nullable) = false];
 }
 
