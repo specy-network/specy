@@ -89,6 +89,12 @@ service Query {
     option (google.api.http).get = "/specy-network/specy/specy/execute_record";
   
   }
+  
+  // Queries a list of ExecuteRecordAllByOwnerAndName items.
+  rpc ExecuteRecordAllByOwnerAndName (QueryExecuteRecordAllByOwnerAndNameRequest) returns (QueryExecuteRecordAllByOwnerAndNameResponse) {
+    option (google.api.http).get = "/specy-network/specy/specy/execute_record_all_by_owner_and_name/{owner}/{name}";
+  
+  }
 }
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -196,5 +202,14 @@ message QueryAllExecuteRecordRequest {
 message QueryAllExecuteRecordResponse {
   repeated ExecuteRecord                          executeRecord = 1 [(gogoproto.nullable) = false];
            cosmos.base.query.v1beta1.PageResponse pagination    = 2;
+}
+
+message QueryExecuteRecordAllByOwnerAndNameRequest {
+  string owner = 1;
+  string name  = 2;
+}
+
+message QueryExecuteRecordAllByOwnerAndNameResponse {
+  repeated ExecuteRecord records = 1 [(gogoproto.nullable) = false];
 }
 

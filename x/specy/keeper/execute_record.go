@@ -71,3 +71,27 @@ func (k Keeper) GetAllExecuteRecord(ctx sdk.Context) (list []types.ExecuteRecord
 
 	return
 }
+
+func (k Keeper) GetAllExecuteRecordByOwnerAndName(ctx sdk.Context, owner, name string) (list []types.ExecuteRecord) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ExecuteRecordKeyPrefix))
+	var key []byte
+
+	ownerBytes := []byte(owner)
+	key = append(key, ownerBytes...)
+	key = append(key, []byte("/")...)
+	nameBytes := []byte(name)
+	key = append(key, nameBytes...)
+	key = append(key, []byte("/")...)
+
+	iterator := sdk.KVStorePrefixIterator(store, key)
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.ExecuteRecord
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		list = append(list, val)
+	}
+
+	return
+}

@@ -59,7 +59,7 @@ func (k msgServer) ExecuteTask(goCtx context.Context, msg *types.MsgExecuteTask)
 		Name:      task.Name,
 		Position:  count.Count,
 		Executor:  msg.Creator,
-		Timestamp: uint64(ctx.BlockTime().Second()),
+		Timestamp: uint64(ctx.BlockTime().UnixNano()),
 		TxHash:    fmt.Sprintf("%x", tmhash.Sum(ctx.TxBytes())),
 		Amount:    1,
 	}
