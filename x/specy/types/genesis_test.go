@@ -52,6 +52,21 @@ func TestGenesisState_Validate(t *testing.T) {
 					CurrentExecutor: "57",
 					ChangeHeight:    92,
 				},
+				HistoryExecuteCount: &types.HistoryExecuteCount{
+					Count: 78,
+				},
+				ExecuteRecordList: []types.ExecuteRecord{
+					{
+						Owner:    "0",
+						Name:     "0",
+						Position: 0,
+					},
+					{
+						Owner:    "1",
+						Name:     "1",
+						Position: 1,
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -95,6 +110,24 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 					{
 						Address: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated executeRecord",
+			genState: &types.GenesisState{
+				ExecuteRecordList: []types.ExecuteRecord{
+					{
+						Owner:    "0",
+						Name:     "0",
+						Position: 0,
+					},
+					{
+						Owner:    "0",
+						Name:     "0",
+						Position: 0,
 					},
 				},
 			},

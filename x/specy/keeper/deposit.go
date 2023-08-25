@@ -68,7 +68,6 @@ func CheckDenom(ctx sdk.Context, keeper Keeper, denom string) bool {
 	return param.CommissionDenom == denom
 }
 
-//
 func (k Keeper) SubFee(
 	ctx sdk.Context,
 	taskOwner string,
