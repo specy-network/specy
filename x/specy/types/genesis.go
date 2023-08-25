@@ -14,6 +14,7 @@ func DefaultGenesis() *GenesisState {
 		ExecutorList:          []Executor{},
 		DepositList:           []Deposit{},
 		CurrentExecutorStatus: nil,
+		HistoryExecuteCount:   nil,
 		// this line is used by starport scaffolding # genesis/types/default
 		Params: DefaultParams(),
 	}

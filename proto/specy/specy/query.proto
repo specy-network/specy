@@ -12,6 +12,7 @@ import "specy/specy/executor.proto";
 import "specy/specy/deposit.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "specy/specy/current_executor_status.proto";
+import "specy/specy/history_execute_count.proto";
 
 option go_package = "github.com/specy-network/specy/x/specy/types";
 
@@ -69,6 +70,12 @@ service Query {
   // Queries a list of TaskAllByOwner items.
   rpc TaskAllByOwner (QueryTaskAllByOwnerRequest) returns (QueryTaskAllByOwnerResponse) {
     option (google.api.http).get = "/specy-network/specy/specy/task_all_by_owner/{owner}";
+  
+  }
+  
+  // Queries a HistoryExecuteCount by index.
+  rpc HistoryExecuteCount (QueryGetHistoryExecuteCountRequest) returns (QueryGetHistoryExecuteCountResponse) {
+    option (google.api.http).get = "/specy-network/specy/specy/history_execute_count";
   
   }
 }
@@ -153,5 +160,11 @@ message QueryTaskAllByOwnerRequest {
 
 message QueryTaskAllByOwnerResponse {
   repeated Task tasks = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetHistoryExecuteCountRequest {}
+
+message QueryGetHistoryExecuteCountResponse {
+  HistoryExecuteCount HistoryExecuteCount = 1 [(gogoproto.nullable) = false];
 }
 

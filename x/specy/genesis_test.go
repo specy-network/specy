@@ -44,6 +44,9 @@ func TestGenesis(t *testing.T) {
 			CurrentExecutor: "46",
 			ChangeHeight:    2,
 		},
+		HistoryExecuteCount: &types.HistoryExecuteCount{
+			Count: 100,
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -59,5 +62,6 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.ExecutorList, got.ExecutorList)
 	require.ElementsMatch(t, genesisState.DepositList, got.DepositList)
 	require.Equal(t, genesisState.CurrentExecutorStatus, got.CurrentExecutorStatus)
+	require.Equal(t, genesisState.HistoryExecuteCount, got.HistoryExecuteCount)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

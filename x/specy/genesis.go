@@ -24,6 +24,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	if genState.CurrentExecutorStatus != nil {
 		k.SetCurrentExecutorStatus(ctx, *genState.CurrentExecutorStatus)
 	}
+	// Set if defined
+	if genState.HistoryExecuteCount != nil {
+		k.SetHistoryExecuteCount(ctx, *genState.HistoryExecuteCount)
+	}
 	// this line is used by starport scaffolding # genesis/module/init
 	k.SetParams(ctx, genState.Params)
 }
@@ -40,6 +44,11 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	currentExecutorStatus, found := k.GetCurrentExecutorStatus(ctx)
 	if found {
 		genesis.CurrentExecutorStatus = &currentExecutorStatus
+	}
+	// Get all historyExecuteCount
+	historyExecuteCount, found := k.GetHistoryExecuteCount(ctx)
+	if found {
+		genesis.HistoryExecuteCount = &historyExecuteCount
 	}
 	// this line is used by starport scaffolding # genesis/module/export
 

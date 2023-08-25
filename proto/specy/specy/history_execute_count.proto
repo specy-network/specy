@@ -1,0 +1,9 @@
+syntax = "proto3";
+package specynetwork.specy.specy;
+
+option go_package = "github.com/specy-network/specy/x/specy/types";
+
+message HistoryExecuteCount {
+  uint64 count = 1; 
+  
+}

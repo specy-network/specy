@@ -52,6 +52,9 @@ func TestGenesisState_Validate(t *testing.T) {
 					CurrentExecutor: "57",
 					ChangeHeight:    92,
 				},
+				HistoryExecuteCount: &types.HistoryExecuteCount{
+					Count: 78,
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
