@@ -21,3 +21,7 @@ func KeyPrefix(p string) []byte {
 const (
 	CurrentExecutorStatusKey = "CurrentExecutorStatus/value/"
 )
+
+const (
+	HistoryExecuteCountKey = "HistoryExecuteCount/value/"
+)

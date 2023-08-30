@@ -1,0 +1,16 @@
+syntax = "proto3";
+package specynetwork.specy.specy;
+
+option go_package = "github.com/specy-network/specy/x/specy/types";
+
+message ExecuteRecord {
+  string owner = 1; 
+  string name = 2; 
+  uint64 position = 3; 
+  string executor = 4; 
+  uint64 timestamp = 5; 
+  string txHash = 6; 
+  uint64 amount = 7; 
+  
+}
+

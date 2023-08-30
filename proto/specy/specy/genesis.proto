@@ -8,6 +8,8 @@ import "specy/specy/task.proto";
 import "specy/specy/executor.proto";
 import "specy/specy/deposit.proto";
 import "specy/specy/current_executor_status.proto";
+import "specy/specy/history_execute_count.proto";
+import "specy/specy/execute_record.proto";
 
 option go_package = "github.com/specy-network/specy/x/specy/types";
 
@@ -18,5 +20,7 @@ message GenesisState {
   repeated Executor              executorList          = 3 [(gogoproto.nullable) = false];
   repeated Deposit               depositList           = 4 [(gogoproto.nullable) = false];
            CurrentExecutorStatus currentExecutorStatus = 5;
+           HistoryExecuteCount   historyExecuteCount   = 6;
+  repeated ExecuteRecord         executeRecordList     = 7 [(gogoproto.nullable) = false];
 }
 

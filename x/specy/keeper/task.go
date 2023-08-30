@@ -66,3 +66,17 @@ func (k Keeper) GetAllTask(ctx sdk.Context) (list []types.Task) {
 
 	return
 }
+func (k Keeper) GetAllTaskByOwner(ctx sdk.Context, owner []byte) (list []types.Task) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TaskKeyPrefix))
+	iterator := sdk.KVStorePrefixIterator(store, owner)
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.Task
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		list = append(list, val)
+	}
+
+	return
+}

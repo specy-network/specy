@@ -14,6 +14,8 @@ func DefaultGenesis() *GenesisState {
 		ExecutorList:          []Executor{},
 		DepositList:           []Deposit{},
 		CurrentExecutorStatus: nil,
+		HistoryExecuteCount:   nil,
+		ExecuteRecordList:     []ExecuteRecord{},
 		// this line is used by starport scaffolding # genesis/types/default
 		Params: DefaultParams(),
 	}
@@ -51,6 +53,16 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for deposit")
 		}
 		depositIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in executeRecord
+	executeRecordIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.ExecuteRecordList {
+		index := string(ExecuteRecordKey(elem.Owner, elem.Name, elem.Position))
+		if _, ok := executeRecordIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for executeRecord")
+		}
+		executeRecordIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

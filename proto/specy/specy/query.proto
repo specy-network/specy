@@ -12,6 +12,8 @@ import "specy/specy/executor.proto";
 import "specy/specy/deposit.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "specy/specy/current_executor_status.proto";
+import "specy/specy/history_execute_count.proto";
+import "specy/specy/execute_record.proto";
 
 option go_package = "github.com/specy-network/specy/x/specy/types";
 
@@ -63,6 +65,34 @@ service Query {
   // Queries a list of Pool items.
   rpc Pool (QueryPoolRequest) returns (QueryPoolResponse) {
     option (google.api.http).get = "/specy-network/specy/specy/pool";
+  
+  }
+  
+  // Queries a list of TaskAllByOwner items.
+  rpc TaskAllByOwner (QueryTaskAllByOwnerRequest) returns (QueryTaskAllByOwnerResponse) {
+    option (google.api.http).get = "/specy-network/specy/specy/task_all_by_owner/{owner}";
+  
+  }
+  
+  // Queries a HistoryExecuteCount by index.
+  rpc HistoryExecuteCount (QueryGetHistoryExecuteCountRequest) returns (QueryGetHistoryExecuteCountResponse) {
+    option (google.api.http).get = "/specy-network/specy/specy/history_execute_count";
+  
+  }
+  
+  // Queries a list of ExecuteRecord items.
+  rpc ExecuteRecord    (QueryGetExecuteRecordRequest) returns (QueryGetExecuteRecordResponse) {
+    option (google.api.http).get = "/specy-network/specy/specy/execute_record/{owner}/{name}/{position}";
+  
+  }
+  rpc ExecuteRecordAll (QueryAllExecuteRecordRequest) returns (QueryAllExecuteRecordResponse) {
+    option (google.api.http).get = "/specy-network/specy/specy/execute_record";
+  
+  }
+  
+  // Queries a list of ExecuteRecordAllByOwnerAndName items.
+  rpc ExecuteRecordAllByOwnerAndName (QueryExecuteRecordAllByOwnerAndNameRequest) returns (QueryExecuteRecordAllByOwnerAndNameResponse) {
+    option (google.api.http).get = "/specy-network/specy/specy/execute_record_all_by_owner_and_name/{owner}/{name}";
   
   }
 }
@@ -139,5 +169,47 @@ message QueryPoolRequest {}
 message QueryPoolResponse {
   cosmos.base.v1beta1.Coin totalDeposit  = 1 [(gogoproto.nullable) = false];
   cosmos.base.v1beta1.Coin currentReward = 2 [(gogoproto.nullable) = false];
+}
+
+message QueryTaskAllByOwnerRequest {
+  string owner = 1;
+}
+
+message QueryTaskAllByOwnerResponse {
+  repeated Task tasks = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetHistoryExecuteCountRequest {}
+
+message QueryGetHistoryExecuteCountResponse {
+  HistoryExecuteCount HistoryExecuteCount = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetExecuteRecordRequest {
+  string owner    = 1;
+  string name     = 2;
+  uint64 position = 3;
+}
+
+message QueryGetExecuteRecordResponse {
+  ExecuteRecord executeRecord = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllExecuteRecordRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllExecuteRecordResponse {
+  repeated ExecuteRecord                          executeRecord = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination    = 2;
+}
+
+message QueryExecuteRecordAllByOwnerAndNameRequest {
+  string owner = 1;
+  string name  = 2;
+}
+
+message QueryExecuteRecordAllByOwnerAndNameResponse {
+  repeated ExecuteRecord records = 1 [(gogoproto.nullable) = false];
 }
 

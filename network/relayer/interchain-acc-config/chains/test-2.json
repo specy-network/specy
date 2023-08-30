@@ -3,7 +3,7 @@
   "value": {
     "key": "testkey2",
     "chain-id": "test-2",
-    "rpc-addr": "http://localhost:16657",
+    "rpc-addr": "http://localhost:26657",
     "grpc-addr": "",
     "account-prefix": "cosmos",
     "keyring-backend": "test",
