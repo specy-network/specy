@@ -14,14 +14,14 @@ WALLET_MNEMONIC_4="open attitude harsh casino rent attitude midnight debris desc
 RLY_MNEMONIC_1="alley afraid soup fall idea toss can goose become valve initial strong forward bright dish figure check leopard decide warfare hub unusual join cart"
 RLY_MNEMONIC_2="record gift you once hip style during joke field prize dust unique length more pencil transfer quit train device arrive energy sort steak upset"
 
-P2PPORT_1=16656
-P2PPORT_2=26656
-RPCPORT_1=16657
-RPCPORT_2=26657
-RESTPORT_1=1316
-RESTPORT_2=1317
-ROSETTA_1=8080
-ROSETTA_2=8081
+P2PPORT_2=16656
+P2PPORT_1=26656
+RPCPORT_2=16657
+RPCPORT_1=26657
+RESTPORT_2=1316
+RESTPORT_1=1317
+ROSETTA_2=8080
+ROSETTA_1=8081
 
 # Stop if it is already running 
 if pgrep -x "$BINARY" >/dev/null; then
@@ -81,9 +81,11 @@ sed -i -e 's/timeout_commit = "5s"/timeout_commit = "1s"/g' $CHAIN_DIR/$CHAINID_
 sed -i -e 's/timeout_propose = "3s"/timeout_propose = "1s"/g' $CHAIN_DIR/$CHAINID_1/config/config.toml
 sed -i -e 's/index_all_keys = false/index_all_keys = true/g' $CHAIN_DIR/$CHAINID_1/config/config.toml
 sed -i -e 's/enable = false/enable = true/g' $CHAIN_DIR/$CHAINID_1/config/app.toml
+sed -i -e 's/enabled-unsafe-cors = false/enabled-unsafe-cors = true/g' $CHAIN_DIR/$CHAINID_1/config/app.toml
 sed -i -e 's/swagger = false/swagger = true/g' $CHAIN_DIR/$CHAINID_1/config/app.toml
 sed -i -e 's#"tcp://0.0.0.0:1317"#"tcp://0.0.0.0:'"$RESTPORT_1"'"#g' $CHAIN_DIR/$CHAINID_1/config/app.toml
 sed -i -e 's#":8080"#":'"$ROSETTA_1"'"#g' $CHAIN_DIR/$CHAINID_1/config/app.toml
+sed -i 's/cors_allowed_origins = \[\]/cors_allowed_origins = ["*",]/g' $CHAIN_DIR/$CHAINID_1/config/config.toml
 
 sed -i -e 's#"tcp://0.0.0.0:26656"#"tcp://0.0.0.0:'"$P2PPORT_2"'"#g' $CHAIN_DIR/$CHAINID_2/config/config.toml
 sed -i -e 's#"tcp://127.0.0.1:26657"#"tcp://0.0.0.0:'"$RPCPORT_2"'"#g' $CHAIN_DIR/$CHAINID_2/config/config.toml
@@ -94,6 +96,9 @@ sed -i -e 's/enable = false/enable = true/g' $CHAIN_DIR/$CHAINID_2/config/app.to
 sed -i -e 's/swagger = false/swagger = true/g' $CHAIN_DIR/$CHAINID_2/config/app.toml
 sed -i -e 's#"tcp://0.0.0.0:1317"#"tcp://0.0.0.0:'"$RESTPORT_2"'"#g' $CHAIN_DIR/$CHAINID_2/config/app.toml
 sed -i -e 's#":8080"#":'"$ROSETTA_2"'"#g' $CHAIN_DIR/$CHAINID_2/config/app.toml
+sed -i -e 's/enabled-unsafe-cors = false/enabled-unsafe-cors = true/g' $CHAIN_DIR/$CHAINID_2/config/app.toml
+sed -i 's/cors_allowed_origins = \[\]/cors_allowed_origins = ["*",]/g' $CHAIN_DIR/$CHAINID_2/config/config.toml
+
 
 # Update host chain genesis to allow x/bank/MsgSend ICA tx execution
 # sed -i -e 's/\"allow_messages\":.*/\"allow_messages\": [\"\/cosmos.bank.v1beta1.MsgSend\", \"\/cosmos.staking.v1beta1.MsgDelegate\"]/g' $CHAIN_DIR/$CHAINID_2/config/genesis.json

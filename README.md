@@ -94,6 +94,7 @@ Here the message signer is used as the account owner.
 
 ```bash
 # Register an interchain account on behalf of WALLET_1 where chain test-2 is the interchain accounts host
+
 specyd tx intertx register --from $WALLET_1 --connection-id connection-0 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
 
 # Query the address of the interchain account
@@ -113,13 +114,13 @@ Note this is executed on the host chain to provide the account with an initial b
 
 ```bash
 # Query the interchain account balance on the host chain. It should be empty.
-specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
+specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:16657
 
 # Send funds to the interchain account.
-specyd tx bank send $WALLET_3 $ICA_ADDR 10000stake --chain-id test-2 --home ./data/test-2 --node tcp://localhost:26657 --keyring-backend test -y
+specyd tx bank send $WALLET_3 $ICA_ADDR 10000stake --chain-id test-2 --home ./data/test-2 --node tcp://localhost:16657 --keyring-backend test -y
 
 # Query the balance once again and observe the changes
-specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
+specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:16657
 ```
 
 > This is the situation after funding the ICA.
@@ -134,14 +135,14 @@ specyd tx specy deposit-balance \
 ```
 
 ```bash
-specyd q specy list-deposit --node tcp://localhost:16657
+specyd q specy list-deposit --node tcp://localhost:26657
 ```
 
 Of course, you can also use `withdraw-balance` cmd extract the deposit token.
 ```bash
 specyd tx specy withdraw-balance \
     5000stake \
-    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:26657 --keyring-backend test -y
 ```
 
 
@@ -187,7 +188,7 @@ specyd tx specy create-task \
         "amount": "1000"
     }
     }' rulefile 0 0 100 '{"maxAmount":10000}' \
-    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:26657 --keyring-backend test -y
 ```
 ![post-create-task](./images/post-create-task.jpg)
 
@@ -195,7 +196,7 @@ Query task details
 Using the `list-task` cmd on the `Specy` chain to query tasks that have already been created.
 
 ```bash 
-specyd q specy list-task --node tcp://localhost:16657
+specyd q specy list-task --node tcp://localhost:26657
 ```
 #### Create executor
 As the validator of the `Specy` chain, the executor service must be running and the corresponding information registered on the chain, otherwise it will be evidenced and slashed.
@@ -206,7 +207,7 @@ specyd tx specy create-executor \
 ```
 
 ```bash
-specyd q specy list-executor --node tcp://localhost:16657
+specyd q specy list-executor --node tcp://localhost:26657
 ```
 
 #### Simulate task execution
@@ -249,9 +250,9 @@ cosmos1m9l358xunhhwds0568za49mzhvuxx9uxre5tud test_task1 cproofstring '{"type":"
 
 - staking detail
 ```bash
-specyd q staking delegations-to cosmosvaloper1qnk2n4nlkpw9xfqntladh74w6ujtulwnmxnh3k --home ./data/test-2 --node tcp://localhost:26657
+specyd q staking delegations-to cosmosvaloper1qnk2n4nlkpw9xfqntladh74w6ujtulwnmxnh3k --home ./data/test-2 --node tcp://localhost:16657
 ```
 - account balance
 ```bash
-specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
+specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:16657
 ```
