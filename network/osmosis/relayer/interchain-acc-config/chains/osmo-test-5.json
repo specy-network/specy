@@ -1,0 +1,20 @@
+{
+  "type": "cosmos",
+  "value": {
+    "key": "testkey2",
+    "chain-id": "osmo-test-5",
+    "rpc-addr": "http://222.106.187.14:53402",
+    "grpc-addr": "",
+    "account-prefix": "osmo",
+    "keyring-backend": "test",
+    "default-denom": "osmo",
+    "gas-adjustment": 1.5,
+    "gas-prices": "0.025uosmo",
+    "debug": true,
+    "timeout": "600s",
+    "output-format": "json",
+    "sign-mode": "direct",
+    "trusting-period": "330h",
+    "gas": 900000
+  }
+}

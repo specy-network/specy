@@ -2,7 +2,9 @@
 import _m0 from "protobufjs/minimal";
 import { CurrentExecutorStatus } from "./current_executor_status";
 import { Deposit } from "./deposit";
+import { ExecuteRecord } from "./execute_record";
 import { Executor } from "./executor";
+import { HistoryExecuteCount } from "./history_execute_count";
 import { Params } from "./params";
 import { Task } from "./task";
 
@@ -15,10 +17,20 @@ export interface GenesisState {
   executorList: Executor[];
   depositList: Deposit[];
   currentExecutorStatus: CurrentExecutorStatus | undefined;
+  historyExecuteCount: HistoryExecuteCount | undefined;
+  executeRecordList: ExecuteRecord[];
 }
 
 function createBaseGenesisState(): GenesisState {
-  return { params: undefined, taskList: [], executorList: [], depositList: [], currentExecutorStatus: undefined };
+  return {
+    params: undefined,
+    taskList: [],
+    executorList: [],
+    depositList: [],
+    currentExecutorStatus: undefined,
+    historyExecuteCount: undefined,
+    executeRecordList: [],
+  };
 }
 
 export const GenesisState = {
@@ -37,6 +49,12 @@ export const GenesisState = {
     }
     if (message.currentExecutorStatus !== undefined) {
       CurrentExecutorStatus.encode(message.currentExecutorStatus, writer.uint32(42).fork()).ldelim();
+    }
+    if (message.historyExecuteCount !== undefined) {
+      HistoryExecuteCount.encode(message.historyExecuteCount, writer.uint32(50).fork()).ldelim();
+    }
+    for (const v of message.executeRecordList) {
+      ExecuteRecord.encode(v!, writer.uint32(58).fork()).ldelim();
     }
     return writer;
   },
@@ -63,6 +81,12 @@ export const GenesisState = {
         case 5:
           message.currentExecutorStatus = CurrentExecutorStatus.decode(reader, reader.uint32());
           break;
+        case 6:
+          message.historyExecuteCount = HistoryExecuteCount.decode(reader, reader.uint32());
+          break;
+        case 7:
+          message.executeRecordList.push(ExecuteRecord.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -82,6 +106,12 @@ export const GenesisState = {
       currentExecutorStatus: isSet(object.currentExecutorStatus)
         ? CurrentExecutorStatus.fromJSON(object.currentExecutorStatus)
         : undefined,
+      historyExecuteCount: isSet(object.historyExecuteCount)
+        ? HistoryExecuteCount.fromJSON(object.historyExecuteCount)
+        : undefined,
+      executeRecordList: Array.isArray(object?.executeRecordList)
+        ? object.executeRecordList.map((e: any) => ExecuteRecord.fromJSON(e))
+        : [],
     };
   },
 
@@ -106,6 +136,14 @@ export const GenesisState = {
     message.currentExecutorStatus !== undefined && (obj.currentExecutorStatus = message.currentExecutorStatus
       ? CurrentExecutorStatus.toJSON(message.currentExecutorStatus)
       : undefined);
+    message.historyExecuteCount !== undefined && (obj.historyExecuteCount = message.historyExecuteCount
+      ? HistoryExecuteCount.toJSON(message.historyExecuteCount)
+      : undefined);
+    if (message.executeRecordList) {
+      obj.executeRecordList = message.executeRecordList.map((e) => e ? ExecuteRecord.toJSON(e) : undefined);
+    } else {
+      obj.executeRecordList = [];
+    }
     return obj;
   },
 
@@ -121,6 +159,10 @@ export const GenesisState = {
       (object.currentExecutorStatus !== undefined && object.currentExecutorStatus !== null)
         ? CurrentExecutorStatus.fromPartial(object.currentExecutorStatus)
         : undefined;
+    message.historyExecuteCount = (object.historyExecuteCount !== undefined && object.historyExecuteCount !== null)
+      ? HistoryExecuteCount.fromPartial(object.historyExecuteCount)
+      : undefined;
+    message.executeRecordList = object.executeRecordList?.map((e) => ExecuteRecord.fromPartial(e)) || [];
     return message;
   },
 };

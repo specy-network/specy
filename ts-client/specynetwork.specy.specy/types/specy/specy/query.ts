@@ -1,10 +1,13 @@
 /* eslint-disable */
+import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { PageRequest, PageResponse } from "../../cosmos/base/query/v1beta1/pagination";
 import { Coin } from "../../cosmos/base/v1beta1/coin";
 import { CurrentExecutorStatus } from "./current_executor_status";
 import { Deposit } from "./deposit";
+import { ExecuteRecord } from "./execute_record";
 import { Executor } from "./executor";
+import { HistoryExecuteCount } from "./history_execute_count";
 import { Params } from "./params";
 import { Task } from "./task";
 
@@ -85,6 +88,49 @@ export interface QueryPoolRequest {
 export interface QueryPoolResponse {
   totalDeposit: Coin | undefined;
   currentReward: Coin | undefined;
+}
+
+export interface QueryTaskAllByOwnerRequest {
+  owner: string;
+}
+
+export interface QueryTaskAllByOwnerResponse {
+  tasks: Task[];
+}
+
+export interface QueryGetHistoryExecuteCountRequest {
+}
+
+export interface QueryGetHistoryExecuteCountResponse {
+  HistoryExecuteCount: HistoryExecuteCount | undefined;
+}
+
+export interface QueryGetExecuteRecordRequest {
+  owner: string;
+  name: string;
+  position: number;
+}
+
+export interface QueryGetExecuteRecordResponse {
+  executeRecord: ExecuteRecord | undefined;
+}
+
+export interface QueryAllExecuteRecordRequest {
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryAllExecuteRecordResponse {
+  executeRecord: ExecuteRecord[];
+  pagination: PageResponse | undefined;
+}
+
+export interface QueryExecuteRecordAllByOwnerAndNameRequest {
+  owner: string;
+  name: string;
+}
+
+export interface QueryExecuteRecordAllByOwnerAndNameResponse {
+  records: ExecuteRecord[];
 }
 
 function createBaseQueryParamsRequest(): QueryParamsRequest {
@@ -1019,6 +1065,553 @@ export const QueryPoolResponse = {
   },
 };
 
+function createBaseQueryTaskAllByOwnerRequest(): QueryTaskAllByOwnerRequest {
+  return { owner: "" };
+}
+
+export const QueryTaskAllByOwnerRequest = {
+  encode(message: QueryTaskAllByOwnerRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.owner !== "") {
+      writer.uint32(10).string(message.owner);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryTaskAllByOwnerRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryTaskAllByOwnerRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.owner = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryTaskAllByOwnerRequest {
+    return { owner: isSet(object.owner) ? String(object.owner) : "" };
+  },
+
+  toJSON(message: QueryTaskAllByOwnerRequest): unknown {
+    const obj: any = {};
+    message.owner !== undefined && (obj.owner = message.owner);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryTaskAllByOwnerRequest>, I>>(object: I): QueryTaskAllByOwnerRequest {
+    const message = createBaseQueryTaskAllByOwnerRequest();
+    message.owner = object.owner ?? "";
+    return message;
+  },
+};
+
+function createBaseQueryTaskAllByOwnerResponse(): QueryTaskAllByOwnerResponse {
+  return { tasks: [] };
+}
+
+export const QueryTaskAllByOwnerResponse = {
+  encode(message: QueryTaskAllByOwnerResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.tasks) {
+      Task.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryTaskAllByOwnerResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryTaskAllByOwnerResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.tasks.push(Task.decode(reader, reader.uint32()));
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryTaskAllByOwnerResponse {
+    return { tasks: Array.isArray(object?.tasks) ? object.tasks.map((e: any) => Task.fromJSON(e)) : [] };
+  },
+
+  toJSON(message: QueryTaskAllByOwnerResponse): unknown {
+    const obj: any = {};
+    if (message.tasks) {
+      obj.tasks = message.tasks.map((e) => e ? Task.toJSON(e) : undefined);
+    } else {
+      obj.tasks = [];
+    }
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryTaskAllByOwnerResponse>, I>>(object: I): QueryTaskAllByOwnerResponse {
+    const message = createBaseQueryTaskAllByOwnerResponse();
+    message.tasks = object.tasks?.map((e) => Task.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseQueryGetHistoryExecuteCountRequest(): QueryGetHistoryExecuteCountRequest {
+  return {};
+}
+
+export const QueryGetHistoryExecuteCountRequest = {
+  encode(_: QueryGetHistoryExecuteCountRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetHistoryExecuteCountRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryGetHistoryExecuteCountRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): QueryGetHistoryExecuteCountRequest {
+    return {};
+  },
+
+  toJSON(_: QueryGetHistoryExecuteCountRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryGetHistoryExecuteCountRequest>, I>>(
+    _: I,
+  ): QueryGetHistoryExecuteCountRequest {
+    const message = createBaseQueryGetHistoryExecuteCountRequest();
+    return message;
+  },
+};
+
+function createBaseQueryGetHistoryExecuteCountResponse(): QueryGetHistoryExecuteCountResponse {
+  return { HistoryExecuteCount: undefined };
+}
+
+export const QueryGetHistoryExecuteCountResponse = {
+  encode(message: QueryGetHistoryExecuteCountResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.HistoryExecuteCount !== undefined) {
+      HistoryExecuteCount.encode(message.HistoryExecuteCount, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetHistoryExecuteCountResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryGetHistoryExecuteCountResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.HistoryExecuteCount = HistoryExecuteCount.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetHistoryExecuteCountResponse {
+    return {
+      HistoryExecuteCount: isSet(object.HistoryExecuteCount)
+        ? HistoryExecuteCount.fromJSON(object.HistoryExecuteCount)
+        : undefined,
+    };
+  },
+
+  toJSON(message: QueryGetHistoryExecuteCountResponse): unknown {
+    const obj: any = {};
+    message.HistoryExecuteCount !== undefined && (obj.HistoryExecuteCount = message.HistoryExecuteCount
+      ? HistoryExecuteCount.toJSON(message.HistoryExecuteCount)
+      : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryGetHistoryExecuteCountResponse>, I>>(
+    object: I,
+  ): QueryGetHistoryExecuteCountResponse {
+    const message = createBaseQueryGetHistoryExecuteCountResponse();
+    message.HistoryExecuteCount = (object.HistoryExecuteCount !== undefined && object.HistoryExecuteCount !== null)
+      ? HistoryExecuteCount.fromPartial(object.HistoryExecuteCount)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseQueryGetExecuteRecordRequest(): QueryGetExecuteRecordRequest {
+  return { owner: "", name: "", position: 0 };
+}
+
+export const QueryGetExecuteRecordRequest = {
+  encode(message: QueryGetExecuteRecordRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.owner !== "") {
+      writer.uint32(10).string(message.owner);
+    }
+    if (message.name !== "") {
+      writer.uint32(18).string(message.name);
+    }
+    if (message.position !== 0) {
+      writer.uint32(24).uint64(message.position);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetExecuteRecordRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryGetExecuteRecordRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.owner = reader.string();
+          break;
+        case 2:
+          message.name = reader.string();
+          break;
+        case 3:
+          message.position = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetExecuteRecordRequest {
+    return {
+      owner: isSet(object.owner) ? String(object.owner) : "",
+      name: isSet(object.name) ? String(object.name) : "",
+      position: isSet(object.position) ? Number(object.position) : 0,
+    };
+  },
+
+  toJSON(message: QueryGetExecuteRecordRequest): unknown {
+    const obj: any = {};
+    message.owner !== undefined && (obj.owner = message.owner);
+    message.name !== undefined && (obj.name = message.name);
+    message.position !== undefined && (obj.position = Math.round(message.position));
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryGetExecuteRecordRequest>, I>>(object: I): QueryGetExecuteRecordRequest {
+    const message = createBaseQueryGetExecuteRecordRequest();
+    message.owner = object.owner ?? "";
+    message.name = object.name ?? "";
+    message.position = object.position ?? 0;
+    return message;
+  },
+};
+
+function createBaseQueryGetExecuteRecordResponse(): QueryGetExecuteRecordResponse {
+  return { executeRecord: undefined };
+}
+
+export const QueryGetExecuteRecordResponse = {
+  encode(message: QueryGetExecuteRecordResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.executeRecord !== undefined) {
+      ExecuteRecord.encode(message.executeRecord, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetExecuteRecordResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryGetExecuteRecordResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.executeRecord = ExecuteRecord.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetExecuteRecordResponse {
+    return { executeRecord: isSet(object.executeRecord) ? ExecuteRecord.fromJSON(object.executeRecord) : undefined };
+  },
+
+  toJSON(message: QueryGetExecuteRecordResponse): unknown {
+    const obj: any = {};
+    message.executeRecord !== undefined
+      && (obj.executeRecord = message.executeRecord ? ExecuteRecord.toJSON(message.executeRecord) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryGetExecuteRecordResponse>, I>>(
+    object: I,
+  ): QueryGetExecuteRecordResponse {
+    const message = createBaseQueryGetExecuteRecordResponse();
+    message.executeRecord = (object.executeRecord !== undefined && object.executeRecord !== null)
+      ? ExecuteRecord.fromPartial(object.executeRecord)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseQueryAllExecuteRecordRequest(): QueryAllExecuteRecordRequest {
+  return { pagination: undefined };
+}
+
+export const QueryAllExecuteRecordRequest = {
+  encode(message: QueryAllExecuteRecordRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryAllExecuteRecordRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryAllExecuteRecordRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllExecuteRecordRequest {
+    return { pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined };
+  },
+
+  toJSON(message: QueryAllExecuteRecordRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined
+      && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryAllExecuteRecordRequest>, I>>(object: I): QueryAllExecuteRecordRequest {
+    const message = createBaseQueryAllExecuteRecordRequest();
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageRequest.fromPartial(object.pagination)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseQueryAllExecuteRecordResponse(): QueryAllExecuteRecordResponse {
+  return { executeRecord: [], pagination: undefined };
+}
+
+export const QueryAllExecuteRecordResponse = {
+  encode(message: QueryAllExecuteRecordResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.executeRecord) {
+      ExecuteRecord.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryAllExecuteRecordResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryAllExecuteRecordResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.executeRecord.push(ExecuteRecord.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllExecuteRecordResponse {
+    return {
+      executeRecord: Array.isArray(object?.executeRecord)
+        ? object.executeRecord.map((e: any) => ExecuteRecord.fromJSON(e))
+        : [],
+      pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined,
+    };
+  },
+
+  toJSON(message: QueryAllExecuteRecordResponse): unknown {
+    const obj: any = {};
+    if (message.executeRecord) {
+      obj.executeRecord = message.executeRecord.map((e) => e ? ExecuteRecord.toJSON(e) : undefined);
+    } else {
+      obj.executeRecord = [];
+    }
+    message.pagination !== undefined
+      && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryAllExecuteRecordResponse>, I>>(
+    object: I,
+  ): QueryAllExecuteRecordResponse {
+    const message = createBaseQueryAllExecuteRecordResponse();
+    message.executeRecord = object.executeRecord?.map((e) => ExecuteRecord.fromPartial(e)) || [];
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageResponse.fromPartial(object.pagination)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseQueryExecuteRecordAllByOwnerAndNameRequest(): QueryExecuteRecordAllByOwnerAndNameRequest {
+  return { owner: "", name: "" };
+}
+
+export const QueryExecuteRecordAllByOwnerAndNameRequest = {
+  encode(message: QueryExecuteRecordAllByOwnerAndNameRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.owner !== "") {
+      writer.uint32(10).string(message.owner);
+    }
+    if (message.name !== "") {
+      writer.uint32(18).string(message.name);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryExecuteRecordAllByOwnerAndNameRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryExecuteRecordAllByOwnerAndNameRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.owner = reader.string();
+          break;
+        case 2:
+          message.name = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryExecuteRecordAllByOwnerAndNameRequest {
+    return {
+      owner: isSet(object.owner) ? String(object.owner) : "",
+      name: isSet(object.name) ? String(object.name) : "",
+    };
+  },
+
+  toJSON(message: QueryExecuteRecordAllByOwnerAndNameRequest): unknown {
+    const obj: any = {};
+    message.owner !== undefined && (obj.owner = message.owner);
+    message.name !== undefined && (obj.name = message.name);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryExecuteRecordAllByOwnerAndNameRequest>, I>>(
+    object: I,
+  ): QueryExecuteRecordAllByOwnerAndNameRequest {
+    const message = createBaseQueryExecuteRecordAllByOwnerAndNameRequest();
+    message.owner = object.owner ?? "";
+    message.name = object.name ?? "";
+    return message;
+  },
+};
+
+function createBaseQueryExecuteRecordAllByOwnerAndNameResponse(): QueryExecuteRecordAllByOwnerAndNameResponse {
+  return { records: [] };
+}
+
+export const QueryExecuteRecordAllByOwnerAndNameResponse = {
+  encode(message: QueryExecuteRecordAllByOwnerAndNameResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.records) {
+      ExecuteRecord.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryExecuteRecordAllByOwnerAndNameResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryExecuteRecordAllByOwnerAndNameResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.records.push(ExecuteRecord.decode(reader, reader.uint32()));
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryExecuteRecordAllByOwnerAndNameResponse {
+    return { records: Array.isArray(object?.records) ? object.records.map((e: any) => ExecuteRecord.fromJSON(e)) : [] };
+  },
+
+  toJSON(message: QueryExecuteRecordAllByOwnerAndNameResponse): unknown {
+    const obj: any = {};
+    if (message.records) {
+      obj.records = message.records.map((e) => e ? ExecuteRecord.toJSON(e) : undefined);
+    } else {
+      obj.records = [];
+    }
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryExecuteRecordAllByOwnerAndNameResponse>, I>>(
+    object: I,
+  ): QueryExecuteRecordAllByOwnerAndNameResponse {
+    const message = createBaseQueryExecuteRecordAllByOwnerAndNameResponse();
+    message.records = object.records?.map((e) => ExecuteRecord.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -1036,6 +1629,17 @@ export interface Query {
   CurrentExecutorStatus(request: QueryGetCurrentExecutorStatusRequest): Promise<QueryGetCurrentExecutorStatusResponse>;
   /** Queries a list of Pool items. */
   Pool(request: QueryPoolRequest): Promise<QueryPoolResponse>;
+  /** Queries a list of TaskAllByOwner items. */
+  TaskAllByOwner(request: QueryTaskAllByOwnerRequest): Promise<QueryTaskAllByOwnerResponse>;
+  /** Queries a HistoryExecuteCount by index. */
+  HistoryExecuteCount(request: QueryGetHistoryExecuteCountRequest): Promise<QueryGetHistoryExecuteCountResponse>;
+  /** Queries a list of ExecuteRecord items. */
+  ExecuteRecord(request: QueryGetExecuteRecordRequest): Promise<QueryGetExecuteRecordResponse>;
+  ExecuteRecordAll(request: QueryAllExecuteRecordRequest): Promise<QueryAllExecuteRecordResponse>;
+  /** Queries a list of ExecuteRecordAllByOwnerAndName items. */
+  ExecuteRecordAllByOwnerAndName(
+    request: QueryExecuteRecordAllByOwnerAndNameRequest,
+  ): Promise<QueryExecuteRecordAllByOwnerAndNameResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -1051,6 +1655,11 @@ export class QueryClientImpl implements Query {
     this.DepositAll = this.DepositAll.bind(this);
     this.CurrentExecutorStatus = this.CurrentExecutorStatus.bind(this);
     this.Pool = this.Pool.bind(this);
+    this.TaskAllByOwner = this.TaskAllByOwner.bind(this);
+    this.HistoryExecuteCount = this.HistoryExecuteCount.bind(this);
+    this.ExecuteRecord = this.ExecuteRecord.bind(this);
+    this.ExecuteRecordAll = this.ExecuteRecordAll.bind(this);
+    this.ExecuteRecordAllByOwnerAndName = this.ExecuteRecordAllByOwnerAndName.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
@@ -1105,11 +1714,62 @@ export class QueryClientImpl implements Query {
     const promise = this.rpc.request("specynetwork.specy.specy.Query", "Pool", data);
     return promise.then((data) => QueryPoolResponse.decode(new _m0.Reader(data)));
   }
+
+  TaskAllByOwner(request: QueryTaskAllByOwnerRequest): Promise<QueryTaskAllByOwnerResponse> {
+    const data = QueryTaskAllByOwnerRequest.encode(request).finish();
+    const promise = this.rpc.request("specynetwork.specy.specy.Query", "TaskAllByOwner", data);
+    return promise.then((data) => QueryTaskAllByOwnerResponse.decode(new _m0.Reader(data)));
+  }
+
+  HistoryExecuteCount(request: QueryGetHistoryExecuteCountRequest): Promise<QueryGetHistoryExecuteCountResponse> {
+    const data = QueryGetHistoryExecuteCountRequest.encode(request).finish();
+    const promise = this.rpc.request("specynetwork.specy.specy.Query", "HistoryExecuteCount", data);
+    return promise.then((data) => QueryGetHistoryExecuteCountResponse.decode(new _m0.Reader(data)));
+  }
+
+  ExecuteRecord(request: QueryGetExecuteRecordRequest): Promise<QueryGetExecuteRecordResponse> {
+    const data = QueryGetExecuteRecordRequest.encode(request).finish();
+    const promise = this.rpc.request("specynetwork.specy.specy.Query", "ExecuteRecord", data);
+    return promise.then((data) => QueryGetExecuteRecordResponse.decode(new _m0.Reader(data)));
+  }
+
+  ExecuteRecordAll(request: QueryAllExecuteRecordRequest): Promise<QueryAllExecuteRecordResponse> {
+    const data = QueryAllExecuteRecordRequest.encode(request).finish();
+    const promise = this.rpc.request("specynetwork.specy.specy.Query", "ExecuteRecordAll", data);
+    return promise.then((data) => QueryAllExecuteRecordResponse.decode(new _m0.Reader(data)));
+  }
+
+  ExecuteRecordAllByOwnerAndName(
+    request: QueryExecuteRecordAllByOwnerAndNameRequest,
+  ): Promise<QueryExecuteRecordAllByOwnerAndNameResponse> {
+    const data = QueryExecuteRecordAllByOwnerAndNameRequest.encode(request).finish();
+    const promise = this.rpc.request("specynetwork.specy.specy.Query", "ExecuteRecordAllByOwnerAndName", data);
+    return promise.then((data) => QueryExecuteRecordAllByOwnerAndNameResponse.decode(new _m0.Reader(data)));
+  }
 }
 
 interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
+
+declare var self: any | undefined;
+declare var window: any | undefined;
+declare var global: any | undefined;
+var globalThis: any = (() => {
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
+  throw "Unable to locate global object";
+})();
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
@@ -1121,6 +1781,18 @@ export type DeepPartial<T> = T extends Builtin ? T
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  return long.toNumber();
+}
+
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

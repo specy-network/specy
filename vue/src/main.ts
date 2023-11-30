@@ -3,6 +3,7 @@ import { createPinia } from "pinia";
 import { VueQueryPlugin } from "@tanstack/vue-query";
 import App from "./App.vue";
 import router from "./router";
+import store from "./store"
 import "./assets/index.css";
 import './assets/boostrap.scss'
 import "@ignt/vue-library/dist/style.css";
@@ -27,6 +28,7 @@ const app = createApp(App);
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.use(createPinia());
 app.use(router);
+app.use(store)
 app.use(ElementPlus)
 app.use(VueQueryPlugin);
 app.mount("#app");

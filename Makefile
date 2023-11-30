@@ -119,32 +119,42 @@ proto-update-deps:
 ###                                Initialize                               ###
 ###############################################################################
 
-init-hermes: kill-dev install 
-	@echo "Initializing both blockchains..."
-	./network/init.sh
-	./network/start.sh
-	@echo "Initializing relayer..." 
-	./network/hermes/restore-keys.sh
-	./network/hermes/create-conn.sh
 
-init-golang-rly: kill-dev install
+init-golang-rly-test: kill-dev install
 	@echo "Initializing both blockchains..."
-	./network/init.sh
-	./network/start.sh
+	./network/test/init.sh
+	./network/test/start.sh
 	@echo "Initializing relayer..."
-	./network/relayer/interchain-acc-config/rly-init.sh
+	./network/test/relayer/interchain-acc-config/rly-init.sh
+
+init-golang-rly-osmosis: kill-dev install
+	@echo "Initializing both blockchains..."
+	./network/osmosis/init.sh
+	./network/osmosis/start.sh
+	@echo "Initializing relayer..."
+	./network/osmosis/relayer/interchain-acc-config/rly-init.sh
+
+init-golang-rly-osmosis-local: kill-dev install
+	@echo "Initializing both blockchains..."
+	./network/osmosis-local/init.sh
+	./network/osmosis-local/start.sh
+	@echo "Initializing relayer..."
+	./network/osmosis-local/relayer/interchain-acc-config/rly-init.sh
+
 
 start: 
 	@echo "Starting up test network"
-	./network/start.sh
+	./network/test/start.sh
 
-start-hermes:
-	./network/hermes/start.sh
+start-golang-rly-test:
+	./network/test/relayer/interchain-acc-config/rly-start.sh
+start-golang-rly-osmosis:
+	./network/osmosis/relayer/interchain-acc-config/rly-start.sh
 
-start-golang-rly:
-	./network/relayer/interchain-acc-config/rly-start.sh
+start-golang-rly-osmosis-local:
+	./network/osmosis-local/relayer/interchain-acc-config/rly-start.sh
 
 kill-dev:
 	@echo "Killing specyd and removing previous data"
-	-@rm -rf ./data
+	-@rm -rf ./network/data
 	-@killall specyd 2>/dev/null

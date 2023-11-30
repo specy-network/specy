@@ -14,7 +14,7 @@
             type="text"
             readonly
             class="form-control"
-            v-model="props.icaAddress"
+            v-model="icaAddress"
           />
         </div>
       </div>
@@ -57,7 +57,13 @@
         </div>
       </div>
       <div class="text-center mb-2">
-        <button class="btn btn-outline-dark" @click="submit">submit</button>
+        <button
+          class="main-btn pl-5 pr-5 pt-1 pb-1"
+          @click="submit"
+          v-if="icaAddress.length != 0"
+        >
+          submit
+        </button>
       </div>
     </div>
   </div>
@@ -65,11 +71,12 @@
 
   
   <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import type { Amount } from "@/utils/interfaces";
 import { useClient } from "@/composables/useClient";
 import { ElNotification } from "element-plus";
 import { useAddress } from "../../def-composables/useAddress";
+import { useStore } from "vuex";
 //page params
 let taskName = ref("");
 let receiverAddress = ref("");
@@ -79,16 +86,15 @@ let rulefile = ref("");
 let checkData = ref("");
 //props
 const props = defineProps({
-  icaAddress: {
-    type: String,
-    require: true,
-  },
   connectionId: {
     type: String,
     require: true,
   },
 });
-
+let store = useStore();
+let icaAddress = computed(() => {
+  return store.state.common.icaAddress;
+});
 const client = useClient();
 const createTask = client.SpecynetworkSpecySpecy.tx.sendMsgCreateTask;
 //function
@@ -119,10 +125,12 @@ const submit = async (): Promise<void> => {
 
   let bankSend = {
     "@type": "/cosmos.bank.v1beta1.MsgSend",
-    from_address: props.icaAddress,
+    from_address: icaAddress.value,
     to_address: receiverAddress.value,
     amount: { denom: denom.value, amount: amount.value },
   };
+  console.log(bankSend);
+
   let msg = JSON.stringify(bankSend);
 
   let payload: any = {
@@ -156,4 +164,19 @@ const submit = async (): Promise<void> => {
   }
 };
 </script>
-  
+<style lang="scss" scoped>
+.col-form-label {
+  color: #757575;
+  font-weight: 500;
+}
+.main-btn {
+  background-color: rgb(255, 255, 255);
+  color: rgb(45, 114, 179);
+  border: 1px solid rgb(45, 114, 179);
+  border-radius: 5px;
+  &:hover {
+    background-color: rgb(20, 101, 176);
+    color: #fff;
+  }
+}
+</style>

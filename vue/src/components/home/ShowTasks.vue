@@ -1,29 +1,40 @@
 <template>
   <div class="container">
-    <h2 class="text-left mt-4 mb-6 pl-2 font-weight-bold">{{ title }}</h2>
-    <div class="table-responsive">
+    <h2 class="text-left mt-5 mb-6 pl-2 font-weight-bold font-main-color">
+      {{ title }}
+    </h2>
+    <div v-if="!showTabel" class="border-1 box-empty">
+      <h2>Please connect the wallet and create a task!</h2>
+    </div>
+    <div v-if="showTabel" class="table-responsive">
       <table class="table table-hover">
         <thead class="bg-light">
           <tr>
-            <th>Name</th>
-            <th>Host Chain</th>
-            <th>Msg Type</th>
-            <th>Status</th>
+            <th class="font-second-color">Name</th>
+            <th class="font-second-color">Host Chain</th>
+            <th class="font-second-color">Msg Type</th>
+            <th class="font-second-color">Status</th>
           </tr>
         </thead>
+
         <tbody>
-          <tr v-for="(row, index) in currentPageData" :key="index">
-            <td>{{ row.name }}</td>
+          <tr
+            v-for="(row, index) in currentPageData"
+            :key="index"
+            class="tr-border"
+          >
+            <td @click="detail(row, index)">{{ row.name }}</td>
             <td>{{ row.connectionId }}</td>
             <td>{{ row.msg }}</td>
-            <td class="status"><i class="fal fa-check-badge"></i></td>
+            <td class="status">Active</td>
           </tr>
         </tbody>
       </table>
     </div>
     <nav
+      v-if="showTabel"
       aria-label="Page navigation"
-      class="d-flex justify-content-between align-items-center"
+      class="d-flex justify-content-between align-items-center mb-2"
     >
       <div>
         <button
@@ -48,89 +59,147 @@
   </div>
 </template>
   
-  <script>
-export default {
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    tableData: {
-      type: Array,
-      required: true,
-    },
-    itemsPerPage: {
-      type: Number,
-      default: 5, // You can adjust the default value
-    },
+  <script setup>
+import { ref, computed, onMounted, watch } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+import { useAddress } from "@/def-composables/useAddress";
+import { userTasks } from "../../def-composables/userTasks";
+import { tasks } from "../../api/task";
+//util
+let store = useStore();
+const { address } = useAddress();
+const router = useRouter();
+//props
+const props = defineProps({
+  title: {
+    type: String,
+    required: true,
   },
-  data() {
-    return {
-      currentPage: 1,
-      handledTableData: [],
-    };
+  itemsPerPage: {
+    type: Number,
+    default: 5, // You can adjust the default value
   },
-  computed: {
-    totalPages() {
-      return Math.ceil(this.tableData.length / this.itemsPerPage);
-    },
-    currentPageData() {
-      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-      const endIndex = startIndex + this.itemsPerPage;
-      for (let i = 0; i < this.tableData.length; i++) {
-        let json = JSON.parse(this.tableData[i].msg);
-        this.handledTableData[i] = Object.assign({}, this.tableData[i]);
-        this.handledTableData[i].msg = json["@type"];
-      }
-      return this.handledTableData.slice(startIndex, endIndex);
-    },
-  },
-  methods: {
-    goToPage(page) {
-      if (page >= 1 && page <= this.totalPages) {
-        this.currentPage = page;
-      }
-    },
-  },
+});
+//state
+let tableData = ref([]);
+let currentPage = ref(1);
+const handledTableData = ref([]);
+
+//watch
+watch(
+  () => store.state.common.address,
+  (newVal, oldVal) => {
+    if (newVal.length == 0) {
+      tableData.value = [];
+    } else {
+      tasks(newVal)
+        .then((response) => {
+          tableData.value = response.tasks;
+        })
+        .catch((error) => {
+          tableData.value = [];
+          console.error("Error fetching data:", error);
+        });
+    }
+  }
+);
+
+//function
+let showTabel = computed(() => {
+  if (useAddress.value == "") {
+    return false;
+  }
+  if (
+    tableData.value.length == 0 ||
+    tableData.value == null ||
+    tableData.value.length == 0
+  ) {
+    return false;
+  }
+
+  return true;
+});
+
+let totalPages = computed(() => {
+  return Math.ceil(tableData.value.length / props.itemsPerPage);
+});
+
+let currentPageData = computed(() => {
+  if (tableData.value.length != 0) {
+    const startIndex = (currentPage.value - 1) * props.itemsPerPage;
+    const endIndex = startIndex + props.itemsPerPage;
+    for (let i = 0; i < tableData.value.length; i++) {
+      let json = JSON.parse(tableData.value[i].msg);
+      handledTableData.value[i] = Object.assign({}, tableData.value[i]);
+      handledTableData.value[i].msg = json["@type"];
+    }
+    return handledTableData.value.slice(startIndex, endIndex);
+  }
+});
+
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
 };
+
+const detail = (task, index) => {
+  store.dispatch(
+    "task/setTask",
+    tableData.value[(currentPage.value - 1) * props.itemsPerPage + index]
+  );
+  router.push("/detail");
+};
+
+const getUserTasks = () => {
+  tasks(store.state.common.address)
+    .then((response) => {
+      tableData.value = response.tasks;
+    })
+    .catch((error) => {
+      tableData.value = [];
+      console.error("Error fetching data:", error);
+    });
+};
+
+//hook
+onMounted(() => {
+  if (store.state.common.address.length != "") {
+    getUserTasks(store);
+  }
+});
 </script>
   
   <style scoped lang="scss">
-.project-card {
-  padding: 20px;
+$main-color: rgb(45, 114, 179);
+.font-main-color {
+  color: #212121;
 }
-
-.project-title {
-  font-size: 24px;
-  margin-bottom: 5px;
-}
-
-.project-description {
-  font-size: 18px;
-  margin-top: 5px;
-}
-
-.table th,
-.table td {
-  vertical-align: middle; /* Center content vertically in table cells */
+.font-second-color {
+  color: #757575;
 }
 
 .table th {
   border: none; /* Remove top border from table headers */
   border: 1px gray;
 }
-
-.table tbody tr {
-  margin-bottom: 10px; /* Add margin between table rows */
+.status {
+  color: rgb(45, 114, 179);
+  font-weight: 600;
 }
-
-.table {
-  border-collapse: separate; /* Separate borders between table cells */
-  border-spacing: 0 8px; /* Set spacing between table rows */
+.box-empty {
+  border: 1px solid #f5f5f5;
+  height: 300px;
+  border-radius: 5px;
+  display: flex; /* 使用 flex 布局 */
+  justify-content: center; /* 在水平方向上居中对齐 */
+  align-items: center; /* 在垂直方向上居中对齐 */
+  color: rgba($color: #000000, $alpha: 0.3);
 }
-
-.pagination {
-  margin-top: 20px; /* Add space between table and pagination */
+table {
+  border-collapse: separate;
+  border-spacing: 0 25px; /* 10px 是你想要的行间距 */
 }
 </style>
   

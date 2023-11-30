@@ -166,11 +166,32 @@ export interface SpecyDeposit {
   balance?: V1Beta1Coin;
 }
 
+export interface SpecyExecuteRecord {
+  owner?: string;
+  name?: string;
+
+  /** @format uint64 */
+  position?: string;
+  executor?: string;
+
+  /** @format uint64 */
+  timestamp?: string;
+  txHash?: string;
+
+  /** @format uint64 */
+  amount?: string;
+}
+
 export interface SpecyExecutor {
   address?: string;
   iasAttestationReport?: string;
   enclavePk?: string;
   valAddr?: string;
+}
+
+export interface SpecyHistoryExecuteCount {
+  /** @format uint64 */
+  count?: string;
 }
 
 export type SpecyMsgCancelExecutorResponse = object;
@@ -193,6 +214,21 @@ export type SpecyMsgWithdrawBalanceResponse = object;
 
 export interface SpecyQueryAllDepositResponse {
   deposit?: SpecyDeposit[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
+export interface SpecyQueryAllExecuteRecordResponse {
+  executeRecord?: SpecyExecuteRecord[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -236,6 +272,10 @@ export interface SpecyQueryAllTaskResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface SpecyQueryExecuteRecordAllByOwnerAndNameResponse {
+  records?: SpecyExecuteRecord[];
+}
+
 export interface SpecyQueryGetCurrentExecutorStatusResponse {
   CurrentExecutorStatus?: SpecyCurrentExecutorStatus;
 }
@@ -244,8 +284,16 @@ export interface SpecyQueryGetDepositResponse {
   deposit?: SpecyDeposit;
 }
 
+export interface SpecyQueryGetExecuteRecordResponse {
+  executeRecord?: SpecyExecuteRecord;
+}
+
 export interface SpecyQueryGetExecutorResponse {
   executor?: SpecyExecutor;
+}
+
+export interface SpecyQueryGetHistoryExecuteCountResponse {
+  HistoryExecuteCount?: SpecyHistoryExecuteCount;
 }
 
 export interface SpecyQueryGetTaskResponse {
@@ -276,6 +324,10 @@ export interface SpecyQueryPoolResponse {
    * signatures required by gogoproto.
    */
   currentReward?: V1Beta1Coin;
+}
+
+export interface SpecyQueryTaskAllByOwnerResponse {
+  tasks?: SpecyTask[];
 }
 
 export interface SpecyTask {
@@ -594,6 +646,63 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryExecuteRecordAll
+   * @request GET:/specy-network/specy/specy/execute_record
+   */
+  queryExecuteRecordAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<SpecyQueryAllExecuteRecordResponse, RpcStatus>({
+      path: `/specy-network/specy/specy/execute_record`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryExecuteRecord
+   * @summary Queries a list of ExecuteRecord items.
+   * @request GET:/specy-network/specy/specy/execute_record/{owner}/{name}/{position}
+   */
+  queryExecuteRecord = (owner: string, name: string, position: string, params: RequestParams = {}) =>
+    this.request<SpecyQueryGetExecuteRecordResponse, RpcStatus>({
+      path: `/specy-network/specy/specy/execute_record/${owner}/${name}/${position}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryExecuteRecordAllByOwnerAndName
+   * @summary Queries a list of ExecuteRecordAllByOwnerAndName items.
+   * @request GET:/specy-network/specy/specy/execute_record_all_by_owner_and_name/{owner}/{name}
+   */
+  queryExecuteRecordAllByOwnerAndName = (owner: string, name: string, params: RequestParams = {}) =>
+    this.request<SpecyQueryExecuteRecordAllByOwnerAndNameResponse, RpcStatus>({
+      path: `/specy-network/specy/specy/execute_record_all_by_owner_and_name/${owner}/${name}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryExecutorAll
    * @request GET:/specy-network/specy/specy/executor
    */
@@ -626,6 +735,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryExecutor = (address: string, params: RequestParams = {}) =>
     this.request<SpecyQueryGetExecutorResponse, RpcStatus>({
       path: `/specy-network/specy/specy/executor/${address}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryHistoryExecuteCount
+   * @summary Queries a HistoryExecuteCount by index.
+   * @request GET:/specy-network/specy/specy/history_execute_count
+   */
+  queryHistoryExecuteCount = (params: RequestParams = {}) =>
+    this.request<SpecyQueryGetHistoryExecuteCountResponse, RpcStatus>({
+      path: `/specy-network/specy/specy/history_execute_count`,
       method: "GET",
       format: "json",
       ...params,
@@ -699,6 +824,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryTask = (owner: string, name: string, params: RequestParams = {}) =>
     this.request<SpecyQueryGetTaskResponse, RpcStatus>({
       path: `/specy-network/specy/specy/task/${owner}/${name}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryTaskAllByOwner
+   * @summary Queries a list of TaskAllByOwner items.
+   * @request GET:/specy-network/specy/specy/task_all_by_owner/{owner}
+   */
+  queryTaskAllByOwner = (owner: string, params: RequestParams = {}) =>
+    this.request<SpecyQueryTaskAllByOwnerResponse, RpcStatus>({
+      path: `/specy-network/specy/specy/task_all_by_owner/${owner}`,
       method: "GET",
       format: "json",
       ...params,

@@ -1,0 +1,18 @@
+{
+  "src": {
+    "chain-id": "specy-test-102",
+    "client-id": "",
+    "connection-id": "",
+    "channel-id": ""
+  },
+  "dst": {
+    "chain-id": "osmosis-testnet-5",
+    "client-id": "",
+    "connection-id": "",
+    "channel-id": ""
+  },
+  "src-channel-filter": {
+    "rule": "",
+    "channel-list": []
+  }
+}

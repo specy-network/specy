@@ -3,12 +3,11 @@
     <div class="container">
       <div class="logo-site-container">
         <div class="logo">
-          <!-- <img src="/path/to/your/logo.png" alt="Logo" class="logo-image" /> -->
-          <i class="fas fa-star logo-icon"></i>
+          <img src="/specylogo.png" alt="Logo" class="logo-image" />
         </div>
-        <a class="navbar-brand site-name" href="#">
+        <!-- <a class="navbar-brand site-name" href="#">
           {{ siteName }}
-        </a>
+        </a> -->
       </div>
       <!-- <nav class="navigation">
         <ul class="nav-list">
@@ -52,8 +51,8 @@ export default {
 }
 
 .logo-image {
-  width: 50px;
-  height: 50px;
+  width: 290px;
+  height: 70px;
 }
 
 .logo-site-container {

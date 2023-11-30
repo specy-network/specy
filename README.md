@@ -27,13 +27,8 @@ cd specy
 make install 
 ```
 
-2. Download and install an IBC relayer. ([hermes](https://hermes.informal.systems/), [go relayer](https://github.com/cosmos/relayer) or both ) 
+2. Download and install an IBC relayer. ([go relayer](https://github.com/cosmos/relayer)) 
 ```bash
-# hermes (make sure to use v1.0.0 or later)
-cargo install ibc-relayer-cli --bin hermes --locked
-
-or
-
 # go relayer (make sure to use v2.0.0-rc4 or later!)
 git clone https://github.com/cosmos/relayer.git
 cd relayer 
@@ -42,28 +37,19 @@ make install
 
 3. Bootstrap two chains, configure the relayer and create an IBC connection (on top of clients that are created as well)
 ```bash
-# hermes
-make init-hermes
-
-or
-
 # go relayer
-make init-golang-rly
+make init-golang-rly-test
 ```
 
 :warning: **NOTE:** When you want to use both relayers interchangeably, using both of these `make` commands will set up two seperate connections (which is not needed and can lead to confusion). In the case of using both relayers, perform:
 ```bash
-make init-golang-rly
-./network/hermes/restore-keys.sh
+make init-golang-rly-test
 ```
 
 4. Start the relayer
 ```bash
-#hermes
-make start-hermes
-
 #go relayer
-make start-golang-rly
+make start-golang-rly-test
 ```
 
 :exclamation: **NOTE:** It is abstracted away in the script files, but in case you want to manually run `rly start` with interchain accounts, you will need to add this flag: `-p events` to it.
@@ -79,6 +65,7 @@ make start-golang-rly
 :warning: **NOTE:** For the purposes of this demo the setup scripts have been provided with a set of hardcoded mnemonics that generate deterministic wallet addresses used below.
 
 ```bash
+cd network
 # Store the following account addresses within the current shell env
 export WALLET_1=$(specyd keys show wallet1 -a --keyring-backend test --home ./data/test-1) && echo $WALLET_1;
 export WALLET_2=$(specyd keys show wallet2 -a --keyring-backend test --home ./data/test-1) && echo $WALLET_2;
@@ -114,16 +101,30 @@ Note this is executed on the host chain to provide the account with an initial b
 
 ```bash
 # Query the interchain account balance on the host chain. It should be empty.
-specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:16657
+specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
 
 # Send funds to the interchain account.
-specyd tx bank send $WALLET_3 $ICA_ADDR 10000stake --chain-id test-2 --home ./data/test-2 --node tcp://localhost:16657 --keyring-backend test -y
+specyd tx bank send $WALLET_3 $ICA_ADDR 10000stake --chain-id test-2 --home ./data/test-2 --node tcp://localhost:26657 --keyring-backend test -y
 
 # Query the balance once again and observe the changes
-specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:16657
+specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
 ```
 
 > This is the situation after funding the ICA.
+
+
+#### Create executor
+As the validator of the `Specy` chain, the executor service must be running and the corresponding information registered on the chain, otherwise it will be evidenced and slashed.
+```bash
+specyd tx specy create-executor \
+     iasreport enclavepk \
+    --from $WALLET_VAL --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+```
+
+```bash
+specyd q specy list-executor --node tcp://localhost:16657
+```
+
 
 #### Deposit token
 
@@ -135,14 +136,14 @@ specyd tx specy deposit-balance \
 ```
 
 ```bash
-specyd q specy list-deposit --node tcp://localhost:26657
+specyd q specy list-deposit --node tcp://localhost:16657
 ```
 
 Of course, you can also use `withdraw-balance` cmd extract the deposit token.
 ```bash
 specyd tx specy withdraw-balance \
     5000stake \
-    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:26657 --keyring-backend test -y
+    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 
 
@@ -160,7 +161,7 @@ specyd tx specy create-task \
     test_task connection-0 \
     '{
     "@type":"/cosmos.bank.v1beta1.MsgSend",
-    "from_address":"cosmos10h92yl2yss3f78tz6q5wu8j59x2cfxmv62umkprdv5zywugt578qagz3q5",
+    "from_address":"cosmos1l3tz2lvcgq6jz4r6hnnvlxj6hmlst0vktkc322cde0j9nuhah0xqfuaeue",
     "to_address":"cosmos10h9stc5v6ntgeygf5xf945njqq5h32r53uquvw",
     "amount": [
         {
@@ -188,7 +189,7 @@ specyd tx specy create-task \
         "amount": "1000"
     }
     }' rulefile 0 0 100 '{"maxAmount":10000}' \
-    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:26657 --keyring-backend test -y
+    --from $WALLET_1 --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
 ```
 ![post-create-task](./images/post-create-task.jpg)
 
@@ -196,19 +197,9 @@ Query task details
 Using the `list-task` cmd on the `Specy` chain to query tasks that have already been created.
 
 ```bash 
-specyd q specy list-task --node tcp://localhost:26657
-```
-#### Create executor
-As the validator of the `Specy` chain, the executor service must be running and the corresponding information registered on the chain, otherwise it will be evidenced and slashed.
-```bash
-specyd tx specy create-executor \
-     iasreport enclavepk \
-    --from $WALLET_VAL --chain-id test-1 --home ./data/test-1 --node tcp://localhost:16657 --keyring-backend test -y
+specyd q specy list-task --node tcp://localhost:16657
 ```
 
-```bash
-specyd q specy list-executor --node tcp://localhost:26657
-```
 
 #### Simulate task execution
 
@@ -222,7 +213,7 @@ Here, we manually simulate the generation of packet-data and send `execute-task`
 ```bash
 specyd tx interchain-accounts host generate-packet-data '{
     "@type":"/cosmos.bank.v1beta1.MsgSend",
-    "from_address":"cosmos10h92yl2yss3f78tz6q5wu8j59x2cfxmv62umkprdv5zywugt578qagz3q5",
+    "from_address":"cosmos1l3tz2lvcgq6jz4r6hnnvlxj6hmlst0vktkc322cde0j9nuhah0xqfuaeue",
     "to_address":"cosmos10h9stc5v6ntgeygf5xf945njqq5h32r53uquvw",
     "amount": [
         {
@@ -250,9 +241,9 @@ cosmos1m9l358xunhhwds0568za49mzhvuxx9uxre5tud test_task1 cproofstring '{"type":"
 
 - staking detail
 ```bash
-specyd q staking delegations-to cosmosvaloper1qnk2n4nlkpw9xfqntladh74w6ujtulwnmxnh3k --home ./data/test-2 --node tcp://localhost:16657
+specyd q staking delegations-to cosmosvaloper1qnk2n4nlkpw9xfqntladh74w6ujtulwnmxnh3k --home ./data/test-2 --node tcp://localhost:26657
 ```
 - account balance
 ```bash
-specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:16657
+specyd q bank balances $ICA_ADDR --chain-id test-2 --node tcp://localhost:26657
 ```

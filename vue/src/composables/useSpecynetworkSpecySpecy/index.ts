@@ -98,6 +98,53 @@ export default function useSpecynetworkSpecySpecy() {
     }, options);
   }
   
-  return {QueryParams,QueryTask,QueryTaskAll,QueryExecutor,QueryExecutorAll,QueryDeposit,QueryDepositAll,QueryCurrentExecutorStatus,QueryPool,
+  const QueryTaskAllByOwner = (owner: string,  options: any) => {
+    const key = { type: 'QueryTaskAllByOwner',  owner };    
+    return useQuery([key], () => {
+      const { owner } = key
+      return  client.SpecynetworkSpecySpecy.query.queryTaskAllByOwner(owner).then( res => res.data );
+    }, options);
+  }
+  
+  const QueryHistoryExecuteCount = ( options: any) => {
+    const key = { type: 'QueryHistoryExecuteCount',  };    
+    return useQuery([key], () => {
+      return  client.SpecynetworkSpecySpecy.query.queryHistoryExecuteCount().then( res => res.data );
+    }, options);
+  }
+  
+  const QueryExecuteRecord = (owner: string, name: string, position: string,  options: any) => {
+    const key = { type: 'QueryExecuteRecord',  owner,  name,  position };    
+    return useQuery([key], () => {
+      const { owner,  name,  position } = key
+      return  client.SpecynetworkSpecySpecy.query.queryExecuteRecord(owner, name, position).then( res => res.data );
+    }, options);
+  }
+  
+  const QueryExecuteRecordAll = (query: any, options: any, perPage: number) => {
+    const key = { type: 'QueryExecuteRecordAll', query };    
+    return useInfiniteQuery([key], ({pageParam = 1}: { pageParam?: number}) => {
+      const {query } = key
+
+      query['pagination.limit']=perPage;
+      query['pagination.offset']= (pageParam-1)*perPage;
+      query['pagination.count_total']= true;
+      return  client.SpecynetworkSpecySpecy.query.queryExecuteRecordAll(query ?? undefined).then( res => ({...res.data,pageParam}) );
+    }, {...options,
+      getNextPageParam: (lastPage, allPages) => { if ((lastPage.pagination?.total ?? 0) >((lastPage.pageParam ?? 0) * perPage)) {return lastPage.pageParam+1 } else {return undefined}},
+      getPreviousPageParam: (firstPage, allPages) => { if (firstPage.pageParam==1) { return undefined } else { return firstPage.pageParam-1}}
+    }
+    );
+  }
+  
+  const QueryExecuteRecordAllByOwnerAndName = (owner: string, name: string,  options: any) => {
+    const key = { type: 'QueryExecuteRecordAllByOwnerAndName',  owner,  name };    
+    return useQuery([key], () => {
+      const { owner,  name } = key
+      return  client.SpecynetworkSpecySpecy.query.queryExecuteRecordAllByOwnerAndName(owner, name).then( res => res.data );
+    }, options);
+  }
+  
+  return {QueryParams,QueryTask,QueryTaskAll,QueryExecutor,QueryExecutorAll,QueryDeposit,QueryDepositAll,QueryCurrentExecutorStatus,QueryPool,QueryTaskAllByOwner,QueryHistoryExecuteCount,QueryExecuteRecord,QueryExecuteRecordAll,QueryExecuteRecordAllByOwnerAndName,
   }
 }

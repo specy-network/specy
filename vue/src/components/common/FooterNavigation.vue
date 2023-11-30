@@ -4,13 +4,13 @@
       <div class="row">
         <div class="col-md-6 text-center text-md-left">
           <p class="footer-text">
-            &copy; {{ currentYear }} Your Company Name. All rights reserved.
+            &copy; {{ currentYear }} Specy Network. All rights reserved.
           </p>
         </div>
         <div class="col-md-6 text-center text-md-right">
           <a
             class="github-link"
-            href="https://github.com/yourusername/your-repo"
+            href="https://github.com/wanxiang-blockchain/2023WXH-Specy/tree/main/src/specy"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -33,9 +33,9 @@ export default {
 };
 </script>
   
-<style scoped>
+<style scoped lang="scss">
 .footer {
-  background-color: #000;
+  background-color: rgb(45, 114, 179);
   /* Black background */
   padding: 20px 0;
   /* position: fixed; */

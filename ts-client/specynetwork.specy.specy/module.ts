@@ -7,39 +7,35 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgExecuteTask } from "./types/specy/specy/tx";
-import { MsgCancelExecutor } from "./types/specy/specy/tx";
 import { MsgEditTask } from "./types/specy/specy/tx";
+import { MsgExecuteTask } from "./types/specy/specy/tx";
 import { MsgWithdrawBalance } from "./types/specy/specy/tx";
-import { MsgCancelTask } from "./types/specy/specy/tx";
+import { MsgCancelExecutor } from "./types/specy/specy/tx";
 import { MsgEditExecutor } from "./types/specy/specy/tx";
+import { MsgCancelTask } from "./types/specy/specy/tx";
 import { MsgDepositBalance } from "./types/specy/specy/tx";
-import { MsgCreateTask } from "./types/specy/specy/tx";
 import { MsgCreateExecutor } from "./types/specy/specy/tx";
+import { MsgCreateTask } from "./types/specy/specy/tx";
 
 import { Condition as typeCondition} from "./types"
 import { CurrentExecutorStatus as typeCurrentExecutorStatus} from "./types"
 import { Deposit as typeDeposit} from "./types"
+import { ExecuteRecord as typeExecuteRecord} from "./types"
 import { Executor as typeExecutor} from "./types"
+import { HistoryExecuteCount as typeHistoryExecuteCount} from "./types"
 import { Params as typeParams} from "./types"
 import { Task as typeTask} from "./types"
 
-export { MsgExecuteTask, MsgCancelExecutor, MsgEditTask, MsgWithdrawBalance, MsgCancelTask, MsgEditExecutor, MsgDepositBalance, MsgCreateTask, MsgCreateExecutor };
-
-type sendMsgExecuteTaskParams = {
-  value: MsgExecuteTask,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgCancelExecutorParams = {
-  value: MsgCancelExecutor,
-  fee?: StdFee,
-  memo?: string
-};
+export { MsgEditTask, MsgExecuteTask, MsgWithdrawBalance, MsgCancelExecutor, MsgEditExecutor, MsgCancelTask, MsgDepositBalance, MsgCreateExecutor, MsgCreateTask };
 
 type sendMsgEditTaskParams = {
   value: MsgEditTask,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgExecuteTaskParams = {
+  value: MsgExecuteTask,
   fee?: StdFee,
   memo?: string
 };
@@ -50,8 +46,8 @@ type sendMsgWithdrawBalanceParams = {
   memo?: string
 };
 
-type sendMsgCancelTaskParams = {
-  value: MsgCancelTask,
+type sendMsgCancelExecutorParams = {
+  value: MsgCancelExecutor,
   fee?: StdFee,
   memo?: string
 };
@@ -62,14 +58,14 @@ type sendMsgEditExecutorParams = {
   memo?: string
 };
 
-type sendMsgDepositBalanceParams = {
-  value: MsgDepositBalance,
+type sendMsgCancelTaskParams = {
+  value: MsgCancelTask,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgCreateTaskParams = {
-  value: MsgCreateTask,
+type sendMsgDepositBalanceParams = {
+  value: MsgDepositBalance,
   fee?: StdFee,
   memo?: string
 };
@@ -80,41 +76,47 @@ type sendMsgCreateExecutorParams = {
   memo?: string
 };
 
-
-type msgExecuteTaskParams = {
-  value: MsgExecuteTask,
+type sendMsgCreateTaskParams = {
+  value: MsgCreateTask,
+  fee?: StdFee,
+  memo?: string
 };
 
-type msgCancelExecutorParams = {
-  value: MsgCancelExecutor,
-};
 
 type msgEditTaskParams = {
   value: MsgEditTask,
+};
+
+type msgExecuteTaskParams = {
+  value: MsgExecuteTask,
 };
 
 type msgWithdrawBalanceParams = {
   value: MsgWithdrawBalance,
 };
 
-type msgCancelTaskParams = {
-  value: MsgCancelTask,
+type msgCancelExecutorParams = {
+  value: MsgCancelExecutor,
 };
 
 type msgEditExecutorParams = {
   value: MsgEditExecutor,
 };
 
+type msgCancelTaskParams = {
+  value: MsgCancelTask,
+};
+
 type msgDepositBalanceParams = {
   value: MsgDepositBalance,
 };
 
-type msgCreateTaskParams = {
-  value: MsgCreateTask,
-};
-
 type msgCreateExecutorParams = {
   value: MsgCreateExecutor,
+};
+
+type msgCreateTaskParams = {
+  value: MsgCreateTask,
 };
 
 
@@ -147,34 +149,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgExecuteTask({ value, fee, memo }: sendMsgExecuteTaskParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgExecuteTask: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgExecuteTask({ value: MsgExecuteTask.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgExecuteTask: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgCancelExecutor({ value, fee, memo }: sendMsgCancelExecutorParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgCancelExecutor: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCancelExecutor({ value: MsgCancelExecutor.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCancelExecutor: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgEditTask({ value, fee, memo }: sendMsgEditTaskParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgEditTask: Unable to sign Tx. Signer is not present.')
@@ -186,6 +160,20 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
 				throw new Error('TxClient:sendMsgEditTask: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgExecuteTask({ value, fee, memo }: sendMsgExecuteTaskParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgExecuteTask: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgExecuteTask({ value: MsgExecuteTask.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgExecuteTask: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -203,17 +191,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgCancelTask({ value, fee, memo }: sendMsgCancelTaskParams): Promise<DeliverTxResponse> {
+		async sendMsgCancelExecutor({ value, fee, memo }: sendMsgCancelExecutorParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgCancelTask: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgCancelExecutor: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCancelTask({ value: MsgCancelTask.fromPartial(value) })
+				let msg = this.msgCancelExecutor({ value: MsgCancelExecutor.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCancelTask: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgCancelExecutor: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -231,6 +219,20 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
+		async sendMsgCancelTask({ value, fee, memo }: sendMsgCancelTaskParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgCancelTask: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgCancelTask({ value: MsgCancelTask.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgCancelTask: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
 		async sendMsgDepositBalance({ value, fee, memo }: sendMsgDepositBalanceParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgDepositBalance: Unable to sign Tx. Signer is not present.')
@@ -242,20 +244,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
 				throw new Error('TxClient:sendMsgDepositBalance: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgCreateTask({ value, fee, memo }: sendMsgCreateTaskParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgCreateTask: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCreateTask({ value: MsgCreateTask.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCreateTask: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -273,28 +261,34 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		
-		msgExecuteTask({ value }: msgExecuteTaskParams): EncodeObject {
-			try {
-				return { typeUrl: "/specynetwork.specy.specy.MsgExecuteTask", value: MsgExecuteTask.fromPartial( value ) }  
+		async sendMsgCreateTask({ value, fee, memo }: sendMsgCreateTaskParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgCreateTask: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgCreateTask({ value: MsgCreateTask.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:MsgExecuteTask: Could not create message: ' + e.message)
+				throw new Error('TxClient:sendMsgCreateTask: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		msgCancelExecutor({ value }: msgCancelExecutorParams): EncodeObject {
-			try {
-				return { typeUrl: "/specynetwork.specy.specy.MsgCancelExecutor", value: MsgCancelExecutor.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgCancelExecutor: Could not create message: ' + e.message)
-			}
-		},
 		
 		msgEditTask({ value }: msgEditTaskParams): EncodeObject {
 			try {
 				return { typeUrl: "/specynetwork.specy.specy.MsgEditTask", value: MsgEditTask.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgEditTask: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgExecuteTask({ value }: msgExecuteTaskParams): EncodeObject {
+			try {
+				return { typeUrl: "/specynetwork.specy.specy.MsgExecuteTask", value: MsgExecuteTask.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgExecuteTask: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -306,11 +300,11 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgCancelTask({ value }: msgCancelTaskParams): EncodeObject {
+		msgCancelExecutor({ value }: msgCancelExecutorParams): EncodeObject {
 			try {
-				return { typeUrl: "/specynetwork.specy.specy.MsgCancelTask", value: MsgCancelTask.fromPartial( value ) }  
+				return { typeUrl: "/specynetwork.specy.specy.MsgCancelExecutor", value: MsgCancelExecutor.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgCancelTask: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgCancelExecutor: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -322,6 +316,14 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
+		msgCancelTask({ value }: msgCancelTaskParams): EncodeObject {
+			try {
+				return { typeUrl: "/specynetwork.specy.specy.MsgCancelTask", value: MsgCancelTask.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCancelTask: Could not create message: ' + e.message)
+			}
+		},
+		
 		msgDepositBalance({ value }: msgDepositBalanceParams): EncodeObject {
 			try {
 				return { typeUrl: "/specynetwork.specy.specy.MsgDepositBalance", value: MsgDepositBalance.fromPartial( value ) }  
@@ -330,19 +332,19 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgCreateTask({ value }: msgCreateTaskParams): EncodeObject {
-			try {
-				return { typeUrl: "/specynetwork.specy.specy.MsgCreateTask", value: MsgCreateTask.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateTask: Could not create message: ' + e.message)
-			}
-		},
-		
 		msgCreateExecutor({ value }: msgCreateExecutorParams): EncodeObject {
 			try {
 				return { typeUrl: "/specynetwork.specy.specy.MsgCreateExecutor", value: MsgCreateExecutor.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgCreateExecutor: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgCreateTask({ value }: msgCreateTaskParams): EncodeObject {
+			try {
+				return { typeUrl: "/specynetwork.specy.specy.MsgCreateTask", value: MsgCreateTask.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCreateTask: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -371,7 +373,9 @@ class SDKModule {
 						Condition: getStructure(typeCondition.fromPartial({})),
 						CurrentExecutorStatus: getStructure(typeCurrentExecutorStatus.fromPartial({})),
 						Deposit: getStructure(typeDeposit.fromPartial({})),
+						ExecuteRecord: getStructure(typeExecuteRecord.fromPartial({})),
 						Executor: getStructure(typeExecutor.fromPartial({})),
+						HistoryExecuteCount: getStructure(typeHistoryExecuteCount.fromPartial({})),
 						Params: getStructure(typeParams.fromPartial({})),
 						Task: getStructure(typeTask.fromPartial({})),
 						
