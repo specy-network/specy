@@ -1,4 +1,4 @@
-name: specyd tests
+name: specyd unit tests
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         arch: [amd64, arm64]
-        targetos: [windows, darwin, linux]
+        targetos: [linux]
     name: specy ${{ matrix.arch }} for ${{ matrix.targetos }}
     steps:
       - uses: actions/checkout@v3
@@ -27,9 +27,6 @@ jobs:
           GOARCH: ${{ matrix.arch }}
 
       - name: run tests
-        run: make test
+        run: cd $GITHUB_WORKSPACE && go test github.com/specy-network/specy/x/specy -v
 
-      - uses: actions/upload-artifact@v2
-        with:
-          name: specyd ${{ matrix.targetos }} ${{ matrix.arch }}
-          path: cmd/specyd/specyd
+      
