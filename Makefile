@@ -27,7 +27,7 @@ lint:
 
 build:
 	@mkdir -p build
-	@go build -o build/icad ./cmd/specyd
+	@go build -o build/specyd ./cmd/specyd
 
 ###############################################################################
 ###                                Protobuf                                 ###
